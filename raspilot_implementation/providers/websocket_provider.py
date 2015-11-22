@@ -1,9 +1,9 @@
 from raspilot.providers.websockets_provider import WebsocketsProvider, WebsocketsConfig
 from raspilot_implementation.websockets.websocket_dispatcher import WebsocketDispatcher
+from threading import Event
 
 
 class RaspilotWebsocketsProvider(WebsocketsProvider):
-
     """
     Implementation of the abstract WebsocketsProvider.
     """
@@ -18,7 +18,10 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         self.__server_address = websockets_config.server_address
         self.__username = websockets_config.username
         self.__password = websockets_config.password
-        self.__dispatcher = WebsocketDispatcher(self)
+        self.__device_identifier = websockets_config.device_identifier
+        self.__dispatcher = WebsocketDispatcher(self, self.__username, self.__password)
+        self.__channel_connected = False
+        self._wait_for_channel = Event()
 
     def connect(self):
         """
@@ -36,6 +39,9 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         WebsocketsProvider.disconnect(self)
         self.__dispatcher.disconnect()
 
+    def should_reconnect(self):
+        return self.__dispatcher.should_reconnect()
+
     def reconnect(self):
         """
         Reconnects the dispatcher.
@@ -52,7 +58,16 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         WebsocketsProvider.start(self)
         self.connect()
         self.__dispatcher.wait_for_connection()
-        return self.__dispatcher.connection_id
+        channel_name = "device:{}".format(self.__device_identifier)
+        self.__dispatcher.subscribe(channel_name, success=self.__on_channel_connection,
+                                    failure=self.__on_channel_connection)
+        self._wait_for_channel.wait()
+        return self.__dispatcher.connection_id and self.__channel_connected
+
+    def __on_channel_connection(self, success):
+        self.__channel_connected = success
+        print("Channel connection: {}".format(success))
+        self._wait_for_channel.set()
 
     def subscribe(self, channel_name):
         """
@@ -85,6 +100,7 @@ class RaspilotWebsocketsConfig(WebsocketsConfig):
         self.__server_address = raspilot_config.websockets_url
         self.__username = raspilot_config.username
         self.__password = raspilot_config.password
+        self.__device_identifier = raspilot_config.device_identifier
 
     @property
     def server_address(self):
@@ -97,3 +113,7 @@ class RaspilotWebsocketsConfig(WebsocketsConfig):
     @property
     def password(self):
         return self.__password
+
+    @property
+    def device_identifier(self):
+        return self.__device_identifier

@@ -26,6 +26,7 @@ class RaspilotConfig:
         cfg.read('config.cfg')
         self.__username = cfg['AUTHENTICATION']['Username']
         self.__password = cfg['AUTHENTICATION']['Password']
+        self.__device_identifier = cfg['AUTHENTICATION']['Device identifier']
         self.__default_protocol = cfg['DEFAULT']['Protocol']
         self.__server_address = cfg['DEFAULT']['Address']
         self.__base_url = "{}://{}".format(self.__default_protocol, self.__server_address)
@@ -34,6 +35,8 @@ class RaspilotConfig:
         self.__websockets_protocol = cfg['WEBSOCKETS']['Protocol']
         self.__websockets_url = "{}://{}:{}{}".format(self.__websockets_protocol, self.__server_address,
                                                       self.__websockets_port, self.__websockets_path)
+        self.__retry_count = cfg.getint('WEBSOCKETS', 'Retries')
+        self.__retry_delay = cfg.getint('WEBSOCKETS', 'Retry delay')
 
     @property
     def username(self):
@@ -71,6 +74,18 @@ class RaspilotConfig:
     def websockets_url(self):
         return self.__websockets_url
 
+    @property
+    def retry_count(self):
+        return self.__retry_count
+
+    @property
+    def retry_delay(self):
+        return self.__retry_delay
+
+    @property
+    def device_identifier(self):
+        return self.__device_identifier
+
 
 def start_raspilot(rasp):
     rasp.start()
@@ -105,7 +120,7 @@ if __name__ == "__main__":
     raspilot_thread.start()
     raspilot.wait_for_init_complete()
     try:
-        time.sleep(60)
+        input()
     except KeyboardInterrupt:
         pass
     finally:

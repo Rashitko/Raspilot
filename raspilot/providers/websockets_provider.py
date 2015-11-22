@@ -54,6 +54,13 @@ class WebsocketsProvider(BaseProvider):
         """
         pass
 
+    def should_reconnect(self):
+        """
+        Returns True if should try to reconnect, False otherwise
+        :return: True if should try to reconnect, False otherwise
+        """
+        return False
+
     def on_error(self, error):
         """
         Called when an error occurred. Tries to reconnect if reconnection limit is not reached
@@ -62,12 +69,19 @@ class WebsocketsProvider(BaseProvider):
         """
         print("Error occurred: {}".format(error))
         self.__retries += 1
-        if self.__retry_count > self.__retries:
-            print("Trying to reconnect. {}/{}".format(self.__retries, self.__retry_count))
-            time.sleep(self.__reconnect_delay / MILLIS_IN_SECOND)
-            self.reconnect()
 
-    def on_close(self):
+        if self.should_reconnect():
+            if self.__retry_count > self.__retries:
+                print("Trying to reconnect. {}/{}".format(self.__retries, self.__retry_count))
+                time.sleep(self.__reconnect_delay / MILLIS_IN_SECOND)
+                self.reconnect()
+            else:
+                print("Connection failed, retries limit reached.")
+        else:
+            print("Connection fails, but not trying to reconnect")
+
+    @staticmethod
+    def on_close():
         """
         Called when connection is closed. This can happen after an error, or when the connection was closed in normal
         way.

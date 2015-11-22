@@ -1,12 +1,16 @@
 from raspilot_implementation.websockets.websocket_event import WebsocketEvent
 
 
+def nop():
+    pass
+
+
 class WebsocketChannel:
     """
     Websocket channel used for communication between subscribers.
     """
 
-    def __init__(self, channel_name, dispatcher, private=False):
+    def __init__(self, channel_name, dispatcher, private=False, success=nop, failure=nop):
         """
         Constructs a new 'WebsocketChannel' with given channel name and subscribes this channel
         :param channel_name: desired channel name
@@ -18,12 +22,15 @@ class WebsocketChannel:
         self.__channel_name = channel_name
         self.__token = None
         self.__dispatcher = dispatcher
+        self.__success_callback = success
+        self.__failure_callback = failure
 
         event_name = 'websocket_rails.subscribe_private' if private else 'websocket_rails.subscribe'
         info = {'channel': channel_name}
         data = {'data': info}
         frame = [event_name, data, dispatcher.connection_id]
-        event = WebsocketEvent(frame)
+        event = WebsocketEvent(frame, success_callback=self.__success_callback,
+                               failure_callback=self.__failure_callback)
         dispatcher.trigger_event(event)
 
     def bind(self, event_name, callback):
@@ -59,7 +66,9 @@ class WebsocketChannel:
         if 'websocket_rails.channel_token' == event_name:
             self.__token = message['token']
             print("Channel token is {}".format(self.__token))
-        for callback in self.__callbacks[event_name]:
+        callbacks = self.__callbacks.get(event_name)
+        if callbacks:
+            for callback in self.__callbacks.get(event_name):
                 callback.on_data_available(message)
 
     def destroy(self):

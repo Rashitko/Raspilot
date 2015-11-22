@@ -1,4 +1,5 @@
 import json
+import time
 
 EVENT_TYPE_CLIENT_CONNECTED = 'client_connected'
 EVENT_TYPE_PING = 'websocket_rails.ping'
@@ -23,7 +24,7 @@ class WebsocketEvent:
         """
         self.__event_name = message[0]
         payload = message[1]
-        self.__id = payload.get('id')
+        self.__id = payload.get('id', int(time.time()))
         self.__channel = payload.get('channel')
         self.__data = payload.get('data')
         self.__token = payload.get('token')
@@ -36,7 +37,7 @@ class WebsocketEvent:
         Returns True if is successful.
         :return: True if is successful, False otherwise
         """
-        return self.__success is not None
+        return self.__success is not None and self.__success
 
     def is_ping(self):
         """
@@ -66,9 +67,11 @@ class WebsocketEvent:
         :return: returns nothing
         """
         if self.is_success() and self.__success_callback is not None:
-            self.__success_callback()
+            print("SUCCESS on event {}".format(self.id))
+            self.__success_callback(True)
         elif self.__failure_callback is not None:
-            self.__failure_callback()
+            print("FAILURE on event {}".format(self.id))
+            self.__failure_callback(False)
 
     def is_client_connected(self):
         """
@@ -100,6 +103,14 @@ class WebsocketEvent:
     @property
     def event_name(self):
         return self.__event_name
+
+    @property
+    def success(self):
+        return self.__success
+
+    @success.setter
+    def success(self, value):
+        self.__success = value
 
     @classmethod
     def create_pong(cls, connection_id):

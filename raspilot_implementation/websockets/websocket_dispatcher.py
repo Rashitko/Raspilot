@@ -1,5 +1,5 @@
 import json
-from threading import Event
+from threading import Event, RLock
 
 from raspilot_implementation.websockets.websocket_channel import WebsocketChannel
 from raspilot_implementation.websockets.websocket_connection import WebsocketConnection
@@ -14,7 +14,7 @@ class WebsocketDispatcher:
     Dispatcher for the websockets. Main class for work with websockets.
     """
 
-    def __init__(self, provider):
+    def __init__(self, provider, username, password):
         """
         Constructs new 'WebsocketDispatcher'.
         :param provider: provider which should be notified of important events
@@ -27,8 +27,10 @@ class WebsocketDispatcher:
         self.__connection_id = None
         self.__queue = {}
         self.__callbacks = {}
-        self.__connection = WebsocketConnection(self.__url, self)
+        self.__connection = WebsocketConnection(self.__url, self, username, password)
         self.__connection_wait_event = Event()
+        self.__was_connected = False
+        self.__recv_lock = RLock()
 
     def on_new_message(self, message):
         """
@@ -38,22 +40,23 @@ class WebsocketDispatcher:
         :param message: received message
         :return: returns nothing.
         """
-        data = json.loads(message)
-        for entry in data:
-            event = WebsocketEvent(entry)
-            if event.is_result():
-                queued_event = self.__queue[event.id]
-                if queued_event:
-                    queued_event.run_callbacks()
-                    del self.__queue[event.id]
-            elif event.is_channel():
-                self.__dispatch_channel(event)
-            elif event.is_ping():
-                self.__pong()
-            elif event.is_client_connected():
-                self.__client_connected(event)
-            else:
-                self.__dispatch(event)
+        with self.__recv_lock:
+            data = json.loads(message)
+            for entry in data:
+                event = WebsocketEvent(entry)
+                if event.is_result():
+                    queued_event = self.__queue.pop(event.id, None)
+                    if queued_event:
+                        queued_event.success = event.success
+                        queued_event.run_callbacks()
+                elif event.is_channel():
+                    self.__dispatch_channel(event)
+                elif event.is_ping():
+                    self.__pong()
+                elif event.is_client_connected():
+                    self.__client_connected(event)
+                else:
+                    self.__dispatch(event)
 
     def on_error(self, error):
         """
@@ -62,7 +65,6 @@ class WebsocketDispatcher:
         :return: returns nothing
         """
         self.state = STATE_DISCONNECTED
-        self.__connection_wait_event.set()
         self.__connection.disconnect()
         self.__provider.on_error(error)
 
@@ -72,6 +74,7 @@ class WebsocketDispatcher:
         :return: returns nothing
         """
         self.state = STATE_DISCONNECTED
+        self.__connection_wait_event.set()
         self.__provider.on_close()
 
     def on_open(self):
@@ -102,6 +105,14 @@ class WebsocketDispatcher:
         """
         self.__connection.reconnect()
 
+    def should_reconnect(self):
+
+        """
+        Returns True, if should reconnect, False, otherwise
+        :return: True, if should reconnect, False, otherwise
+        """
+        return self.__was_connected
+
     def __pong(self):
         """
         Creates and send the 'pong' event.
@@ -120,6 +131,7 @@ class WebsocketDispatcher:
         self.__connection_id = data.get('connection_id')
         print("connection id is {0}".format(self.connection_id))
         self.state = STATE_CONNECTED
+        self.__was_connected = True
         self.__connection_wait_event.set()
 
     def bind(self, event_name, callback):
@@ -163,8 +175,10 @@ class WebsocketDispatcher:
         :param event: received event
         :return: returns nothing
         """
-        for callback in self.__callbacks[event.event_name]:
-            callback.on_data_available(event.data)
+        callbacks = self.__callbacks.get(event.event_name, None)
+        if callbacks:
+            for callback in callbacks:
+                callback.on_data_available(event.data)
 
     def is_subscribed(self, channel_name):
         """
@@ -174,15 +188,17 @@ class WebsocketDispatcher:
         """
         return self.__channels_map.get(channel_name) is not None
 
-    def subscribe(self, channel_name):
+    def subscribe(self, channel_name, success=nop, failure=nop):
         """
         Subscribes the public channel.
         :param channel_name: name of the channel
+        :param success: success callback
+        :param failure: failure callback
         :return: returns nothing
         """
         if self.is_subscribed(channel_name):
             return self.__channels_map[channel_name]
-        channel = WebsocketChannel(channel_name, self)
+        channel = WebsocketChannel(channel_name, self, success=success, failure=failure)
         self.__channels_map[channel_name] = channel
         return channel
 
@@ -214,9 +230,9 @@ class WebsocketDispatcher:
         :param event: received event
         :return: returns nothing
         """
-        channel_name = None if not event.channel else event.channel.channel_name
+        channel_name = None if not event.channel else event.channel
         if self.is_subscribed(channel_name):
-            self.__channels_map[channel_name].dispatch(event.name, event.data)
+            self.__channels_map[channel_name].dispatch(event.event_name, event.data)
 
     def wait_for_connection(self):
         """

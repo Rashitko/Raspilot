@@ -116,7 +116,7 @@ class Raspilot:
             print('Websockets provider failed to start')
 
         # TODO: start orientation, gps, servo controller
-            
+
         self.__init_complete_event.set()
         print('Initialization complete, Raspilot is now running!')
         self.__stop_self_event.wait()

@@ -1,5 +1,6 @@
 from threading import Thread
 from websocket import WebSocketApp
+import base64
 
 
 class WebsocketConnection:
@@ -7,7 +8,7 @@ class WebsocketConnection:
     Websocket connection. Used to send, receive messages.
     """
 
-    def __init__(self, url, dispatcher):
+    def __init__(self, url, dispatcher, username, password):
         """
         Constructs a new 'WebsocketConnection'. Does not connect, until WebsocketConnection.connect() is called.
         :param url: address where to connect
@@ -18,8 +19,16 @@ class WebsocketConnection:
         self.__url = url
         self.__message_queue = []
         self.__connection_id = None
-        self.__websocket_app = WebSocketApp(self.__url, on_open=self.__on_open, on_message=self.__on_message,
-                                            on_close=self.__on_close, on_error=self.__on_error)
+        self.__username = username
+        self.__password = password
+        self.__websocket_app = self.__create_websocket_app()
+
+    def __create_websocket_app(self):
+        auth_data = "{}:{}".format(self.__username, self.__password).encode('utf-8')
+        auth_encoded = "Basic {}".format(base64.b64encode(auth_data).decode('ascii'))
+        auth_header = "Authorization:{}".format(auth_encoded)
+        return WebSocketApp(self.__url, on_open=self.__on_open, on_message=self.__on_message,
+                            on_close=self.__on_close, on_error=self.__on_error, header={auth_header})
 
     def connect(self):
         """
@@ -41,8 +50,7 @@ class WebsocketConnection:
         :return: returns nothing
         """
         self.__websocket_app.close()
-        self.__websocket_app = WebSocketApp(self.__url, on_open=self.__on_open, on_message=self.__on_message,
-                                            on_close=self.__on_close, on_error=self.__on_error)
+        self.__websocket_app = self.__create_websocket_app()
         self.connect()
 
     def trigger(self, event):
@@ -71,7 +79,9 @@ class WebsocketConnection:
         :param event: event to send
         :return: returns nothing
         """
-        self.__ws.send(event.to_json())
+        data = event.to_json()
+        print("----> SENDING: {}".format(event.event_name))
+        self.__ws.send(data)
 
     def __on_open(self, ws):
         """
@@ -109,7 +119,7 @@ class WebsocketConnection:
         :return: returns nothing
         """
         self.__ws = ws
-        print("new message: {}".format(message))
+        print("<---- RECEIVED: {}".format(message))
         self.__dispatcher.on_new_message(message)
 
     @property

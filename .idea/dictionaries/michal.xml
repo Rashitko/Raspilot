@@ -2,6 +2,7 @@
   <dictionary name="michal">
     <words>
       <w>raspilot</w>
+      <w>struct</w>
       <w>unsubscribe</w>
       <w>unsubscribes</w>
       <w>websocket</w>

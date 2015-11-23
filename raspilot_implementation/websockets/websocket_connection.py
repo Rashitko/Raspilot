@@ -80,7 +80,7 @@ class WebsocketConnection:
         :return: returns nothing
         """
         data = event.to_json()
-        print("----> SENDING: {}".format(event.event_name))
+        # print("----> SENDING: {}".format(event.event_name))
         self.__ws.send(data)
 
     def __on_open(self, ws):
@@ -119,7 +119,7 @@ class WebsocketConnection:
         :return: returns nothing
         """
         self.__ws = ws
-        print("<---- RECEIVED: {}".format(message))
+        # print("<---- RECEIVED: {}".format(message))
         self.__dispatcher.on_new_message(message)
 
     @property

@@ -84,7 +84,7 @@ class Raspilot:
     def __start_rx_provider(self):
         """
         starts the RXProvider if a provider is set
-        :return: returns True, if no provider is set, else return the result from providers start
+        :return: returns True, if no provider is set, else return the result of provider start
         """
         if self.__rx_provider is not None:
             return self.__rx_provider.start()
@@ -93,10 +93,19 @@ class Raspilot:
     def __start_websockets_provider(self):
         """
         starts the WebsocketsProvider if a provider is set
-        :return: returns True, if no provider is set, else return the result from providers start
+        :return: returns True, if no provider is set, else return the result of provider start
         """
         if self.__websockets_provider is not None:
             return self.__websockets_provider.start()
+        return True
+
+    def __start_orientation_provider(self):
+        """
+        starts the OrientationProvider if a provider is set
+        :return: returns True, if no provider is set, else return the result of provider start
+        """
+        if self.__orientation_provider is not None:
+            return self.__orientation_provider.start()
         return True
 
     def start(self):
@@ -115,7 +124,12 @@ class Raspilot:
         else:
             print('Websockets provider failed to start')
 
-        # TODO: start orientation, gps, servo controller
+        if self.__start_orientation_provider():
+            print('Orientation provider started')
+        else:
+            print('Orientation provider failed to start')
+
+        # TODO: gps, servo controller
 
         self.__init_complete_event.set()
         print('Initialization complete, Raspilot is now running!')
@@ -127,8 +141,12 @@ class Raspilot:
         :return: return nothing
         """
         print('Stopping Raspilot\n')
+        if self.__rx_provider is not None:
+            self.__rx_provider.stop()
         if self.__websockets_provider is not None:
             self.__websockets_provider.stop()
+        if self.__orientation_provider is not None:
+            self.__orientation_provider.stop()
         self.__stop_self_event.set()
 
     def wait_for_init_complete(self):

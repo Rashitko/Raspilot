@@ -20,6 +20,7 @@ class RaspilotOrientationProvider(OrientationProvider):
         :return: created socket which is bound to the specified port
         """
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, port))
         return s
 
@@ -36,9 +37,12 @@ class RaspilotOrientationProvider(OrientationProvider):
 
     def start(self):
         super().start()
-        self.__socket = self.__create_socket(self.__port)
-        Thread(target=self.__process).start()
-        return True
+        try:
+            self.__socket = self.__create_socket(self.__port)
+            Thread(target=self.__process).start()
+            return True
+        except:
+            return False
 
     def __process(self):
         """
@@ -48,30 +52,33 @@ class RaspilotOrientationProvider(OrientationProvider):
         """
         self.__socket.listen(MAX_CONNECTIONS)
         self.__socket_listening_event.set()
-        connection, address = self.__socket.accept()
-        self.__on_client_connected(connection, address)
-        print("Client {} on address {} connected".format(connection, address))
         while self.__receive:
-            data = connection.recv(RECV_BYTES)
-            if not data:
-                break
             try:
-                self.__on_data_received(data)
-            except DataProcessingError:
-                print("Invalid data received ignoring them.")
-        connection.close()
-        print("Connection closed")
-        self.__on_connection_closed()
+                connection, address = self.__socket.accept()
+                self.__on_client_connected(connection, address)
+                print("Client {} on address {} connected".format(connection, address))
+                while self.__receive:
+                    data = connection.recv(RECV_BYTES)
+                    if not data:
+                        break
+                    try:
+                        self.__on_data_received(data)
+                    except DataProcessingError:
+                        print("Invalid data received ignoring them.")
+                connection.close()
+                print("Connection closed")
+                self.__on_connection_closed()
+            except ConnectionAbortedError:
+                print("Connection Aborted error")
+                pass
 
     def __on_connection_closed(self):
         """
-        Called when socket connection is closed. If should receive (RaspilotOrientationProvider.stop() wasn't called),
-        RaspilotOrientationProvider.start() is called. This can happen for example because of an network error.
-        Otherwise nothing happens.
+        Sets client connection and address to None
         :return: returns nothing
         """
-        if self.__receive:
-            self.start()
+        self.__connection = None
+        self.__address = None
 
     def __on_client_connected(self, connection, address):
         """
@@ -112,10 +119,14 @@ class RaspilotOrientationProvider(OrientationProvider):
     def stop(self):
         super().stop()
         self.__receive = False
+        if self.__connection:
+            self.__connection.shutdown(0)
+        if self.__socket:
+            self.__socket.close()
 
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):
-    def __init__(self, raspilot, port):
+    def __init__(self, port):
         """
         Creates a new 'RaspilotOrientationProviderConfig' which is used for
         the RaspilotOrientationProviderConfiguration. See wiki for more information about this provider.
@@ -123,16 +134,11 @@ class RaspilotOrientationProviderConfig(OrientationProviderConfig):
         :return: returns nothing
         """
         super().__init__()
-        self.__raspilot = raspilot
         self.__port = port
 
     @property
     def port(self):
         return self.__port
-
-    @property
-    def raspilot(self):
-        return self.__raspilot
 
 
 class DataProcessingError(Exception):

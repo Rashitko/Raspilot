@@ -37,6 +37,7 @@ class RaspilotConfig:
                                                       self.__websockets_port, self.__websockets_path)
         self.__retry_count = cfg.getint('WEBSOCKETS', 'Retries')
         self.__retry_delay = cfg.getint('WEBSOCKETS', 'Retry delay')
+        self.__orientation_port = cfg.getint('ANDROID', 'Port for orientation data')
 
     @property
     def username(self):
@@ -86,6 +87,10 @@ class RaspilotConfig:
     def device_identifier(self):
         return self.__device_identifier
 
+    @property
+    def orientation_port(self):
+        return self.__orientation_port
+
 
 def start_raspilot(rasp):
     rasp.start()
@@ -103,7 +108,7 @@ if __name__ == "__main__":
     rx_provider = RaspilotRXProvider(rx_config)
     builder.rx_provider = rx_provider
 
-    orientation_config = RaspilotOrientationProviderConfig()
+    orientation_config = RaspilotOrientationProviderConfig(config.orientation_port)
     orientation_provider = RaspilotOrientationProvider(orientation_config)
     builder.orientation_provider = orientation_provider
 

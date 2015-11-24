@@ -2,6 +2,8 @@ from raspilot.providers.websockets_provider import WebsocketsProvider, Websocket
 from raspilot_implementation.websockets.websocket_dispatcher import WebsocketDispatcher
 from threading import Event
 
+CHANNEL_NAME_FORMAT = "device:{}"
+
 
 class RaspilotWebsocketsProvider(WebsocketsProvider):
     """
@@ -40,6 +42,10 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         self.__dispatcher.disconnect()
 
     def should_reconnect(self):
+        """
+        Asks the dispatcher whether should reconnect
+        :return: result from dispatcher
+        """
         return self.__dispatcher.should_reconnect()
 
     def reconnect(self):
@@ -58,7 +64,9 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         WebsocketsProvider.start(self)
         self.connect()
         self.__dispatcher.wait_for_connection()
-        channel_name = "device:{}".format(self.__device_identifier)
+        if not self.__dispatcher.is_connected():
+            return False
+        channel_name = CHANNEL_NAME_FORMAT.format(self.__device_identifier)
         self.__dispatcher.subscribe(channel_name, success=self.__on_channel_connection,
                                     failure=self.__on_channel_connection)
         self._wait_for_channel.wait()

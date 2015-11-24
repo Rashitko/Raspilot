@@ -1,5 +1,4 @@
 import configparser
-import time
 from threading import Thread
 
 from raspilot.raspylot import RaspilotBuilder
@@ -9,7 +8,7 @@ from raspilot_implementation.providers.orientation_provider import (RaspilotOrie
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
 from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
 from raspilot_implementation.servo.servo_controller import RaspilotServoController, RaspilotServoControllerConfig
-
+from raspilot_implementation.providers.android_provider import AndroidProvider, AndroidProviderConfig
 
 class RaspilotConfig:
     """
@@ -38,6 +37,7 @@ class RaspilotConfig:
         self.__retry_count = cfg.getint('WEBSOCKETS', 'Retries')
         self.__retry_delay = cfg.getint('WEBSOCKETS', 'Retry delay')
         self.__orientation_port = cfg.getint('ANDROID', 'Port for orientation data')
+        self.__general_port = cfg.getint('ANDROID', 'Port for general data')
 
     @property
     def username(self):
@@ -91,6 +91,10 @@ class RaspilotConfig:
     def orientation_port(self):
         return self.__orientation_port
 
+    @property
+    def general_port(self):
+        return self.__general_port
+
 
 def start_raspilot(rasp):
     rasp.start()
@@ -119,6 +123,8 @@ if __name__ == "__main__":
     servo_controller_config = RaspilotServoControllerConfig()
     servo_controller = RaspilotServoController(servo_controller_config)
     builder.servo_controller = servo_controller
+
+    builder.add_custom_provider(AndroidProvider(AndroidProviderConfig(config.general_port)))
 
     raspilot = builder.build()
     raspilot_thread = Thread(None, start_raspilot, None, (raspilot,))

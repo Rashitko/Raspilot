@@ -1,4 +1,4 @@
-class BaseProvider:
+class BaseProvider(object):
     """
     Base provider class, which all other provider should extend. Defines the basic methods, which are common for
     all providers.
@@ -10,8 +10,6 @@ class BaseProvider:
         :param config: configuration for this provider
         :return: returns nothing
         """
-        if config is None:
-            raise ValueError("Config must be set")
         self.__raspilot_ = None
 
     def initialize(self):

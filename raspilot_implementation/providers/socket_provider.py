@@ -20,9 +20,10 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         s.bind((HOST, port))
         return s
 
-    def __init__(self, port):
+    def __init__(self, port, recv_size):
         raspilot.providers.base_provider.BaseProvider.__init__(self, None)
         self.__port = port
+        self.__recv_size = recv_size
         self.__socket = None
         self.__data_process_lock = RLock()
         self.__receive = True
@@ -33,6 +34,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
 
     def start(self):
         super().start()
+        # noinspection PyBroadException
         try:
             self.__socket = self.__create_socket(self.__port)
             Thread(target=self._process).start()
@@ -43,7 +45,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
 
     def _process(self):
         """
-        Opens the socket and waits for the connection, then receives data until RaspilotOrientationProvider.stop()
+        Opens the socket and waits for the connection, then receives data until SocketProvider.stop()
         is called
         :return: returns nothing
         """
@@ -57,7 +59,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
                 while self.__receive:
                     try:
                         with self.__data_process_lock:
-                            data = connection.recv(RECV_BYTES)
+                            data = connection.recv(self.__recv_size)
                             if not data:
                                 break
                             self.__handle_data(data)
@@ -127,6 +129,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
             self.__connection.close()
         if self.__socket:
             self.__socket.close()
+
 
 class DataProcessingError(Exception):
     """

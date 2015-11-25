@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1c79c7d9-7e56-4d9e-993b-d34aa406499c" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py" afterPath="$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py" afterPath="$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py" afterPath="$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py" />
     </list>
@@ -19,7 +21,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/raspilot$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1448014177931" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/raspilot$Generate_docs.coverage" NAME="Generate docs Coverage Results" MODIFIED="1447849302116" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/raspilot$default.coverage" NAME="default Coverage Results" MODIFIED="1448365533504" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raspilot_implementation" />
+    <SUITE FILE_PATH="coverage/raspilot$default.coverage" NAME="default Coverage Results" MODIFIED="1448453361654" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raspilot_implementation" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -34,7 +36,7 @@
         <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+              <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -52,11 +54,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="android_provider.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="android_provider.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="15" column="25" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.5555556">
+              <caret line="17" column="47" selection-start-line="17" selection-start-column="47" selection-end-line="17" selection-end-column="47" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -64,11 +66,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="socket_provider.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="socket_provider.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6405229">
-              <caret line="63" column="46" selection-start-line="63" selection-start-column="46" selection-end-line="63" selection-end-column="46" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="61" column="67" selection-start-line="61" selection-start-column="67" selection-end-line="61" selection-end-column="67" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -90,7 +92,7 @@
         <entry file="file://$PROJECT_DIR$/raspilot/raspylot.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
+              <caret line="150" column="0" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
               </folding>
@@ -105,6 +107,9 @@
               <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
+                <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
+                <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
+                <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -162,10 +167,10 @@
         <option value="$PROJECT_DIR$/raspilot/providers/base_provider.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/config.cfg" />
         <option value="$PROJECT_DIR$/raspilot_implementation/main.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py" />
         <option value="$PROJECT_DIR$/raspilot/raspylot.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py" />
       </list>
     </option>
   </component>
@@ -625,21 +630,15 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/raspilot/raspylot.py</url>
-          <line>150</line>
-          <option name="timeStamp" value="70" />
-        </line-breakpoint>
-      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="72" />
+      <option name="time" value="73" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="provider.__class__.__name__" language="Python" />
+        <watch expression="sys.getsizeof(data)" language="Python" />
       </configuration>
     </watches-manager>
   </component>
@@ -658,6 +657,9 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
+            <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
+            <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -708,6 +710,9 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
+            <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
+            <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -764,6 +769,9 @@
           <caret line="5" column="89" selection-start-line="5" selection-start-column="89" selection-end-line="5" selection-end-column="89" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
+            <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
+            <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -974,28 +982,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="25" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="68" column="0" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot/providers/base_provider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1006,6 +996,9 @@
           <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
+            <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
+            <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -1021,9 +1014,27 @@
     <entry file="file://$PROJECT_DIR$/raspilot/raspylot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
+          <caret line="150" column="0" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot/providers/base_provider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="61" column="67" selection-start-line="61" selection-start-column="67" selection-end-line="61" selection-end-column="67" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1031,19 +1042,19 @@
     <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py">
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6405229">
-          <caret line="63" column="46" selection-start-line="63" selection-start-column="46" selection-end-line="63" selection-end-column="46" />
+        <state vertical-scroll-proportion="0.5555556">
+          <caret line="17" column="47" selection-start-line="17" selection-start-column="47" selection-end-line="17" selection-end-column="47" />
           <folding>
-            <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>

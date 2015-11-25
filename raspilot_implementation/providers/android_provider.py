@@ -1,6 +1,8 @@
 import raspilot.providers.base_provider
 import raspilot_implementation.providers.socket_provider
 
+RECV_SIZE = 1024
+
 
 class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketProvider):
     """
@@ -13,7 +15,7 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
         :param config: configuration to load from
         :return: returns nothing
         """
-        super().__init__(config.port)
+        super().__init__(config.port, RECV_SIZE)
 
 
 class AndroidProviderConfig(raspilot.providers.base_provider.BaseProviderConfig):

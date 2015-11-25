@@ -4,7 +4,7 @@ from raspilot.providers.orientation_provider import OrientationProvider, Orienta
 from raspilot_implementation.providers.socket_provider import SocketProvider
 
 FMT = "!ddd"
-RECV_BYTES = 1024
+RECV_BYTES = 24
 MAX_CONNECTIONS = 1
 HOST = ''
 
@@ -12,7 +12,7 @@ HOST = ''
 class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
     def __init__(self, config):
         OrientationProvider.__init__(self, config)
-        SocketProvider.__init__(self, config.orientation_port)
+        SocketProvider.__init__(self, config.orientation_port, RECV_BYTES)
         self.__roll = 0
         self.__pitch = 0
         self.__yaw = 0
@@ -27,7 +27,6 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
         :return: returns nothing
         """
         (self.__roll, self.__pitch, self.__yaw) = struct.unpack(FMT, data)
-        print("roll: {}, pitch: {}, yaw: {}".format(self.__roll, self.__pitch, self.__yaw))
 
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):

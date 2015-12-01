@@ -24,6 +24,7 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         self.__dispatcher = WebsocketDispatcher(self, self.__username, self.__password)
         self.__channel_connected = False
         self._wait_for_channel = Event()
+        self.__channel = None
 
     def connect(self):
         """
@@ -67,10 +68,23 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         if not self.__dispatcher.is_connected():
             return False
         channel_name = CHANNEL_NAME_FORMAT.format(self.__device_identifier)
-        self.__dispatcher.subscribe(channel_name, success=self.__on_channel_connection,
+        self.__channel = self.__dispatcher.subscribe(channel_name, success=self.__on_channel_connection,
                                     failure=self.__on_channel_connection)
         self._wait_for_channel.wait()
         return self.__dispatcher.connection_id and self.__channel_connected
+
+    def send_telemetry_update_message(self, message, success=None, failure=None):
+        """
+        Sends a raw message via the websocket. If the transmission fails failure callback is executed (if set).
+        If the transmission is successful the success callback is executed (if set). It is not verified that someone
+        receives the message, only transmission success is reported. Callbacks should have one parameter - message.
+        :param message: message to be sent
+        :param success: success callback
+        :param failure: failure callback
+        :return: True if transmission is successful, False otherwise.
+        """
+        trigger = self.__channel.trigger('telemetry.update', message)
+        return trigger
 
     def __on_channel_connection(self, success):
         self.__channel_connected = success

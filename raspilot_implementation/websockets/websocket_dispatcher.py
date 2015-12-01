@@ -31,6 +31,7 @@ class WebsocketDispatcher:
         self.__connection_wait_event = Event()
         self.__was_connected = False
         self.__recv_lock = RLock()
+        self.__normally_disconnected = False
 
     def on_new_message(self, message):
         """
@@ -90,6 +91,7 @@ class WebsocketDispatcher:
         :return: returns nothing
         """
         self.__connection.connect()
+        self.__normally_disconnected = False
 
     def disconnect(self):
         """
@@ -97,6 +99,7 @@ class WebsocketDispatcher:
         :return: returns nothing
         """
         self.__connection.disconnect()
+        self.__normally_disconnected = True
 
     def reconnect(self):
         """
@@ -111,7 +114,7 @@ class WebsocketDispatcher:
         Returns True, if should reconnect, False, otherwise
         :return: True, if should reconnect, False, otherwise
         """
-        return self.__was_connected
+        return self.__was_connected and not self.__normally_disconnected
 
     def __pong(self):
         """
@@ -147,7 +150,8 @@ class WebsocketDispatcher:
 
     def trigger(self, event_name, data, success_callback=nop, failure_callback=nop):
         """
-        Creates event with given name and data sends it and executes the callback if set.
+        Creates event with given name and data sends it. If the event is successfully executed then the success callback
+        is run, otherwise failure callback is run.
         :param event_name: name for the event
         :param data: data sent in the event
         :param success_callback: callback for success
@@ -156,18 +160,18 @@ class WebsocketDispatcher:
         """
         frame = [event_name, data, self.__connection_id]
         event = WebsocketEvent(frame, success_callback, failure_callback)
-        self.__queue[event.id] = event
-        self.__connection.trigger(event)
+        self.trigger_event(event)
 
     def trigger_event(self, event):
         """
         Sends event, which was previously created.
         :param event: event which should be sent
-        :return: returns nothing
+        :return: returns True if message was transmitted, False otherwise
         """
         if not self.__queue.get(event.id) or not self.__queue[event.id] == event.id:
             self.__queue[event.id] = event
-            self.__connection.trigger(event)
+            return self.__connection.trigger(event)
+        return False
 
     def __dispatch(self, event):
         """
@@ -263,3 +267,15 @@ class WebsocketDispatcher:
     @property
     def connection_id(self):
         return self.__connection_id
+
+    def raw_send(self, message, success, failure):
+        """
+        Sends a raw message via the websocket. If the transmission fails failure callback is executed (if set).
+        If the transmission is successful the success callback is executed (if set). It is not verified that someone
+        receives the message, only transmission success is reported. Callbacks should have one parameter - message.
+        :param message: message to be sent
+        :param success: success callback
+        :param failure: failure callback
+        :return: True if transmission is successful, False otherwise.
+        """
+        return self.__connection.raw_send(message, success, failure)

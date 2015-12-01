@@ -1,4 +1,5 @@
 import struct
+from threading import RLock
 
 from raspilot.providers.orientation_provider import OrientationProvider, OrientationProviderConfig
 from raspilot_implementation.providers.socket_provider import SocketProvider
@@ -13,9 +14,8 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
     def __init__(self, config):
         OrientationProvider.__init__(self, config)
         SocketProvider.__init__(self, config.orientation_port, RECV_BYTES)
-        self.__roll = 0
-        self.__pitch = 0
-        self.__yaw = 0
+        self.__orientation = None
+        self.__prop_lock = RLock()
 
     def _on_data_received(self, data):
         """
@@ -26,7 +26,12 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
         :param data: received data
         :return: returns nothing
         """
-        (self.__roll, self.__pitch, self.__yaw) = struct.unpack(FMT, data)
+        with self.__prop_lock:
+            (roll, pitch, yaw) = struct.unpack(FMT, data)
+            self.__orientation = Orientation(roll, pitch, yaw)
+
+    def current_orientation(self):
+        return self.__orientation
 
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):
@@ -43,3 +48,36 @@ class RaspilotOrientationProviderConfig(OrientationProviderConfig):
     @property
     def orientation_port(self):
         return self.__orientation_port
+
+
+class Orientation:
+    """
+    Wrapper class for the roll pitch and yaw angles.
+    """
+
+    def __init__(self, roll, pitch, yaw):
+        """
+        Creates a new 'Orientation' with roll, pitch and yaw angles specified.
+        :param roll: roll angle in degrees
+        :param pitch: pitch angle in degrees
+        :param yaw: yaw andle in degrees
+        :return: returns nothing
+        """
+        self.__roll = roll
+        self.__pitch = pitch
+        self.__yaw = yaw
+
+    def to_json(self):
+        return {'roll': self.roll, 'pitch': self.pitch, 'yaw': self.roll}
+
+    @property
+    def roll(self):
+        return self.__roll
+
+    @property
+    def pitch(self):
+        return self.__pitch
+
+    @property
+    def yaw(self):
+        return self.__yaw

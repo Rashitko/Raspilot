@@ -49,12 +49,13 @@ class WebsocketChannel:
         Publishes the event to the channel.
         :param event_name: event name of the event
         :param message: message which should be in the event
-        :return: return nothing
+        :return: return True if message was transmitted, False otherwise
         """
         info = {'channel': self.__channel_name, 'data': message, 'token': self.__token}
         frame = [event_name, info, self.__dispatcher.connection_id]
         event = WebsocketEvent(frame)
-        self.__dispatcher.trigger_event(event)
+        trigger_event = self.__dispatcher.trigger_event(event)
+        return trigger_event
 
     def dispatch(self, event_name, message):
         """

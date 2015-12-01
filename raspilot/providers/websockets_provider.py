@@ -1,4 +1,5 @@
 import time
+
 from raspilot.providers.base_provider import BaseProvider, BaseProviderConfig
 
 MILLIS_IN_SECOND = 1000
@@ -80,6 +81,18 @@ class WebsocketsProvider(BaseProvider):
         else:
             print("Connection fails, but not trying to reconnect")
 
+    def send_telemetry_update_message(self, message, success=None, failure=None):
+        """
+        Sends the message. The default implementation fails to send the message. Callbacks should have one
+        parameter - message.
+        :param message: message to be sent
+        :param success: success callback, run if transmission was successful
+        :param failure: failure callback, run if transmission failed
+        :return: returns nothing
+        """
+        if failure:
+            failure(message)
+
     @staticmethod
     def on_close():
         """
@@ -103,6 +116,7 @@ class WebsocketsConfig(BaseProviderConfig):
     Used to initialize the WebsocketsProvider. All subclasses of the WebsocketProvider which has their own config,
     should extend this class.
     """
+
     def __init__(self, retry_count=DEFAULT_RECONNECT_COUNT, retry_delay=DEFAULT_RETRY_DELAY):
         """
         Constructs a new 'WebsocketsConfig' which is used to initialize the WebsocketsProvider.

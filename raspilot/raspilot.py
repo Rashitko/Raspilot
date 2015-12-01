@@ -1,7 +1,8 @@
 from threading import Event
 
 from raspilot.commands_executor import CommandsExecutor, CommandExecutionError
-
+from raspilot.providers.websockets_provider import WebsocketsProvider
+from raspilot.providers.orientation_provider import OrientationProvider
 
 def nop():
     pass
@@ -27,12 +28,14 @@ class Raspilot:
         self.__init_complete_event = Event()
         self.__commands_executor = raspilot_builder.commands_executor
         self.__custom_providers = raspilot_builder.custom_providers
+        self.__notifier = raspilot_builder.notifier
 
         self.__init_rx_provider()
         self.__init_websockets_provider()
         self.__init_orientation_provider()
         self.__init_gps_provider()
         self.__init_servo_controller()
+        self.__init_notifier()
 
         self.__init_custom_providers()
 
@@ -42,7 +45,7 @@ class Raspilot:
         :return: returns nothing
         """
         if self.__websockets_provider is not None:
-            self.__websockets_provider.__raspilot = self
+            self.__websockets_provider.raspilot = self
             self.__websockets_provider.initialize()
         else:
             print('Websockets not available')
@@ -53,7 +56,7 @@ class Raspilot:
         :return: returns nothing
         """
         if self.__rx_provider is not None:
-            self.__rx_provider.__raspilot = self
+            self.__rx_provider.raspilot = self
             self.__rx_provider.initialize()
         else:
             print('RX input not available')
@@ -64,7 +67,7 @@ class Raspilot:
         :return: returns nothing
         """
         if self.__orientation_provider is not None:
-            self.__orientation_provider.__raspilot = self
+            self.__orientation_provider.raspilot = self
             self.__orientation_provider.initialize()
         else:
             print('Orientation provider not available')
@@ -75,7 +78,7 @@ class Raspilot:
         :return: returns nothing
         """
         if self.__gps_provider is not None:
-            self.__gps_provider.__raspilot = self
+            self.__gps_provider.raspilot = self
             self.__gps_provider.initialize()
         else:
             print('GPS provider not available')
@@ -86,7 +89,7 @@ class Raspilot:
         :return: returns nothing
         """
         if self.__servo_controller is not None:
-            self.__servo_controller.__raspilot = self
+            self.__servo_controller.raspilot = self
             self.__servo_controller.initialize()
         else:
             print('Servo controller not available')
@@ -97,8 +100,18 @@ class Raspilot:
         :return: returns nothing
         """
         for provider in self.__custom_providers:
-            provider.__raspilot = self
+            provider.raspilot = self
             provider.initialize()
+
+    def __init_notifier(self):
+        """
+        Initializes the notifier if any.
+        :return: returns nothing
+        """
+        if self.__notifier:
+            print("Initializing notifier")
+            self.__notifier.raspilot = self
+            self.__notifier.initialize()
 
     def __start_rx_provider(self):
         """
@@ -154,7 +167,16 @@ class Raspilot:
 
         self.__init_complete_event.set()
         print('Initialization complete, Raspilot is now running!')
+        self.__start_notifier()
         self.__stop_self_event.wait()
+
+    def __start_notifier(self):
+        """
+        Starts the notifier if any.
+        :return: returns nothing
+        """
+        if self.__notifier:
+            self.__notifier.start()
 
     def __start_custom_providers(self):
         """
@@ -171,15 +193,17 @@ class Raspilot:
 
     def stop(self):
         """
-        Stops all available providers and the stops self.
+        Stops all available providers, notifier and then stops self.
         :return: return nothing
         """
         print('Stopping Raspilot\n')
-        if self.__rx_provider is not None:
+        if self.__notifier:
+            self.__notifier.stop()
+        if self.__rx_provider:
             self.__rx_provider.stop()
-        if self.__websockets_provider is not None:
+        if self.__websockets_provider:
             self.__websockets_provider.stop()
-        if self.__orientation_provider is not None:
+        if self.__orientation_provider:
             self.__orientation_provider.stop()
         self.__stop_custom_providers()
         self.__stop_self_event.set()
@@ -235,6 +259,10 @@ class Raspilot:
     def websocket_provider(self):
         return self.__websockets_provider
 
+    @property
+    def orientation_provider(self):
+        return self.__orientation_provider
+
 
 class RaspilotBuilder:
     """
@@ -246,13 +274,14 @@ class RaspilotBuilder:
         Constructs a new 'RaspilotBuilder' with all providers set as None.
         :return: returns nothing
         """
-        self.__websockets_provider = None
+        self.__websockets_provider = WebsocketsProvider
         self.__rx_provider = None
-        self.__orientation_provider = None
+        self.__orientation_provider = OrientationProvider
         self.__gps_provider = None
         self.__servo_controller = None
         self.__commands_executor = CommandsExecutor()
         self.__custom_providers = []
+        self.__notifier = None
 
     def add_custom_provider(self, provider):
         """
@@ -313,6 +342,14 @@ class RaspilotBuilder:
     @property
     def custom_providers(self):
         return self.__custom_providers
+
+    @property
+    def notifier(self):
+        return self.__notifier
+
+    @notifier.setter
+    def notifier(self, value):
+        self.__notifier = value
 
     def build(self):
         """

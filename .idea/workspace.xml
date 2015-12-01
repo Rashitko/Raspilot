@@ -2,10 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1c79c7d9-7e56-4d9e-993b-d34aa406499c" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/raspilot/notifier/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/raspilot/notifier/base_notifier.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/raspilot_implementation/notifier/RaspilotNotifier.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/raspilot_implementation/notifier/__init__.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/raspilot/raspylot.py" afterPath="$PROJECT_DIR$/raspilot/raspilot.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/michal.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/michal.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py" afterPath="$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot/providers/base_provider.py" afterPath="$PROJECT_DIR$/raspilot/providers/base_provider.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot/providers/orientation_provider.py" afterPath="$PROJECT_DIR$/raspilot/providers/orientation_provider.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot/providers/websockets_provider.py" afterPath="$PROJECT_DIR$/raspilot/providers/websockets_provider.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/config.cfg" afterPath="$PROJECT_DIR$/raspilot_implementation/config.cfg" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/main.py" afterPath="$PROJECT_DIR$/raspilot_implementation/main.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py" afterPath="$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py" afterPath="$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py" afterPath="$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_channel.py" afterPath="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_channel.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_connection.py" afterPath="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_connection.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_dispatcher.py" afterPath="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_dispatcher.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_event.py" afterPath="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_event.py" />
     </list>
     <ignored path="raspilot.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -21,7 +35,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/raspilot$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1448014177931" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/raspilot$Generate_docs.coverage" NAME="Generate docs Coverage Results" MODIFIED="1447849302116" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/raspilot$default.coverage" NAME="default Coverage Results" MODIFIED="1448453361654" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raspilot_implementation" />
+    <SUITE FILE_PATH="coverage/raspilot$default.coverage" NAME="default Coverage Results" MODIFIED="1448966840429" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/raspilot_implementation" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -32,48 +46,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="orientation_provider.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py">
+      <file leaf-file-name="base_notifier.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/raspilot/notifier/base_notifier.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+              <caret line="151" column="73" selection-start-line="151" selection-start-column="73" selection-end-line="151" selection-end-column="73" />
               <folding>
-                <element signature="e#0#13#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="base_provider.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/raspilot/providers/base_provider.py">
+      <file leaf-file-name="websockets_provider.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/raspilot/providers/websockets_provider.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+              <caret line="83" column="37" selection-start-line="83" selection-start-column="8" selection-end-line="83" selection-end-column="37" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="android_provider.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5555556">
-              <caret line="17" column="47" selection-start-line="17" selection-start-column="47" selection-end-line="17" selection-end-column="47" />
-              <folding>
-                <element signature="e#0#39#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="socket_provider.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="61" column="67" selection-start-line="61" selection-start-column="67" selection-end-line="61" selection-end-column="67" />
-              <folding>
-                <element signature="e#0#13#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -82,19 +72,39 @@
         <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="68" column="0" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+              <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="raspylot.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/raspilot/raspylot.py">
+      <file leaf-file-name="websocket_channel.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_channel.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="150" column="0" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+              <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="websocket_dispatcher.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_dispatcher.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="172" column="0" selection-start-line="172" selection-start-column="0" selection-end-line="172" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="websocket_event.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_event.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.49019608">
+              <caret line="88" column="105" selection-start-line="88" selection-start-column="105" selection-end-line="88" selection-end-column="105" />
               <folding>
-                <element signature="e#0#27#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -104,23 +114,34 @@
         <entry file="file://$PROJECT_DIR$/raspilot_implementation/main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+              <caret line="152" column="36" selection-start-line="152" selection-start-column="36" selection-end-line="152" selection-end-column="36" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
-                <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
-                <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
-                <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.cfg" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/raspilot_implementation/config.cfg">
+      <file leaf-file-name="websocket_connection.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_connection.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
-              <folding />
+              <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RaspilotNotifier.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/raspilot_implementation/notifier/RaspilotNotifier.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="24" column="65" selection-start-line="24" selection-start-column="65" selection-end-line="24" selection-end-column="65" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -146,31 +167,34 @@
         <option value="$PROJECT_DIR$/raspilot_implementation/providers/gps_provider.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/servo/servo_controller.py" />
         <option value="$PROJECT_DIR$/raspilot/providers/gps_provider.py" />
-        <option value="$PROJECT_DIR$/raspilot/providers/orientation_provider.py" />
         <option value="$PROJECT_DIR$/raspilot/providers/rx_provider.py" />
         <option value="$PROJECT_DIR$/raspilot/servo/servo_controller.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/websockets/iskcrew.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websockets_rails.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_rails.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/websockets/abstract_connection.py" />
-        <option value="$PROJECT_DIR$/raspilot/providers/websockets_provider.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/utils/logger.py" />
         <option value="$PROJECT_DIR$/raspilot/utils/logger.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_channel.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_dispatcher.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_event.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_connection.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/geometry/euler_angles.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/geometry/quaternion.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py" />
         <option value="$PROJECT_DIR$/raspilot/commands_executor.py" />
-        <option value="$PROJECT_DIR$/raspilot/providers/base_provider.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/config.cfg" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/main.py" />
-        <option value="$PROJECT_DIR$/raspilot/raspylot.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py" />
-        <option value="$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py" />
         <option value="$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py" />
+        <option value="$PROJECT_DIR$/raspilot/providers/base_provider.py" />
+        <option value="$PROJECT_DIR$/raspilot/raspylot.py" />
+        <option value="$PROJECT_DIR$/raspilot/raspilot.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/config.cfg" />
+        <option value="$PROJECT_DIR$/raspilot/providers/orientation_provider.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/main.py" />
+        <option value="$PROJECT_DIR$/raspilot/providers/websockets_provider.py" />
+        <option value="$PROJECT_DIR$/raspilot/notifier/base_notifier.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_dispatcher.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_channel.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_connection.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/notifier/RaspilotNotifier.py" />
+        <option value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_event.py" />
       </list>
     </option>
   </component>
@@ -208,6 +232,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -254,7 +280,43 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="websockets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot_implementation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="providers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot_implementation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="notifier" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -287,19 +349,35 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="providers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="raspilot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="notifier" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/raspilot_implementation/websockets/websocket_dispatcher.py" />
-    <property name="SearchEverywhereHistoryKey" value="Raspilotor&#9;null&#9;null&#10;dispat&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_dispatcher.py&#10;Websock&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/providers/websocket_provider.py&#10;connection&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_connection.py&#10;event&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_event.py&#10;channel&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_channel.py&#10;on_channel&#9;null&#9;null&#10;channe&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_channel.py&#10;subscribe&#9;null&#9;null&#10;provide&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/providers/websocket_provider.py&#10;eve&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_event.py&#10;provider&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/providers/websocket_provider.py&#10;connect&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_connection.py&#10;onmessage&#9;null&#9;null&#10;on_message&#9;null&#9;null&#10;__on_mess&#9;null&#9;null&#10;dispa&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_dispatcher.py&#10;Connection&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_connection.py&#10;Initiali&#9;null&#9;null" />
+    <property name="SearchEverywhereHistoryKey" value="channe&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_channel.py&#10;Connec&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_connection.py&#10;chann&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_channel.py&#10;connectio&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_connection.py&#10;RaspilotWeb&#9;null&#9;null&#10;event&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_event.py&#10;Websocket_event&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_event.py&#10;websockets&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot/providers/websockets_provider.py&#10;Raspilotor&#9;null&#9;null&#10;dispat&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_dispatcher.py&#10;Websock&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/providers/websocket_provider.py&#10;connection&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_connection.py&#10;channel&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_channel.py&#10;on_channel&#9;null&#9;null&#10;subscribe&#9;null&#9;null&#10;provide&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/providers/websocket_provider.py&#10;eve&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_event.py&#10;provider&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/providers/websocket_provider.py&#10;connect&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_connection.py&#10;onmessage&#9;null&#9;null&#10;on_message&#9;null&#9;null&#10;__on_mess&#9;null&#9;null&#10;dispa&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_dispatcher.py&#10;Connection&#9;FILE&#9;file:///Users/michal/development/python/raspilot/raspilot_implementation/websockets/websocket_connection.py&#10;Initiali&#9;null&#9;null" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.appearance" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="FullScreen" value="true" />
@@ -595,7 +673,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21156661" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -604,7 +682,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32732317" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32454923" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32454923" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18740849" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
@@ -630,10 +708,17 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_channel.py</url>
+          <line>55</line>
+          <option name="timeStamp" value="88" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="73" />
+      <option name="time" value="89" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -643,27 +728,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="35" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
-            <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
-            <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/raspilot_implementation/config.cfg">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -676,7 +740,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="36" column="38" selection-start-line="36" selection-start-column="38" selection-end-line="36" selection-end-column="38" />
-          <folding />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -692,7 +758,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="58" column="25" selection-start-line="58" selection-start-column="25" selection-end-line="58" selection-end-column="25" />
-          <folding />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -708,12 +776,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
-            <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
-            <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -739,12 +802,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot/raspylot.py">
+    <entry file="file://$PROJECT_DIR$/raspilot/raspilot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="77" column="12" selection-start-line="77" selection-start-column="12" selection-end-line="77" selection-end-column="12" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
+            <marker date="1448963183000" expanded="true" signature="288:9000" placeholder="..." />
+            <marker date="1448963183000" expanded="true" signature="8957:9000" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -767,12 +832,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="89" selection-start-line="5" selection-start-column="89" selection-end-line="5" selection-end-column="89" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
-            <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
-            <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -910,18 +970,83 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_channel.py">
+    <entry file="file://$PROJECT_DIR$/raspilot/commands_executor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+          <caret line="42" column="42" selection-start-line="22" selection-start-column="4" selection-end-line="42" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.36796537">
+          <caret line="17" column="47" selection-start-line="17" selection-start-column="47" selection-end-line="17" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#39#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.021645023">
+          <caret line="61" column="67" selection-start-line="61" selection-start-column="67" selection-end-line="61" selection-end-column="67" />
+          <folding>
+            <element signature="e#0#13#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/threading.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="10.566503">
+          <caret line="306" column="0" selection-start-line="306" selection-start-column="0" selection-end-line="306" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_event.py">
+    <entry file="file://$PROJECT_DIR$/raspilot/providers/base_provider.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="69" column="0" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
+          <caret line="43" column="23" selection-start-line="43" selection-start-column="23" selection-end-line="43" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot/raspilot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="71" selection-start-line="4" selection-start-column="71" selection-end-line="4" selection-end-column="71" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <marker date="1448963183000" expanded="true" signature="288:9000" placeholder="..." />
+            <marker date="1448963183000" expanded="true" signature="8957:9000" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/config.cfg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="45" column="16" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="52" column="17" selection-start-line="52" selection-start-column="17" selection-end-line="52" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot/providers/orientation_provider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
           <folding />
         </state>
       </provider>
@@ -929,63 +1054,7 @@
     <entry file="file://$PROJECT_DIR$/raspilot/providers/websockets_provider.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="89" column="0" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/websocket/_app.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6059113">
-          <caret line="242" column="0" selection-start-line="242" selection-start-column="0" selection-end-line="242" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_dispatcher.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="190" column="8" selection-start-line="190" selection-start-column="8" selection-end-line="190" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_connection.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="101" column="0" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot/commands_executor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="42" column="42" selection-start-line="22" selection-start-column="4" selection-end-line="42" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot/providers/orientation_provider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="24" selection-start-line="0" selection-start-column="24" selection-end-line="0" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/config.cfg">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="68" column="0" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+          <caret line="83" column="37" selection-start-line="83" selection-start-column="8" selection-end-line="83" selection-end-column="37" />
           <folding />
         </state>
       </provider>
@@ -993,68 +1062,81 @@
     <entry file="file://$PROJECT_DIR$/raspilot_implementation/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+          <caret line="152" column="36" selection-start-line="152" selection-start-column="36" selection-end-line="152" selection-end-column="36" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
-            <marker date="1448364453000" expanded="true" signature="853:3405" placeholder="..." />
-            <marker date="1448364453000" expanded="true" signature="921:2281" placeholder="..." />
-            <marker date="1448364453000" expanded="true" signature="3370:3405" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/threading.py">
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/websocket/_app.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.024630541">
-          <caret line="306" column="0" selection-start-line="306" selection-start-column="0" selection-end-line="306" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="113" column="0" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot/raspylot.py">
+    <entry file="file://$PROJECT_DIR$/raspilot/notifier/base_notifier.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="150" column="0" selection-start-line="150" selection-start-column="0" selection-end-line="150" selection-end-column="0" />
+          <caret line="151" column="73" selection-start-line="151" selection-start-column="73" selection-end-line="151" selection-end-column="73" />
           <folding>
-            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot/providers/base_provider.py">
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/websocket_provider.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/socket_provider.py">
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/notifier/RaspilotNotifier.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="61" column="67" selection-start-line="61" selection-start-column="67" selection-end-line="61" selection-end-column="67" />
+          <caret line="24" column="65" selection-start-line="24" selection-start-column="65" selection-end-line="24" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_channel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_dispatcher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="172" column="0" selection-start-line="172" selection-start-column="0" selection-end-line="172" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_connection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/orientation_provider.py">
+    <entry file="file://$PROJECT_DIR$/raspilot_implementation/websockets/websocket_event.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.49019608">
+          <caret line="88" column="105" selection-start-line="88" selection-start-column="105" selection-end-line="88" selection-end-column="105" />
           <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raspilot_implementation/providers/android_provider.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5555556">
-          <caret line="17" column="47" selection-start-line="17" selection-start-column="47" selection-end-line="17" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>

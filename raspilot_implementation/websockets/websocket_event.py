@@ -1,5 +1,5 @@
 import json
-import time
+import uuid
 
 EVENT_TYPE_CLIENT_CONNECTED = 'client_connected'
 EVENT_TYPE_PING = 'websocket_rails.ping'
@@ -24,7 +24,7 @@ class WebsocketEvent:
         """
         self.__event_name = message[0]
         payload = message[1]
-        self.__id = payload.get('id', int(time.time()))
+        self.__id = payload.get('id', str(uuid.uuid4()))
         self.__channel = payload.get('channel')
         self.__data = payload.get('data')
         self.__token = payload.get('token')
@@ -85,7 +85,8 @@ class WebsocketEvent:
         Serializes the event into JSON
         :return: JSON representation of the event
         """
-        serialized = [self.__event_name, {'channel': self.__channel, 'data': self.data, 'id': self.id}]
+        serialized = [self.__event_name,
+                      {'channel': self.__channel, 'data': self.data, 'id': self.id, 'token': self.__token}]
         return json.dumps(serialized, indent=4)
 
     @property
@@ -114,6 +115,23 @@ class WebsocketEvent:
 
     @classmethod
     def create_pong(cls, connection_id):
+        """
+        Creates a pong event.
+        :param connection_id: id of the current connection
+        :return: newly created pong event
+        """
         message = ['websocket_rails.pong', {'data': {'connection_id': connection_id}}]
         pong_event = cls(message)
         return pong_event
+
+    @classmethod
+    def create_event(cls, namespace, data):
+        """
+        Creates an WebsocketEvent containing the data for regular updates.
+        :param namespace: event namespace (type) under which the data will be transferred
+        :param data: data which should be contained in the event
+        :return: newly created WebsocketEvent with regular data updates
+        """
+        message = [namespace, {'data': data}]
+        event = cls(message)
+        return event

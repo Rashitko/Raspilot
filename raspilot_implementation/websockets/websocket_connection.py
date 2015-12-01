@@ -1,6 +1,9 @@
-from threading import Thread
-from websocket import WebSocketApp
 import base64
+from threading import Thread
+
+from websocket import WebSocketApp
+
+NAME_NOT_PROVIDED = "Name not provided"
 
 
 class WebsocketConnection:
@@ -57,12 +60,13 @@ class WebsocketConnection:
         """
         Sends event to the server. If not connected, event is added to the queue.
         :param event: event to send
-        :return: returns nothing
+        :return: returns True if message was transmitted, False otherwise
         """
         if not self.__dispatcher.is_connected():
             self.__message_queue.append(event)
+            return False
         else:
-            self.__send_event(event)
+            return self.__send_event(event)
 
     def __flush_queue(self):
         """
@@ -77,11 +81,15 @@ class WebsocketConnection:
         """
         Sends event.
         :param event: event to send
-        :return: returns nothing
+        :return: returns True if event was transmitted, False otherwise
         """
         data = event.to_json()
-        # print("----> SENDING: {}".format(event.event_name))
-        self.__ws.send(data)
+        return self.__send(data, event.event_name)
+
+    def __send(self, data, event_name=NAME_NOT_PROVIDED):
+        print("----> SENDING: {}".format(event_name))
+        print(data)
+        return self.__ws.send(data) is None
 
     def __on_open(self, ws):
         """
@@ -119,7 +127,7 @@ class WebsocketConnection:
         :return: returns nothing
         """
         self.__ws = ws
-        # print("<---- RECEIVED: {}".format(message))
+        print("<---- RECEIVED: {}".format(message))
         self.__dispatcher.on_new_message(message)
 
     @property
@@ -129,3 +137,28 @@ class WebsocketConnection:
     @connection_id.setter
     def connection_id(self, value):
         self.__connection_id = value
+
+    def raw_send(self, message, success, failure):
+        """
+        Sends a raw message via the websocket. If the transmission fails failure callback is executed (if set).
+        If the transmission is successful the success callback is executed (if set). It is not verified that someone
+        receives the message, only transmission success is reported. Callbacks should have one parameter - message.
+        :param message: message to be sent
+        :param success: success callback
+        :param failure: failure callback
+        :return: True if transmission is successful, False otherwise.
+        """
+        result = False
+        if self.__ws:
+            error = self.__send(message, message)
+            if not error:
+                result = True
+                if success:
+                    success()
+            else:
+                if failure:
+                    failure()
+        else:
+            if failure:
+                failure()
+        return result

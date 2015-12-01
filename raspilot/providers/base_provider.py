@@ -10,7 +10,7 @@ class BaseProvider(object):
         :param config: configuration for this provider
         :return: returns nothing
         """
-        self.__raspilot_ = None
+        self.__raspilot = None
 
     def initialize(self):
         """
@@ -24,6 +24,8 @@ class BaseProvider(object):
         Called after initializations, can be called multiple times.
         :return: returns True, if start was successful, False otherwise
         """
+        if not self.__raspilot:
+            raise ValueError("Raspilot must be set prior to start")
         return False
 
     def stop(self):
@@ -34,12 +36,12 @@ class BaseProvider(object):
         return True
 
     @property
-    def __raspilot(self):
-        return self.__raspilot_
+    def raspilot(self):
+        return self.__raspilot
 
-    @__raspilot.setter
-    def __raspilot(self, value):
-        self.__raspilot_ = value
+    @raspilot.setter
+    def raspilot(self, value):
+        self.__raspilot = value
 
 
 class BaseProviderConfig:

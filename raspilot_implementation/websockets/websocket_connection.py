@@ -87,8 +87,14 @@ class WebsocketConnection:
         return self.__send(data, event.event_name)
 
     def __send(self, data, event_name=NAME_NOT_PROVIDED):
+        """
+        Sends the data via the websocket.
+        :param data: data to be sent
+        :param event_name: name of the event, or other identification for logging purposes
+        :return:
+        """
         print("----> SENDING: {}".format(event_name))
-        print(data)
+        # print(data)
         return self.__ws.send(data) is None
 
     def __on_open(self, ws):

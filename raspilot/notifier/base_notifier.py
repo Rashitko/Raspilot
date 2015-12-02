@@ -133,12 +133,13 @@ class BaseNotifier:
         """
         Calls self._send_message() an catches all exceptions and throw MessageTransmissionError instead
         :param message: serialized message which should be sent
-        :return: returns nothing
+        :return: returns returns True if message was sent, False, otherwise
         """
         try:
-            self._send_message(message)
+            sent = self._send_message(message)
         except Exception as e:
             raise MessageTransmissionError(e)
+        return sent
 
     def _send_message(self, serialized_message, success=None, failure=None):
         """
@@ -146,12 +147,14 @@ class BaseNotifier:
         :param message: serialized message which should be sent
         :param success: success callback, if the message was successfully sent
         :param failure: failure callback, if the message transmission failed
-        :return: returns nothing
+        :return: returns True if message was sent, False, otherwise
         """
+        update_sent = False
         if serialized_message and self.__raspilot.websocket_provider:
             update_sent = self.__raspilot.websocket_provider.send_telemetry_update_message(serialized_message)
             if not update_sent:
                 print("Update transmission failed")
+        return update_sent
 
     @property
     def update_freq(self):

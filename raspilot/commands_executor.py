@@ -28,11 +28,12 @@ class CommandsExecutor:
         """
         return self.__commands.pop(command, None)
 
-    def execute_command(self, command):
+    def execute_command(self, command, data):
         """
         If command is bound, then executes the action. If any Exception is thrown during the execution, its caught and
         CommandExecutionError is risen.
         :param command: command which should be executed
+        :param data: additional data for the command
         """
         try:
             action = self.__commands.get(command, None)

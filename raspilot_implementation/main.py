@@ -25,21 +25,27 @@ class RaspilotConfig:
         """
         cfg = configparser.ConfigParser()
         cfg.read('config.cfg')
+
         self.__username = cfg['AUTHENTICATION']['Username']
         self.__password = cfg['AUTHENTICATION']['Password']
         self.__device_identifier = cfg['AUTHENTICATION']['Device identifier']
+
         self.__default_protocol = cfg['DEFAULT']['Protocol']
         self.__server_address = cfg['DEFAULT']['Address']
-        self.__base_url = "{}://{}".format(self.__default_protocol, self.__server_address)
+        self.__default_port = cfg['DEFAULT']['Protocol']
+        self.__base_url = "{}://{}:{}".format(self.__default_protocol, self.__server_address, self.__default_protocol)
+
         self.__websockets_port = cfg['WEBSOCKETS']['Port']
         self.__websockets_path = cfg['WEBSOCKETS']['Address']
         self.__websockets_protocol = cfg['WEBSOCKETS']['Protocol']
-        self.__websockets_url = "{}://{}:{}{}".format(self.__websockets_protocol, self.__server_address,
+        self.__websockets_url = "{}://{}:{}/{}".format(self.__websockets_protocol, self.__server_address,
                                                       self.__websockets_port, self.__websockets_path)
         self.__retry_count = cfg.getint('WEBSOCKETS', 'Retries')
         self.__retry_delay = cfg.getint('WEBSOCKETS', 'Retry delay')
+
         self.__orientation_port = cfg.getint('ANDROID', 'Port for orientation data')
         self.__general_port = cfg.getint('ANDROID', 'Port for general data')
+
         self.__updates_namespace = cfg['TELEMETRY']['Updates namespace']
         self.__updates_freq = cfg.getint('TELEMETRY', 'Updates frequency')
         self.__updates_error_limit = cfg.getint('TELEMETRY', 'Error limit')

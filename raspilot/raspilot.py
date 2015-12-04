@@ -241,16 +241,17 @@ class Raspilot:
         """
         return self.__commands_executor.unbind_command(command)
 
-    def execute_command(self, command, default_action=nop, on_error=nop):
+    def execute_command(self, command, data, default_action=nop, on_error=nop):
         """
         If command is bound executes the action, otherwise the default_action is executed.
         :param command: command which should be executed
+        :param data: additional data for the command
         :param default_action: callable action which is executed when command is not bound
         :param on_error: callable action which is executed when CommandExecutionError is risen, usually when command
         fails to execute
         """
         try:
-            if not self.__commands_executor.execute_command(command):
+            if not self.__commands_executor.execute_command(command, data):
                 default_action()
         except CommandExecutionError:
             on_error()

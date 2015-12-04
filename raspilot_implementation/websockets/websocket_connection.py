@@ -1,4 +1,5 @@
 import base64
+import logging
 from threading import Thread
 
 from websocket import WebSocketApp
@@ -18,6 +19,7 @@ class WebsocketConnection:
         :param dispatcher: dispatcher used for communication
         :return: returns nothing
         """
+        self.__logger = logging.getLogger('raspilot.log')
         self.__dispatcher = dispatcher
         self.__url = url
         self.__message_queue = []
@@ -93,8 +95,7 @@ class WebsocketConnection:
         :param event_name: name of the event, or other identification for logging purposes
         :return:
         """
-        print("----> SENDING: {}".format(event_name))
-        # print(data)
+        self.__logger.log(9, ("----> SENDING: {}".format(event_name)))
         return self.__ws.send(data) is None
 
     def __on_open(self, ws):
@@ -133,7 +134,7 @@ class WebsocketConnection:
         :return: returns nothing
         """
         self.__ws = ws
-        print("<---- RECEIVED: {}".format(message))
+        self.__logger.log(9, ("<---- RECEIVED: {}".format(message)))
         self.__dispatcher.on_new_message(message)
 
     @property

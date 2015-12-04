@@ -1,5 +1,6 @@
 import json
 import time
+import logging
 from threading import Thread
 
 DEFAULT_ERROR_LIMIT = 100
@@ -18,6 +19,7 @@ class BaseNotifier:
         :param update_freq: how often the update message should be sent, in milliseconds
         :return: returns nothing
         """
+        self.__logger = logging.getLogger('raspilot.log')
         self.__update_freq = update_freq
         self.__dispatch_errors = 0
         self.__error_limit = error_limit
@@ -61,17 +63,17 @@ class BaseNotifier:
                 dispatched = self.__dispatch_message(serialized_message)
 
             except MessagePreparationError as msgPrepError:
-                print("Message preparation failed. Error was {}".format(msgPrepError.error))
+                self.__logger.error("Message preparation failed. Error was {}".format(msgPrepError.error))
                 if on_preparation_error:
                     on_preparation_error()
             except MessageSerializationError as msgSerializationError:
-                print("Message serialization failed. Error was {}".format(msgSerializationError.error))
+                self.__logger.error("Message serialization failed. Error was {}".format(msgSerializationError.error))
                 if on_serialization_error:
                     if not message:
                         message = None
                     on_serialization_error(message)
             except MessageTransmissionError as msgTransmissionError:
-                print("Message failed to be sent. Error was {}".format(msgTransmissionError.error))
+                self.__logger.error("Message failed to be sent. Error was {}".format(msgTransmissionError.error))
                 if on_transmission_error:
                     if not message:
                         message = None
@@ -86,7 +88,7 @@ class BaseNotifier:
                 else:
                     self.__dispatch_errors += 1
                     if self.__dispatch_errors > self.__error_limit:
-                        print("Updates error limit reached, stopping")
+                        self.__logger.error("Updates error limit reached, stopping")
                         self.stop()
                 try:
                     time.sleep(self.__update_freq / 1000)
@@ -153,7 +155,7 @@ class BaseNotifier:
         if serialized_message and self.__raspilot.websocket_provider:
             update_sent = self.__raspilot.websocket_provider.send_telemetry_update_message(serialized_message)
             if not update_sent:
-                print("Update transmission failed")
+                self.__logger.warning("Update transmission failed")
         return update_sent
 
     @property

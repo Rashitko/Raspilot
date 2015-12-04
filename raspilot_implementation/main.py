@@ -1,4 +1,6 @@
 import configparser
+import logging
+import datetime
 from threading import Thread
 
 from raspilot.raspilot import RaspilotBuilder
@@ -10,6 +12,9 @@ from raspilot_implementation.providers.orientation_provider import (RaspilotOrie
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
 from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
 from raspilot_implementation.servo.servo_controller import RaspilotServoController, RaspilotServoControllerConfig
+
+TRANSMISSION_LEVEL_NUM = 9
+FILE_LOGGER = 'raspilot.log'
 
 
 class RaspilotConfig:
@@ -39,7 +44,7 @@ class RaspilotConfig:
         self.__websockets_path = cfg['WEBSOCKETS']['Address']
         self.__websockets_protocol = cfg['WEBSOCKETS']['Protocol']
         self.__websockets_url = "{}://{}:{}/{}".format(self.__websockets_protocol, self.__server_address,
-                                                      self.__websockets_port, self.__websockets_path)
+                                                       self.__websockets_port, self.__websockets_path)
         self.__retry_count = cfg.getint('WEBSOCKETS', 'Retries')
         self.__retry_delay = cfg.getint('WEBSOCKETS', 'Retry delay')
 
@@ -123,7 +128,27 @@ def start_raspilot(rasp):
     rasp.start()
 
 
+def init_logger():
+    logging.addLevelName(TRANSMISSION_LEVEL_NUM, "TRANSMISSION")
+    logger = logging.getLogger('raspilot.log')
+    logger.setLevel(TRANSMISSION_LEVEL_NUM)
+    fh = logging.FileHandler("raspilog-{}.log".format(datetime.datetime.now()))
+    fh.setLevel(TRANSMISSION_LEVEL_NUM)
+    ch = logging.StreamHandler()
+    ch.setLevel(TRANSMISSION_LEVEL_NUM)
+    formatter = logging.Formatter('[%(levelname)s] %(asctime)s\n\t'
+                                  '%(message)s\n\t'
+                                  '[FILE]%(pathname)s:%(lineno)s\n\t'
+                                  "%Y-%m-%d %H:%M:%S")
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    logger.debug('Logging initialized')
+
+
 if __name__ == "__main__":
+    init_logger()
     builder = RaspilotBuilder()
     config = RaspilotConfig()
 

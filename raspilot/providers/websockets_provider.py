@@ -1,4 +1,5 @@
 import time
+import logging
 
 from raspilot.providers.base_provider import BaseProvider, BaseProviderConfig
 
@@ -21,6 +22,7 @@ class WebsocketsProvider(BaseProvider):
         """
         if websockets_config is None:
             raise ValueError("Config cannot be None")
+        self.__logger = logging.getLogger('raspilot.log')
         BaseProvider.__init__(self, websockets_config)
         self.__retry_count = websockets_config.retry_count
         self.__reconnect_delay = websockets_config.reconnect_delay
@@ -68,18 +70,18 @@ class WebsocketsProvider(BaseProvider):
         :param error: occurred error
         :return: returns nothing
         """
-        print("Error occurred: {}".format(error))
+        self.__logger.error("Error occurred: {}".format(error))
         self.__retries += 1
 
         if self.should_reconnect():
             if self.__retry_count > self.__retries:
-                print("Trying to reconnect. {}/{}".format(self.__retries, self.__retry_count))
+                self.__logger.warning("Trying to reconnect. {}/{}".format(self.__retries, self.__retry_count))
                 time.sleep(self.__reconnect_delay / MILLIS_IN_SECOND)
                 self.reconnect()
             else:
-                print("Connection failed, retries limit reached.")
+                self.__logger.error("Connection failed, retries limit reached.")
         else:
-            print("Connection fails, but not trying to reconnect")
+            self.__logger.error("Connection fails, but not trying to reconnect")
 
     def send_telemetry_update_message(self, message, success=None, failure=None):
         """
@@ -93,14 +95,13 @@ class WebsocketsProvider(BaseProvider):
         if failure:
             failure(message)
 
-    @staticmethod
-    def on_close():
+    def on_close(self):
         """
         Called when connection is closed. This can happen after an error, or when the connection was closed in normal
         way.
         :return: returns nothing
         """
-        print("Websocket closed")
+        self.__logger.info("Websocket closed")
 
     @property
     def retry_count(self):

@@ -1,4 +1,5 @@
 import json
+import logging
 from threading import Event, RLock
 
 from raspilot_implementation.websockets.websocket_channel import WebsocketChannel
@@ -20,6 +21,7 @@ class WebsocketDispatcher:
         :param provider: provider which should be notified of important events
         :return: returns nothing
         """
+        self.__logger = logging.getLogger('raspilot.log')
         self.__url = provider.server_address
         self.__provider = provider
         self.__state = STATE_DISCONNECTED
@@ -132,7 +134,7 @@ class WebsocketDispatcher:
         """
         data = event.data
         self.__connection_id = data.get('connection_id')
-        print("connection id is {0}".format(self.connection_id))
+        self.__logger.debug("connection id is {0}".format(self.connection_id))
         self.state = STATE_CONNECTED
         self.__was_connected = True
         self.__connection_wait_event.set()

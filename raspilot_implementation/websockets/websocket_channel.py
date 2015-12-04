@@ -1,3 +1,5 @@
+import logging
+
 from raspilot_implementation.websockets.websocket_event import WebsocketEvent
 
 
@@ -18,6 +20,7 @@ class WebsocketChannel:
         :param private: True if channel should be private
         :return: returns nothing
         """
+        self.__logger = logging.getLogger('raspilot.log')
         self.__callbacks = {}
         self.__channel_name = channel_name
         self.__token = None
@@ -66,7 +69,7 @@ class WebsocketChannel:
         """
         if 'websocket_rails.channel_token' == event_name:
             self.__token = message['token']
-            print("Channel token is {}".format(self.__token))
+            self.__logger.debug("Channel token is {}".format(self.__token))
         callbacks = self.__callbacks.get(event_name)
         if callbacks:
             for callback in self.__callbacks.get(event_name):

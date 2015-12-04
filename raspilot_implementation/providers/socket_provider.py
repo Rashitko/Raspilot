@@ -1,4 +1,5 @@
 import socket
+import logging
 from threading import RLock, Thread, Event
 import raspilot.providers.base_provider
 
@@ -22,6 +23,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
 
     def __init__(self, port, recv_size):
         raspilot.providers.base_provider.BaseProvider.__init__(self, None)
+        self.__logger = logging.getLogger('raspilot.log')
         self.__port = port
         self.__recv_size = recv_size
         self.__socket = None
@@ -55,7 +57,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
             try:
                 connection, address = self.__socket.accept()
                 self._on_client_connected(connection, address)
-                print("Client {} on address {} connected".format(connection, address))
+                self.__logger.info("Client {} on address {} connected".format(connection, address))
                 while self.__receive:
                     try:
                         with self.__data_process_lock:
@@ -64,11 +66,11 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
                                 break
                             self.__handle_data(data)
                     except DataProcessingError:
-                        print("Wrong data received, ignoring them")
+                        self.__logger.warning("Wrong data received, ignoring them")
                     except OSError:
                         pass
                 connection.close()
-                print("Connection closed")
+                self.__logger.info("Connection closed")
                 self._on_connection_closed()
             except ConnectionAbortedError:
                 pass
@@ -83,7 +85,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
             self._on_data_received(data)
         except Exception as e:
             message = "Error during data processing. Error was {}".format(e)
-            print(message)
+            self.__logger.error(message)
             raise DataProcessingError(message)
 
     def _on_data_received(self, data):

@@ -1,5 +1,6 @@
 import json
 import uuid
+import logging
 
 EVENT_TYPE_CLIENT_CONNECTED = 'client_connected'
 EVENT_TYPE_PING = 'websocket_rails.ping'
@@ -22,6 +23,7 @@ class WebsocketEvent:
         :param failure_callback: called when event fails
         :return: returns nothing
         """
+        self.__logger = logging.getLogger('raspilot.log')
         self.__event_name = message[0]
         payload = message[1]
         self.__id = payload.get('id', str(uuid.uuid4()))
@@ -67,10 +69,10 @@ class WebsocketEvent:
         :return: returns nothing
         """
         if self.is_success() and self.__success_callback is not None:
-            print("SUCCESS on event {}".format(self.id))
+            logging.info("SUCCESS on event {}".format(self.id))
             self.__success_callback(True)
         elif self.__failure_callback is not None:
-            print("FAILURE on event {}".format(self.id))
+            logging.error("FAILURE on event {}".format(self.id))
             self.__failure_callback(False)
 
     def is_client_connected(self):

@@ -1,9 +1,10 @@
 import configparser
-import logging
 import datetime
+import logging
 from threading import Thread
 
 from raspilot.raspilot import RaspilotBuilder
+from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
 from raspilot_implementation.notifier.RaspilotNotifier import RaspilotNotifier
 from raspilot_implementation.providers.android_provider import AndroidProvider, AndroidProviderConfig
 from raspilot_implementation.providers.gps_provider import RaspilotGPSProvider, RaspilotGPSProviderConfig
@@ -135,10 +136,10 @@ def init_logger():
     fh = logging.FileHandler("raspilog-{}.log".format(datetime.datetime.now()))
     fh.setLevel(TRANSMISSION_LEVEL_NUM)
     ch = logging.StreamHandler()
-    ch.setLevel(TRANSMISSION_LEVEL_NUM)
+    ch.setLevel(logging.DEBUG)
     formatter = logging.Formatter('[%(levelname)s] %(asctime)s\n\t'
                                   '%(message)s\n\t'
-                                  '[FILE]%(pathname)s:%(lineno)s\n\t'
+                                  '[FILE]%(pathname)s:%(lineno)s\n\t',
                                   "%Y-%m-%d %H:%M:%S")
     fh.setFormatter(formatter)
     ch.setFormatter(formatter)
@@ -178,7 +179,12 @@ if __name__ == "__main__":
     builder.servo_controller = servo_controller
 
     # Android provider initialization
-    builder.add_custom_provider(AndroidProvider(AndroidProviderConfig(config.general_port)))
+    android_provider = AndroidProvider(AndroidProviderConfig(config.general_port))
+    builder.add_custom_provider(android_provider)
+
+    # Commands executor
+    commands_executor = RaspilotCommandsExecutor(android_provider)
+    builder.commands_executor = commands_executor
 
     # Notifier initialization
     builder.notifier = RaspilotNotifier(config.updates_namespace, config.updates_freq, config.updates_error_limit)

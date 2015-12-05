@@ -1,10 +1,11 @@
-import raspilot.providers.base_provider
-import raspilot_implementation.providers.socket_provider
 import json
 
-RESPONSE_KEY = 'response'
+import raspilot.providers.base_provider
+import raspilot_implementation.providers.socket_provider
 
 DATA_KEY = 'data'
+RESPONSE_KEY = 'response'
+REQUEST_KEY = 'request'
 COMMAND_KEY = 'command'
 ID_KEY = 'id'
 
@@ -27,22 +28,36 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
     def _on_data_received(self, data):
         """
         Reads json from the received data and executes command present in this json. For json format see the docs.
-        The json should contain
+        The json must contain
         * the command name, which is used to identify the command
-        * the data, which are passed to the action associated with the command
         * the id of the command, used to identify the commands
-        * response object containing the success flag and id of received message which this message responds to
+        * the data, which are passed to the action associated with the command, might be None
+        * the response flag, which determines whether and response should be sent after the execution
+        * response object, containing additional information about the request execution, might be None
         :param data: received data
         :return: returns nothing
         """
         super()._on_data_received(data)
         deserialized_data = json.loads(data)
-        command = deserialized_data[COMMAND_KEY]
-        if command:
-            command_data = deserialized_data[DATA_KEY]
+        valid_command = self._validate_command(deserialized_data)
+        if valid_command:
+            command_name = deserialized_data[COMMAND_KEY]
             command_id = deserialized_data[ID_KEY]
-            response = deserialized_data[RESPONSE_KEY]
-            self.raspilot.execute_command(command, command_data, command_id, response)
+            command_data = deserialized_data[DATA_KEY]
+            request = deserialized_data[REQUEST_KEY]
+            response = None
+            if RESPONSE_KEY in deserialized_data:
+                response = deserialized_data[RESPONSE_KEY]
+            self.raspilot.execute_command(command_name, command_id, command_data, request, response)
+
+    @staticmethod
+    def _validate_command(received_data):
+        """
+        Validates the command. Valid command contains all required keys.
+        :param received_data: data which should be validated
+        :return: returns True if command is valid, False otherwise
+        """
+        return COMMAND_KEY in received_data and DATA_KEY in received_data and ID_KEY in received_data and REQUEST_KEY in received_data
 
 
 class AndroidProviderConfig(raspilot.providers.base_provider.BaseProviderConfig):

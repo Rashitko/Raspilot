@@ -1,7 +1,7 @@
 import logging
 from threading import Event
 
-from raspilot.commands_executor import CommandsExecutor, CommandExecutionError
+from raspilot.commands.commands_executor import CommandsExecutor, CommandExecutionError
 from raspilot.providers.orientation_provider import OrientationProvider
 from raspilot.providers.websockets_provider import WebsocketsProvider
 
@@ -171,7 +171,16 @@ class Raspilot:
         self.__init_complete_event.set()
         self.__logger.info('Initialization complete, Raspilot is now running!')
         self.__start_notifier()
+        self.__start_executor()
         self.__stop_self_event.wait()
+
+    def __start_executor(self):
+        """
+        Starts the executor if any.
+        :return: returns nothing
+        """
+        if self.__commands_executor:
+            self.__commands_executor.start()
 
     def __start_notifier(self):
         """
@@ -200,6 +209,8 @@ class Raspilot:
         :return: return nothing
         """
         self.__logger.info('Stopping Raspilot')
+        if self.__commands_executor:
+            self.__commands_executor.stop()
         if self.__notifier:
             self.__notifier.stop()
         if self.__rx_provider:
@@ -244,20 +255,27 @@ class Raspilot:
         """
         return self.__commands_executor.unbind_command(command)
 
-    def execute_command(self, command, data, default_action=nop, on_error=nop):
+    def execute_command(self, command_name, command_id, data, request=False, response=None):
         """
         If command is bound executes the action, otherwise the default_action is executed.
-        :param command: command which should be executed
-        :param data: additional data for the command
-        :param default_action: callable action which is executed when command is not bound
-        :param on_error: callable action which is executed when CommandExecutionError is risen, usually when command
-        fails to execute
+        :param command_name: command which should be executed, must be set
+        :param command_id: id of the command, must be set
+        :param data: additional data for the command, must be set
+        :param request: flag, whether the command is a request and should be responded to
+        :param response: response object, containing additional information about the request execution, can be None
+        :return: returns nothing
         """
         try:
-            if not self.__commands_executor.execute_command(command, data):
-                default_action()
+            if command_name is None:
+                raise CommandExecutionError(ValueError("command_name not set"))
+            if data is None:
+                raise CommandExecutionError(ValueError("data not set"))
+            if command_id is None:
+                raise CommandExecutionError(ValueError("command id not set"))
+            self.__commands_executor.execute_command(command_name, data, command_id, request, response)
         except CommandExecutionError:
-            on_error()
+            if request and command_id:
+                self.__commands_executor.notify_command_failed(command_name, data, command_id, response)
 
     @property
     def websocket_provider(self):

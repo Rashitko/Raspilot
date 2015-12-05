@@ -1,0 +1,88 @@
+import logging
+
+
+def nop(data, request):
+    pass
+
+
+class BaseCommandHandler:
+    """
+    Class used in CommandsExecutor. Wraps command name and desired action.
+    """
+
+    def __init__(self, name):
+        """
+        Creates a new 'BaseCommandHandler'. This class must be subclassed.
+        :param name: name of the command
+        :return: returns nothing
+        """
+        self.__logger = logging.getLogger('raspilot.log')
+        if name is None:
+            ValueError('Name must be set')
+        self.__name = name
+
+    def execute_action(self, data, command_id, request, response):
+        """
+        Runs the action. If any error is thrown, it is caught and an ActionExecution error is thrown instead.
+        :param data: additional data for the command
+        :param command_id: id of the command
+        :param request: request flag
+        :param response: response object which contains additional information about the request execution, can be None
+        :return: returns an ActionResult object
+        """
+        try:
+            return self._run_action(data, command_id, request, response)
+        except Exception as e:
+            self.__logger.error(
+                "An error during action execution occurred. Command name was {}, data were {}, command_id was {},"
+                " request was {}".format(self.name, data, command_id, request))
+            raise ActionExecutionError(e)
+
+    # def handle_response(self, data, command_id, request, response):
+    #     """
+    #     Called when a response to a request is received.
+    #     :param data: additional data
+    #     :param command_id: id of the command (the one with response, not the one which this command responds to)
+    #     :param response: response object containing addional information
+    #     :return: returns nothing
+    #     """
+    #     try:
+    #         return self._run_response(data, command_id, response)
+    #     except Exception as e:
+    #         self.__logger.error(
+    #             "An error during response handling occurred. Command name was {}, data were {}, command_id was {},"
+    #             " request was {}".format(self.name, data, command_id, request))
+
+    def _run_action(self, data, command_id, request, response):
+        """
+        Runs the action. The default implementation rises the NotImplementedError. All subclasses should override
+        this method.
+        :param data: additional data
+        :param command_id: id of the command
+        :param request: request flag
+        :param response: response object which contains additional information about the request execution, can be None
+        :return: returns an ActionResult object
+        """
+        raise NotImplementedError()
+
+    @property
+    def name(self):
+        return self.__name
+
+
+class ActionExecutionError(Exception):
+    """
+    Exception is thrown if an error during action execution occurs.
+    """
+
+    def __init__(self, exception):
+        """
+        Creates new 'ActionExecutionError' with given exception.
+        :param exception: exception which causes this ActionExecutionError
+        :return: returns nothing
+        """
+        self.__exception = exception
+
+    @property
+    def exception(self):
+        return self.__exception

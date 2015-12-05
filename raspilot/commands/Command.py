@@ -1,5 +1,7 @@
 import uuid
 
+from raspilot.commands.response import CommandResponse
+
 RESPONSE_KEY = 'response'
 
 REQUEST_KEY = 'request'
@@ -34,7 +36,10 @@ class Command:
         Serializes the command as a dict.
         :return: returns serialized command
         """
-        return {NAME_KEY: self.name, DATA_KEY: self.data, REQUEST_KEY: self.request, RESPONSE_KEY: self.response}
+        serialized_response = None
+        if self.response:
+            serialized_response = self.response.serialize()
+        return {NAME_KEY: self.name, DATA_KEY: self.data, REQUEST_KEY: self.request, RESPONSE_KEY: serialized_response}
 
     @classmethod
     def from_json(cls, data):
@@ -45,7 +50,7 @@ class Command:
         """
         response = None
         if RESPONSE_KEY in data:
-            response = data[RESPONSE_KEY]
+            response = CommandResponse.from_json(data[RESPONSE_KEY])
         return cls(data[NAME_KEY], data[DATA_KEY], data[REQUEST_KEY], response)
 
     @property

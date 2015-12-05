@@ -1,4 +1,8 @@
-import json
+DATA_KEY = 'data'
+
+SUCCESS_KEY = 'success'
+
+ID_KEY = 'requestID'
 
 
 class CommandResponse:
@@ -25,7 +29,17 @@ class CommandResponse:
         Serializes the object as a JSON object.
         :return:
         """
-        result = {'requestID': self.__request, 'success': self.__success}
+        result = {ID_KEY: self.__request, SUCCESS_KEY: self.__success}
         if self.__data:
-            result['data'] = json.dumps(self.__data)
+            result[DATA_KEY] = self.__data
         return result
+
+    @classmethod
+    def from_json(cls, json_data):
+        """
+        Deserializes the CommandResponse from the provided json
+        :param json_data: json object to load from
+        :return: returns deserialized CommandResponse
+        """
+        data = json_data.get(DATA_KEY, None)
+        return cls(json_data[ID_KEY], json_data[SUCCESS_KEY], data)

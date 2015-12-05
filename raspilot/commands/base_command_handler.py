@@ -38,21 +38,6 @@ class BaseCommandHandler:
                 " request was {}".format(self.name, data, command_id, request))
             raise ActionExecutionError(e)
 
-    # def handle_response(self, data, command_id, request, response):
-    #     """
-    #     Called when a response to a request is received.
-    #     :param data: additional data
-    #     :param command_id: id of the command (the one with response, not the one which this command responds to)
-    #     :param response: response object containing addional information
-    #     :return: returns nothing
-    #     """
-    #     try:
-    #         return self._run_response(data, command_id, response)
-    #     except Exception as e:
-    #         self.__logger.error(
-    #             "An error during response handling occurred. Command name was {}, data were {}, command_id was {},"
-    #             " request was {}".format(self.name, data, command_id, request))
-
     def _run_action(self, data, command_id, request, response):
         """
         Runs the action. The default implementation rises the NotImplementedError. All subclasses should override

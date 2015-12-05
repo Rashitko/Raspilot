@@ -21,10 +21,11 @@ class CommandsExecutor:
         self.__execute_lock = RLock()
         self.__send_lock = RLock()
         self.__queue = Queue()
-        self.__running = True
-        self.__thread = Thread(target=self.__message_loop)
+        self.__running = False
+        self.__thread = Thread(target=self.__message_loop, name="COMMANDS_EXECUTOR_MESSAGE_THREAD")
 
     def start(self):
+        self.__running = True
         if not self.__thread.is_alive():
             self.__logger.debug("Starting the commands executor")
             self.__thread.start()
@@ -99,6 +100,13 @@ class CommandsExecutor:
         :return: returns True if transmission was successful False otherwise
         """
         return False
+
+    @property
+    def running(self):
+        return self.__running
+
+    def messages_thread(self):
+        return self.__thread
 
 
 class CommandExecutionError(Exception):

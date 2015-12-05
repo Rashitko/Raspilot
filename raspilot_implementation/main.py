@@ -13,7 +13,7 @@ from raspilot_implementation.providers.orientation_provider import (RaspilotOrie
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
 from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
 from raspilot_implementation.servo.servo_controller import RaspilotServoController, RaspilotServoControllerConfig
-
+from raspilot_implementation.commands.ahi_command import SetNeutralAhiHandler
 TRANSMISSION_LEVEL_NUM = 9
 FILE_LOGGER = 'raspilot.log'
 
@@ -139,7 +139,8 @@ def init_logger():
     ch.setLevel(logging.DEBUG)
     formatter = logging.Formatter('[%(levelname)s] %(asctime)s\n\t'
                                   '%(message)s\n\t'
-                                  '[FILE]%(pathname)s:%(lineno)s\n\t',
+                                  '[FILE]%(pathname)s:%(lineno)s\n\t'
+                                  '[THREAD]%(threadName)s',
                                   "%Y-%m-%d %H:%M:%S")
     fh.setFormatter(formatter)
     ch.setFormatter(formatter)
@@ -184,13 +185,14 @@ if __name__ == "__main__":
 
     # Commands executor
     commands_executor = RaspilotCommandsExecutor(android_provider)
+    commands_executor.add_command_handler(SetNeutralAhiHandler())
     builder.commands_executor = commands_executor
 
     # Notifier initialization
     builder.notifier = RaspilotNotifier(config.updates_namespace, config.updates_freq, config.updates_error_limit)
 
     raspilot = builder.build()
-    raspilot_thread = Thread(None, start_raspilot, None, (raspilot,))
+    raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")
     raspilot_thread.start()
     raspilot.wait_for_init_complete()
     try:

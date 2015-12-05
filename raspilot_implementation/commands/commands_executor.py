@@ -13,7 +13,7 @@ class RaspilotCommandsExecutor(CommandsExecutor):
         :return: returns nothing
         """
         if android_provider is None:
-            ValueError("Android provider must be set")
+            raise ValueError("Android provider must be set")
         super().__init__()
         self.__logger = logging.getLogger('raspilot.log')
 

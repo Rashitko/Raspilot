@@ -40,7 +40,7 @@ class WebsocketConnection:
         Connects to the server.
         :return: returns nothing
         """
-        Thread(target=self.__websocket_app.run_forever).start()
+        Thread(target=self.__websocket_app.run_forever, name="WEBSOCKET_THREAD").start()
 
     def disconnect(self):
         """

@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>raspilot.commands.commands_executor &mdash; Raspilot 1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for raspilot.commands.commands_executor</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">RLock</span><span class="p">,</span> <span class="n">Thread</span>
+
+<span class="kn">from</span> <span class="nn">raspilot.commands.command</span> <span class="kn">import</span> <span class="n">Command</span>
+<span class="kn">from</span> <span class="nn">raspilot.commands.response</span> <span class="kn">import</span> <span class="n">CommandResponse</span>
+
+
+<div class="viewcode-block" id="CommandsExecutor"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.CommandsExecutor">[docs]</a><span class="k">class</span> <span class="nc">CommandsExecutor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes commands if they have a callable associated with their name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new &#39;CommandsExecutor&#39; with empty dict of commands and associated actions.</span>
+<span class="sd">        :return: returns nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;raspilot.log&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__commands</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__execute_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__send_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__running</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__message_loop</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;COMMANDS_EXECUTOR_MESSAGE_THREAD&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CommandsExecutor.stop"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.CommandsExecutor.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Stopping the commands executor&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__running</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__message_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">__running</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">command</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_transmit_message</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CommandsExecutor.add_command_handler"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.CommandsExecutor.add_command_handler">[docs]</a>    <span class="k">def</span> <span class="nf">add_command_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds new command handler. Should be a subclass of the BaseCommandHandler</span>
+<span class="sd">        :param command_handler: new command handler</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__commands</span><span class="p">[</span><span class="n">command_handler</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">command_handler</span></div>
+
+<div class="viewcode-block" id="CommandsExecutor.remove_command_handler"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.CommandsExecutor.remove_command_handler">[docs]</a>    <span class="k">def</span> <span class="nf">remove_command_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes the command handler. If command handler has not been added previously, nothing is changed.</span>
+<span class="sd">        :param command_name: name of the command, which handler will be removed</span>
+<span class="sd">        :return: returns command handler or None, if command is not bound</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__commands</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">command_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CommandsExecutor.execute_command"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.CommandsExecutor.execute_command">[docs]</a>    <span class="k">def</span> <span class="nf">execute_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">command_id</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If command is bound, executes the action.</span>
+<span class="sd">        :param command_name: name of the command which should be executed</span>
+<span class="sd">        :param data: additional data for the command</span>
+<span class="sd">        :param command_id: id of the command</span>
+<span class="sd">        :param request: flag whether the command is a request which should be responded to</span>
+<span class="sd">        :param response: response object which contains additional information about the request execution, can be None</span>
+<span class="sd">        :return: returns nothing</span>
+<span class="sd">        :raises: raspilot.commands.base_command_handler.ActionExecutionError if any error occurs during the action</span>
+<span class="sd">        execution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__commands</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">command_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">handler</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">__execute_lock</span><span class="p">:</span>
+                <span class="n">handler</span><span class="o">.</span><span class="n">execute_action</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">command_id</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CommandsExecutor.notify_command_failed"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.CommandsExecutor.notify_command_failed">[docs]</a>    <span class="k">def</span> <span class="nf">notify_command_failed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">command_id</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param command_name: name of the command which execution fails</span>
+<span class="sd">        :param data: data provided for the command, might be None</span>
+<span class="sd">        :param command_id: id of the command</span>
+<span class="sd">        :param response: response object which contains additional information about the request execution,</span>
+<span class="sd">                         might be None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">command_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="n">CommandResponse</span><span class="p">(</span><span class="n">command_id</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CommandsExecutor.send_message"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.CommandsExecutor.send_message">[docs]</a>    <span class="k">def</span> <span class="nf">send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs general message object from provided data and adds it to the send queue.</span>
+<span class="sd">        :param command_name: name of the command which should be sent</span>
+<span class="sd">        :param data: data for the command, might be None</span>
+<span class="sd">        :param request: flag, whether the command is a request</span>
+<span class="sd">        :param response: response object, contains additional information about the request execution, might be None</span>
+<span class="sd">        :return: returns True if message was sent, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Command</span><span class="p">(</span><span class="n">command_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">_transmit_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends the command.</span>
+<span class="sd">        :param command: command to be sent</span>
+<span class="sd">        :return: returns True if transmission was successful False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__running</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">messages_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__thread</span></div>
+
+
+<div class="viewcode-block" id="CommandExecutionError"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.CommandExecutionError">[docs]</a><span class="k">class</span> <span class="nc">CommandExecutionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Error thrown when an Exception is risen during command execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new &#39;CommandExecutionError&#39; with the specified exception.</span>
+<span class="sd">        :param error: Exception which caused this error</span>
+<span class="sd">        :return: returns nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__error</span> <span class="o">=</span> <span class="n">error</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__error</span></div>
+
+
+<div class="viewcode-block" id="MessageTransmitter"><a class="viewcode-back" href="../../../raspilot.commands.html#raspilot.commands.commands_executor.MessageTransmitter">[docs]</a><span class="k">class</span> <span class="nc">MessageTransmitter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Michal Raška.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

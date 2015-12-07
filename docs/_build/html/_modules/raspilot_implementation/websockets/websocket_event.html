@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>raspilot_implementation.websockets.websocket_event &mdash; Raspilot 1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for raspilot_implementation.websockets.websocket_event</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">EVENT_TYPE_CLIENT_CONNECTED</span> <span class="o">=</span> <span class="s">&#39;client_connected&#39;</span>
+<span class="n">EVENT_TYPE_PING</span> <span class="o">=</span> <span class="s">&#39;websocket_rails.ping&#39;</span>
+
+
+<div class="viewcode-block" id="nop"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.nop">[docs]</a><span class="k">def</span> <span class="nf">nop</span><span class="p">():</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="WebsocketEvent"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent">[docs]</a><span class="k">class</span> <span class="nc">WebsocketEvent</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Event representation used in the websocket.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">success_callback</span><span class="o">=</span><span class="n">nop</span><span class="p">,</span> <span class="n">failure_callback</span><span class="o">=</span><span class="n">nop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new &#39;WebsocketEvent&#39; with given message and callbacks.</span>
+<span class="sd">        :param message: message in format [event_name, payload]</span>
+<span class="sd">        :param success_callback: called when event is successful</span>
+<span class="sd">        :param failure_callback: called when event fails</span>
+<span class="sd">        :return: returns nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;raspilot.log&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__event_name</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__id</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__channel</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;channel&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__data</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__token</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;token&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__success</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;success&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__success_callback</span> <span class="o">=</span> <span class="n">success_callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__failure_callback</span> <span class="o">=</span> <span class="n">failure_callback</span>
+
+<div class="viewcode-block" id="WebsocketEvent.is_success"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_success">[docs]</a>    <span class="k">def</span> <span class="nf">is_success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if is successful.</span>
+<span class="sd">        :return: True if is successful, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__success</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__success</span></div>
+
+<div class="viewcode-block" id="WebsocketEvent.is_ping"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_ping">[docs]</a>    <span class="k">def</span> <span class="nf">is_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if is ping.</span>
+<span class="sd">        :return: True if is ping, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__event_name</span> <span class="o">==</span> <span class="n">EVENT_TYPE_PING</span></div>
+
+<div class="viewcode-block" id="WebsocketEvent.is_result"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_result">[docs]</a>    <span class="k">def</span> <span class="nf">is_result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if is result.</span>
+<span class="sd">        :return: True if is result, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__success</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="WebsocketEvent.is_channel"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_channel">[docs]</a>    <span class="k">def</span> <span class="nf">is_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if is send in channel.</span>
+<span class="sd">        :return: True if is send in channel, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__channel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="WebsocketEvent.run_callbacks"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.run_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">run_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs the successful callback if is successful and the callback is set, otherwise runs failure callback if the</span>
+<span class="sd">        callback is set.</span>
+<span class="sd">        :return: returns nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_success</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__success_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;SUCCESS on event {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__success_callback</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">__failure_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;FAILURE on event {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__failure_callback</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WebsocketEvent.is_client_connected"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_client_connected">[docs]</a>    <span class="k">def</span> <span class="nf">is_client_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if is &#39;client_connected&#39; event.</span>
+<span class="sd">        :return: True if is &#39;client_connected&#39; event, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__event_name</span> <span class="o">==</span> <span class="n">EVENT_TYPE_CLIENT_CONNECTED</span></div>
+
+<div class="viewcode-block" id="WebsocketEvent.to_json"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serializes the event into JSON</span>
+<span class="sd">        :return: JSON representation of the event</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">serialized</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__event_name</span><span class="p">,</span>
+                      <span class="p">{</span><span class="s">&#39;channel&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__channel</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s">&#39;token&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__token</span><span class="p">}]</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">serialized</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__channel</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">event_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__event_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__success</span>
+
+    <span class="nd">@success.setter</span>
+    <span class="k">def</span> <span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__success</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="WebsocketEvent.create_pong"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_pong">[docs]</a>    <span class="k">def</span> <span class="nf">create_pong</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">connection_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a pong event.</span>
+<span class="sd">        :param connection_id: id of the current connection</span>
+<span class="sd">        :return: newly created pong event</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;websocket_rails.pong&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;connection_id&#39;</span><span class="p">:</span> <span class="n">connection_id</span><span class="p">}}]</span>
+        <span class="n">pong_event</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pong_event</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="WebsocketEvent.create_event"><a class="viewcode-back" href="../../../raspilot_implementation.websockets.html#raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_event">[docs]</a>    <span class="k">def</span> <span class="nf">create_event</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an WebsocketEvent containing the data for regular updates.</span>
+<span class="sd">        :param namespace: event namespace (type) under which the data will be transferred</span>
+<span class="sd">        :param data: data which should be contained in the event</span>
+<span class="sd">        :return: newly created WebsocketEvent with regular data updates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">[</span><span class="n">namespace</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">}]</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">event</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Michal Raška.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

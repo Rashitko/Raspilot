@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>raspilot_implementation.providers.websocket_provider &mdash; Raspilot 1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for raspilot_implementation.providers.websocket_provider</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">raspilot.providers.websockets_provider</span> <span class="kn">import</span> <span class="n">WebsocketsProvider</span><span class="p">,</span> <span class="n">WebsocketsConfig</span>
+<span class="kn">from</span> <span class="nn">raspilot_implementation.websockets.websocket_dispatcher</span> <span class="kn">import</span> <span class="n">WebsocketDispatcher</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Event</span>
+
+<span class="n">CHANNEL_NAME_FORMAT</span> <span class="o">=</span> <span class="s">&quot;device:{}&quot;</span>
+
+
+<div class="viewcode-block" id="RaspilotWebsocketsProvider"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsProvider">[docs]</a><span class="k">class</span> <span class="nc">RaspilotWebsocketsProvider</span><span class="p">(</span><span class="n">WebsocketsProvider</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of the abstract WebsocketsProvider.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websockets_config</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs a new &#39;RaspilotWebsocketsProvider&#39; which is initialized from data in the configuration.</span>
+<span class="sd">        :param websockets_config: configuration to read initialization data from</span>
+<span class="sd">        :return: returns nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WebsocketsProvider</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websockets_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__server_address</span> <span class="o">=</span> <span class="n">websockets_config</span><span class="o">.</span><span class="n">server_address</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__username</span> <span class="o">=</span> <span class="n">websockets_config</span><span class="o">.</span><span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__password</span> <span class="o">=</span> <span class="n">websockets_config</span><span class="o">.</span><span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__device_identifier</span> <span class="o">=</span> <span class="n">websockets_config</span><span class="o">.</span><span class="n">device_identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span> <span class="o">=</span> <span class="n">WebsocketDispatcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__password</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__channel_connected</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_channel</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__channel</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="RaspilotWebsocketsProvider.connect"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsProvider.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connects the dispatcher.</span>
+<span class="sd">        :return: return nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WebsocketsProvider</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RaspilotWebsocketsProvider.disconnect"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsProvider.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disconnects the dispatcher.</span>
+<span class="sd">        :return: return nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WebsocketsProvider</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RaspilotWebsocketsProvider.should_reconnect"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsProvider.should_reconnect">[docs]</a>    <span class="k">def</span> <span class="nf">should_reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asks the dispatcher whether should reconnect</span>
+<span class="sd">        :return: result from dispatcher</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">should_reconnect</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RaspilotWebsocketsProvider.reconnect"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsProvider.reconnect">[docs]</a>    <span class="k">def</span> <span class="nf">reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reconnects the dispatcher.</span>
+<span class="sd">        :return: return nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WebsocketsProvider</span><span class="o">.</span><span class="n">reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">reconnect</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RaspilotWebsocketsProvider.start"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsProvider.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connects and waits for the success of failure.</span>
+<span class="sd">        :return: True, if connection is successful, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WebsocketsProvider</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">wait_for_connection</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">is_connected</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="n">channel_name</span> <span class="o">=</span> <span class="n">CHANNEL_NAME_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__device_identifier</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">channel_name</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__on_channel_connection</span><span class="p">,</span>
+                                    <span class="n">failure</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__on_channel_connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_channel</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">connection_id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__channel_connected</span></div>
+
+<div class="viewcode-block" id="RaspilotWebsocketsProvider.send_telemetry_update_message"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsProvider.send_telemetry_update_message">[docs]</a>    <span class="k">def</span> <span class="nf">send_telemetry_update_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">failure</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a raw message via the websocket. If the transmission fails failure callback is executed (if set).</span>
+<span class="sd">        If the transmission is successful the success callback is executed (if set). It is not verified that someone</span>
+<span class="sd">        receives the message, only transmission success is reported. Callbacks should have one parameter - message.</span>
+<span class="sd">        :param message: message to be sent</span>
+<span class="sd">        :param success: success callback</span>
+<span class="sd">        :param failure: failure callback</span>
+<span class="sd">        :return: True if transmission is successful, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trigger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__channel</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s">&#39;telemetry.update&#39;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">trigger</span></div>
+
+    <span class="k">def</span> <span class="nf">__on_channel_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">success</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__channel_connected</span> <span class="o">=</span> <span class="n">success</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Channel connection: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">success</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_channel</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RaspilotWebsocketsProvider.subscribe"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsProvider.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Subscribes the given channel name</span>
+<span class="sd">        :param channel_name: channel name to subscribe</span>
+<span class="sd">        :return: returns nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dispatcher</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">channel_name</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">server_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__server_address</span></div>
+
+
+<div class="viewcode-block" id="RaspilotWebsocketsConfig"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.websocket_provider.RaspilotWebsocketsConfig">[docs]</a><span class="k">class</span> <span class="nc">RaspilotWebsocketsConfig</span><span class="p">(</span><span class="n">WebsocketsConfig</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Used to initialize the RaspilotWebsocketsProvider. All subclasses of the RaspilotWebsocketsProvider which has their</span>
+<span class="sd">    own config should extend this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raspilot_config</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs a new &#39;RaspilotWebsocketsConfig&#39; which is used to initialize the RaspilotWebsocketsProvider.</span>
+<span class="sd">        :param raspilot_config: configuration used to read data from</span>
+<span class="sd">        :return: returns nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">raspilot_config</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Raspilot config must be set&quot;</span><span class="p">)</span>
+        <span class="n">WebsocketsConfig</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raspilot_config</span><span class="o">.</span><span class="n">retry_count</span><span class="p">,</span> <span class="n">raspilot_config</span><span class="o">.</span><span class="n">retry_delay</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__server_address</span> <span class="o">=</span> <span class="n">raspilot_config</span><span class="o">.</span><span class="n">websockets_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__username</span> <span class="o">=</span> <span class="n">raspilot_config</span><span class="o">.</span><span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__password</span> <span class="o">=</span> <span class="n">raspilot_config</span><span class="o">.</span><span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__device_identifier</span> <span class="o">=</span> <span class="n">raspilot_config</span><span class="o">.</span><span class="n">device_identifier</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">server_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__server_address</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__username</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__password</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">device_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__device_identifier</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Michal Raška.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

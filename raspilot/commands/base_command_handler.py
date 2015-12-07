@@ -35,7 +35,7 @@ class BaseCommandHandler:
         except Exception as e:
             self.__logger.error(
                 "An error during action execution occurred. Command name was {}, data were {}, command_id was {},"
-                " request was {}".format(self.name, data, command_id, request))
+                " request was {}, error was {}".format(self.name, data, command_id, request, e))
             raise ActionExecutionError(e)
 
     def _run_action(self, data, command_id, request, response):

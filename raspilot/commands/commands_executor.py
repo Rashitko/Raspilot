@@ -21,14 +21,9 @@ class CommandsExecutor:
         self.__execute_lock = RLock()
         self.__send_lock = RLock()
         self.__queue = Queue()
-        self.__running = False
-        self.__thread = Thread(target=self.__message_loop, name="COMMANDS_EXECUTOR_MESSAGE_THREAD")
-
-    def start(self):
         self.__running = True
-        if not self.__thread.is_alive():
-            self.__logger.debug("Starting the commands executor")
-            self.__thread.start()
+        self.__thread = Thread(target=self.__message_loop, name="COMMANDS_EXECUTOR_MESSAGE_THREAD")
+        self.messages_thread.start()
 
     def stop(self):
         self.__logger.debug("Stopping the commands executor")
@@ -66,6 +61,9 @@ class CommandsExecutor:
         :param command_id: id of the command
         :param request: flag whether the command is a request which should be responded to
         :param response: response object which contains additional information about the request execution, can be None
+        :return: returns nothing
+        :raises: raspilot.commands.base_command_handler.ActionExecutionError if any error occurs during the action
+        execution
         """
         handler = self.__commands.get(command_name, None)
         if handler:
@@ -105,6 +103,7 @@ class CommandsExecutor:
     def running(self):
         return self.__running
 
+    @property
     def messages_thread(self):
         return self.__thread
 

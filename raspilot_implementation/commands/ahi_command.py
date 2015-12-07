@@ -8,12 +8,13 @@ class SetNeutralAhiHandler(BaseCommandHandler):
     Handler for setting the neutral AHI.
     """
 
-    def __init__(self):
+    def __init__(self, orientation_provider):
         """
         Creates a new 'SetNeutralAhiHandler'. This handler is associated with the name 'ahi.set_neutral'
         :return: returns nothing
         """
         super().__init__(AHI_SET_NEUTRAL_COMMAND_NAME)
+        self.__orientation_provider = orientation_provider
 
     def _run_action(self, data, command_id, request, response):
         """
@@ -21,4 +22,4 @@ class SetNeutralAhiHandler(BaseCommandHandler):
         :param data: currently not processed
         :return: returns response object containing the information whether the operation was successful or not
         """
-
+        self.__orientation_provider.set_neutral()

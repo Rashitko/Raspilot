@@ -171,16 +171,7 @@ class Raspilot:
         self.__init_complete_event.set()
         self.__logger.info('Initialization complete, Raspilot is now running!')
         self.__start_notifier()
-        self.__start_executor()
         self.__stop_self_event.wait()
-
-    def __start_executor(self):
-        """
-        Starts the executor if any.
-        :return: returns nothing
-        """
-        if self.__commands_executor:
-            self.__commands_executor.start()
 
     def __start_notifier(self):
         """

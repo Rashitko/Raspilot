@@ -22,7 +22,7 @@ class CommandsExecutor:
         self.__send_lock = RLock()
         self.__queue = Queue()
         self.__running = True
-        self.__thread = Thread(target=self.__message_loop, name="COMMANDS_EXECUTOR_MESSAGE_THREAD")
+        self.__thread = Thread(target=self.__message_loop, name="COMMANDS_EXECUTOR_MESSAGE_THREAD", daemon=False)
         self.messages_thread.start()
 
     def stop(self):
@@ -33,9 +33,12 @@ class CommandsExecutor:
     def __message_loop(self):
         while self.__running:
             command = self.__queue.get()
+            self.__logger.debug('Got new command')
             if command:
+                self.__logger.debug('Sending command')
                 self._transmit_message(command)
             self.__queue.task_done()
+        self.__logger.debug('Message loop finished')
 
     def add_command_handler(self, command_handler):
         """

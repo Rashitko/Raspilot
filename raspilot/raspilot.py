@@ -30,6 +30,8 @@ class Raspilot:
         self.__stop_self_event = Event()
         self.__init_complete_event = Event()
         self.__commands_executor = raspilot_builder.commands_executor
+        if not self.__commands_executor:
+            self.__commands_executor = CommandsExecutor()
         self.__custom_providers = raspilot_builder.custom_providers
         self.__notifier = raspilot_builder.notifier
 
@@ -292,7 +294,7 @@ class RaspilotBuilder:
         self.__orientation_provider = OrientationProvider
         self.__gps_provider = None
         self.__servo_controller = None
-        self.__commands_executor = CommandsExecutor()
+        self.__commands_executor = None
         self.__custom_providers = []
         self.__notifier = None
 

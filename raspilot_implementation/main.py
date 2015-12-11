@@ -1,9 +1,11 @@
 import configparser
 import datetime
 import logging
+from colorlog import ColoredFormatter
 from threading import Thread
 
 from raspilot.raspilot import RaspilotBuilder
+from raspilot_implementation.commands.ahi_command import SetNeutralAhiHandler
 from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
 from raspilot_implementation.notifier.RaspilotNotifier import RaspilotNotifier
 from raspilot_implementation.providers.android_provider import AndroidProvider, AndroidProviderConfig
@@ -13,7 +15,9 @@ from raspilot_implementation.providers.orientation_provider import (RaspilotOrie
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
 from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
 from raspilot_implementation.servo.servo_controller import RaspilotServoController, RaspilotServoControllerConfig
-from raspilot_implementation.commands.ahi_command import SetNeutralAhiHandler
+
+date_format = "%Y-%m-%d %H:%M:%S"
+
 TRANSMISSION_LEVEL_NUM = 9
 FILE_LOGGER = 'raspilot.log'
 
@@ -40,6 +44,7 @@ class RaspilotConfig:
         self.__server_address = cfg['DEFAULT']['Address']
         self.__default_port = cfg['DEFAULT']['Protocol']
         self.__base_url = "{}://{}:{}".format(self.__default_protocol, self.__server_address, self.__default_protocol)
+        self.__logging_level = cfg['DEFAULT']['Logging level']
 
         self.__websockets_port = cfg['WEBSOCKETS']['Port']
         self.__websockets_path = cfg['WEBSOCKETS']['Address']
@@ -124,24 +129,55 @@ class RaspilotConfig:
     def updates_error_limit(self):
         return self.__updates_error_limit
 
+    @property
+    def logging_level(self):
+        return self.__logging_level
+
+
+def logging_level_name_to_value(level_name):
+    """
+    For the specified logging level name returns the logging level int value. If an unspecified or invalid level is
+    provided, logging.DEBUG is returned
+    :param level_name: string representation of the level name
+    :return: int value of the level name
+    """
+    level_name = level_name.upper()
+    if level_name == 'DEBUG':
+        return logging.DEBUG
+    elif level_name == 'INFO':
+        return logging.INFO
+    elif level_name == 'ERROR':
+        return logging.ERROR
+    elif level_name == 'TRANSMISSION':
+        return TRANSMISSION_LEVEL_NUM
+    else:
+        return logging.DEBUG
+
 
 def start_raspilot(rasp):
+    """
+    Starts the Raspilot.
+    :param rasp: Raspilot instance
+    :return: returns nothing
+    """
     rasp.start()
 
 
-def init_logger():
+def init_logger(level):
+    """
+    Initializes the Raspilot logger.
+    :param level: logging level of the created logger
+    :return: returns nothing
+    """
     logging.addLevelName(TRANSMISSION_LEVEL_NUM, "TRANSMISSION")
     logger = logging.getLogger('raspilot.log')
-    logger.setLevel(TRANSMISSION_LEVEL_NUM)
-    fh = logging.FileHandler("raspilog-{}.log".format(datetime.datetime.now()))
-    fh.setLevel(TRANSMISSION_LEVEL_NUM)
+    logger.setLevel(level)
+    fh = logging.FileHandler("raspilog-{}.log".format(datetime.datetime.now().strftime("%Y-%m-%d")))
+    fh.setLevel(level)
     ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('[%(levelname)s] %(asctime)s\n\t'
-                                  '%(message)s\n\t'
-                                  '[FILE]%(pathname)s:%(lineno)s\n\t'
-                                  '[THREAD]%(threadName)s',
-                                  "%Y-%m-%d %H:%M:%S")
+    ch.setLevel(level)
+    message_format = '%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\t''[FILE]%(pathname)s:%(lineno)s\n\t''[THREAD]%(threadName)s\n\n'
+    formatter = ColoredFormatter(message_format, date_format)
     fh.setFormatter(formatter)
     ch.setFormatter(formatter)
     logger.addHandler(fh)
@@ -150,9 +186,9 @@ def init_logger():
 
 
 if __name__ == "__main__":
-    init_logger()
-    builder = RaspilotBuilder()
     config = RaspilotConfig()
+    init_logger(config.logging_level)
+    builder = RaspilotBuilder()
 
     # Websockets provider initialization
     websockets_config = RaspilotWebsocketsConfig(config)
@@ -185,7 +221,7 @@ if __name__ == "__main__":
 
     # Commands executor
     commands_executor = RaspilotCommandsExecutor(android_provider)
-    commands_executor.add_command_handler(SetNeutralAhiHandler())
+    commands_executor.add_command_handler(SetNeutralAhiHandler(orientation_provider))
     builder.commands_executor = commands_executor
 
     # Notifier initialization

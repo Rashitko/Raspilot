@@ -1,3 +1,4 @@
+import logging
 import struct
 from threading import RLock
 
@@ -14,7 +15,9 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
     def __init__(self, config):
         OrientationProvider.__init__(self, config)
         SocketProvider.__init__(self, config.orientation_port, RECV_BYTES)
+        self.__logger = logging.getLogger('raspilot.log')
         self.__orientation = None
+        self.__offset_orientation = Orientation(0, 0, 0)
         self.__prop_lock = RLock()
 
     def _on_data_received(self, data):
@@ -31,7 +34,24 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
             self.__orientation = Orientation(roll, pitch, yaw)
 
     def current_orientation(self):
-        return self.__orientation
+        return self.__get_offset_orientation()
+
+    def __get_offset_orientation(self):
+        """
+        Returns orientation which is modified with the offsets. Offsets are set with the set_neutral method.
+        :return: returns Orientation
+        """
+        if self.__orientation:
+            return Orientation(
+                    self.__orientation.roll - self.__offset_orientation.roll,
+                    self.__orientation.pitch - self.__offset_orientation.pitch,
+                    self.__orientation.yaw)
+        else:
+            return None
+
+    def set_neutral(self):
+        self.__logger.info("Neutral orientation set.")
+        self.__offset_orientation = self.current_orientation()
 
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):

@@ -4,6 +4,7 @@ from threading import Event
 from raspilot.commands.commands_executor import CommandsExecutor, CommandExecutionError
 from raspilot.providers.orientation_provider import OrientationProvider
 from raspilot.providers.websockets_provider import WebsocketsProvider
+from raspilot_implementation.commands.speak_command import SpeakCommand
 
 
 def nop():
@@ -32,8 +33,11 @@ class Raspilot:
         self.__commands_executor = raspilot_builder.commands_executor
         if not self.__commands_executor:
             self.__commands_executor = CommandsExecutor()
+        self.__commands_executor.raspilot = self
         self.__custom_providers = raspilot_builder.custom_providers
         self.__notifier = raspilot_builder.notifier
+
+        self.__init_messages = []
 
         self.__init_rx_provider()
         self.__init_websockets_provider()
@@ -150,28 +154,35 @@ class Raspilot:
         Starts the Raspilot with available providers and blocks till the Raspilot is running.
         :return: return nothing
         """
+        init_messages = []
         self.__logger.info('Starting Raspilot...')
         if self.__start_rx_provider():
             self.__logger.info('RX provider started')
         else:
             self.__logger.warning('RX provider failed to start')
+            init_messages.append('Warning! Receiver provider failed to start.')
 
         if self.__start_websockets_provider():
             self.__logger.info('Websockets provider started')
         else:
             self.__logger.warning('Websockets provider failed to start')
+            init_messages.append('Warning! Websocket provider failed to start.')
 
         if self.__start_orientation_provider():
             self.__logger.info('Orientation provider started')
         else:
             self.__logger.warning('Orientation provider failed to start')
+            init_messages.append('Warning! Orientation provider failed to start.')
 
-        self.__start_custom_providers()
+        self.__start_custom_providers(init_messages)
 
         # TODO: gps, servo controller
 
         self.__init_complete_event.set()
         self.__logger.info('Initialization complete, Raspilot is now running!')
+        init_messages.append('Initialization complete.')
+        if init_messages != [] and self.commands_executor:
+            self.commands_executor.send_command(SpeakCommand(init_messages))
         self.__start_notifier()
         self.__stop_self_event.wait()
 
@@ -183,7 +194,7 @@ class Raspilot:
         if self.__notifier:
             self.__notifier.start()
 
-    def __start_custom_providers(self):
+    def __start_custom_providers(self, init_messages):
         """
         Starts custom providers, if any.
         :return: returns nothing
@@ -195,6 +206,7 @@ class Raspilot:
                 self.__logger.info("Custom provider '{}' started".format(name))
             else:
                 self.__logger.warning("Custom provider '{}' failed to start".format(name))
+                init_messages.append('Warning! Custom provider {} failed to start'.format(name))
 
     def stop(self):
         """
@@ -230,23 +242,22 @@ class Raspilot:
         """
         self.__init_complete_event.wait()
 
-    def bind_command(self, command, action):
+    def add_command_handler(self, command_handler):
         """
-        Associates the command and the callable action. Upon receiving of the command, the action will be called.
-        If command is already bound, the action is replaced.
-        :param command: command to bind to
-        :param action: action to execute, should be callable
+        Adds the command handler to the commands executor. Upon receiving of the command with corresponding
+        command name, the action will be executed. If handler is already added, it is replaced.
+        :param command_handler: command handler to add
         :return: returns nothing
         """
-        self.__commands_executor.bind_command(command, action)
+        self.__commands_executor.add_command_handler(command_handler)
 
-    def unbind_command(self, command):
+    def remove_command_handler(self, command_handler):
         """
-        Unbinds the command. If command is not bound, nothing is changed.
-        :param command: command to unbind from
-        :return: return command or None, if command is not bound
+        Removes the command handler. If command handler was not added previously, nothing is changed.
+        :param command_handler: command handler to remove
+        :return: return command handler or None, if command handler was not bound previously
         """
-        return self.__commands_executor.unbind_command(command)
+        return self.__commands_executor.remove_command_handler(command_handler)
 
     def execute_command(self, command_name, command_id, data, request=False, response=None):
         """
@@ -270,6 +281,17 @@ class Raspilot:
             if request and command_id:
                 self.__commands_executor.notify_command_failed(command_name, data, command_id, response)
 
+    def named_provider(self, provider_name):
+        """
+        If provider with given name is available, then it is returned. Otherwise None is returned.
+        :param provider_name: name of the desired provider
+        :return: provider with given name or None
+        """
+        for provider in self.__custom_providers:
+            if provider.name == provider_name:
+                return provider
+        return None
+
     @property
     def websocket_provider(self):
         return self.__websockets_provider
@@ -277,6 +299,10 @@ class Raspilot:
     @property
     def orientation_provider(self):
         return self.__orientation_provider
+
+    @property
+    def commands_executor(self):
+        return self.__commands_executor
 
 
 class RaspilotBuilder:

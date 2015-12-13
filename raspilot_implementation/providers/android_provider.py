@@ -16,6 +16,7 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
     """
     Provider of communication with the Android device
     """
+    NAME = "Android Provider"
 
     def __init__(self, config):
         """
@@ -23,7 +24,7 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
         :param config: configuration to load from
         :return: returns nothing
         """
-        super().__init__(config.port, RECV_SIZE)
+        super().__init__(config.port, RECV_SIZE, AndroidProvider.NAME)
 
     def _on_data_received(self, data):
         """
@@ -49,6 +50,14 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
             if RESPONSE_KEY in deserialized_data:
                 response = deserialized_data[RESPONSE_KEY]
             self.raspilot.execute_command(command_name, command_id, command_data, request, response)
+
+    def send_command(self, command):
+        """
+        Serializes the command as JSON string and adds it to the send queue.
+        :param command: command to be sent
+        :return: returns nothing
+        """
+        self.send(json.dumps(command.serialize()) + '\n')
 
     @staticmethod
     def _validate_command(received_data):

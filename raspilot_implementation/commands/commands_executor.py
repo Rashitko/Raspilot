@@ -1,6 +1,9 @@
 import logging
 
 from raspilot.commands.commands_executor import CommandsExecutor
+from raspilot_implementation.commands.command import RaspilotCommand
+from raspilot_implementation.websockets.websocket_event import WebsocketEvent
+from raspilot_implementation.providers.android_provider import AndroidProvider
 
 
 class RaspilotCommandsExecutor(CommandsExecutor):
@@ -23,5 +26,17 @@ class RaspilotCommandsExecutor(CommandsExecutor):
         :param command: command to be sent
         :return: returns True if transmission was successful, False otherwise
         """
-        self.__logger.debug(command.serialize())
+        if command.data.get('target', None) == RaspilotCommand.TARGET_ANDROID:
+            self.__transmit_to_android(command)
+        elif command.data.get('target', None) == RaspilotCommand.TARGET_WEBSOCKET:
+            if self.raspilot.websocket_provider:
+                self.raspilot.websocket_provider.send_message(WebsocketEvent(command))
+        else:
+            self.__transmit_to_android(command)
+
         return True
+
+    def __transmit_to_android(self, command):
+        android_provider = self.raspilot.named_provider(AndroidProvider.NAME)
+        if android_provider:
+            android_provider.send_command(command)

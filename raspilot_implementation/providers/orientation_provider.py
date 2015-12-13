@@ -13,8 +13,8 @@ HOST = ''
 
 class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
     def __init__(self, config):
+        SocketProvider.__init__(self, port=config.orientation_port, recv_size=RECV_BYTES)
         OrientationProvider.__init__(self, config)
-        SocketProvider.__init__(self, config.orientation_port, RECV_BYTES)
         self.__logger = logging.getLogger('raspilot.log')
         self.__orientation = None
         self.__offset_orientation = Orientation(0, 0, 0)
@@ -52,6 +52,7 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
     def set_neutral(self):
         self.__logger.info("Neutral orientation set.")
         self.__offset_orientation = self.current_orientation()
+        return self.__offset_orientation is not None
 
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):

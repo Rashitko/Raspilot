@@ -23,7 +23,7 @@ class WebsocketsProvider(BaseProvider):
         if websockets_config is None:
             raise ValueError("Config cannot be None")
         self.__logger = logging.getLogger('raspilot.log')
-        BaseProvider.__init__(self, websockets_config)
+        super().__init__(websockets_config)
         self.__retry_count = websockets_config.retry_count
         self.__reconnect_delay = websockets_config.reconnect_delay
         self.__retries = 0
@@ -84,6 +84,18 @@ class WebsocketsProvider(BaseProvider):
             self.__logger.error("Connection fails, but not trying to reconnect")
 
     def send_telemetry_update_message(self, message, success=None, failure=None):
+        """
+        Sends the message. The default implementation fails to send the message. Callbacks should have one
+        parameter - message.
+        :param message: message to be sent
+        :param success: success callback, run if transmission was successful
+        :param failure: failure callback, run if transmission failed
+        :return: returns nothing
+        """
+        if failure:
+            failure(message)
+
+    def send_message(self, message, success=None, failure=None):
         """
         Sends the message. The default implementation fails to send the message. Callbacks should have one
         parameter - message.

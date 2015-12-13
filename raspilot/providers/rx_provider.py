@@ -6,7 +6,7 @@ class RXProvider(BaseProvider):
     def __init__(self, config):
         if config is None:
             raise ValueError("Config must be set")
-        BaseProvider.__init__(self, config)
+        super().__init__(config)
 
 
 class RXConfig(BaseProviderConfig):

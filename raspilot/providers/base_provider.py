@@ -4,13 +4,17 @@ class BaseProvider(object):
     all providers.
     """
 
-    def __init__(self, config):
+    def __init__(self, config, name=None):
         """
         Constructs a new 'BaseProvider'
         :param config: configuration for this provider
         :return: returns nothing
         """
         self.__raspilot = None
+        if name:
+            self.__name = name
+        else:
+            self.__name = self.__class__.name
 
     def initialize(self):
         """
@@ -42,6 +46,10 @@ class BaseProvider(object):
     @raspilot.setter
     def raspilot(self, value):
         self.__raspilot = value
+
+    @property
+    def name(self):
+        return self.__name
 
 
 class BaseProviderConfig:

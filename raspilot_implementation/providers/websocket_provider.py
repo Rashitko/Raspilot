@@ -86,6 +86,9 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         trigger = self.__channel.trigger('telemetry.update', message)
         return trigger
 
+    def send_message(self, message, success=None, failure=None):
+        self.__dispatcher.trigger_event(message)
+
     def __on_channel_connection(self, success):
         self.__channel_connected = success
         print("Channel connection: {}".format(success))

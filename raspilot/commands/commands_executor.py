@@ -24,6 +24,7 @@ class CommandsExecutor:
         self.__running = True
         self.__thread = Thread(target=self.__message_loop, name="COMMANDS_EXECUTOR_MESSAGE_THREAD", daemon=False)
         self.messages_thread.start()
+        self.__raspilot = None
 
     def stop(self):
         self.__logger.debug("Stopping the commands executor")
@@ -33,9 +34,7 @@ class CommandsExecutor:
     def __message_loop(self):
         while self.__running:
             command = self.__queue.get()
-            self.__logger.debug('Got new command')
             if command:
-                self.__logger.debug('Sending command')
                 self._transmit_message(command)
             self.__queue.task_done()
         self.__logger.debug('Message loop finished')
@@ -71,7 +70,9 @@ class CommandsExecutor:
         handler = self.__commands.get(command_name, None)
         if handler:
             with self.__execute_lock:
-                handler.execute_action(data, command_id, request, response)
+                execute_response = handler.execute_action(data, command_id, request, response)
+                if execute_response:
+                    self.send_message(command_name, data, False, execute_response)
 
     def notify_command_failed(self, command_name, data, command_id, response):
         """
@@ -90,9 +91,17 @@ class CommandsExecutor:
         :param data: data for the command, might be None
         :param request: flag, whether the command is a request
         :param response: response object, contains additional information about the request execution, might be None
-        :return: returns True if message was sent, False otherwise
+        :return: returns nothing
         """
         self.__queue.put(Command(command_name, data, request, response))
+
+    def send_command(self, command):
+        """
+        Adds the command to the send queue.
+        :param command: command which should be sent
+        :return: returns nothing
+        """
+        self.__queue.put(command)
 
     def _transmit_message(self, command):
         """
@@ -109,6 +118,14 @@ class CommandsExecutor:
     @property
     def messages_thread(self):
         return self.__thread
+
+    @property
+    def raspilot(self):
+        return self.__raspilot
+
+    @raspilot.setter
+    def raspilot(self, value):
+        self.__raspilot = value
 
 
 class CommandExecutionError(Exception):

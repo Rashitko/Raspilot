@@ -1,11 +1,13 @@
 import configparser
 import datetime
 import logging
-from colorlog import ColoredFormatter
+import sys
 from threading import Thread
 
+from colorlog import ColoredFormatter
+
 from raspilot.raspilot import RaspilotBuilder
-from raspilot_implementation.commands.ahi_command import SetNeutralAhiHandler
+from raspilot_implementation.commands.ahi_command_handler import SetNeutralAhiHandler
 from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
 from raspilot_implementation.notifier.RaspilotNotifier import RaspilotNotifier
 from raspilot_implementation.providers.android_provider import AndroidProvider, AndroidProviderConfig
@@ -14,7 +16,6 @@ from raspilot_implementation.providers.orientation_provider import (RaspilotOrie
                                                                     RaspilotOrientationProviderConfig)
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
 from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
-from raspilot_implementation.servo.servo_controller import RaspilotServoController, RaspilotServoControllerConfig
 
 date_format = "%Y-%m-%d %H:%M:%S"
 
@@ -174,15 +175,15 @@ def init_logger(level):
     logger.setLevel(level)
     fh = logging.FileHandler("raspilog-{}.log".format(datetime.datetime.now().strftime("%Y-%m-%d")))
     fh.setLevel(level)
-    ch = logging.StreamHandler()
-    ch.setLevel(level)
-    message_format = '%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\t''[FILE]%(pathname)s:%(lineno)s\n\t''[THREAD]%(threadName)s\n\n'
+    message_format = '%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\t''[FILE]%(pathname)s:%(lineno)s\n\t''[THREAD]%(threadName)s'
     formatter = ColoredFormatter(message_format, date_format)
     fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
     logger.addHandler(fh)
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.DEBUG)
+    ch.setFormatter(formatter)
     logger.addHandler(ch)
-    logger.debug('Logging initialized')
+    logger.propagate = False
 
 
 if __name__ == "__main__":
@@ -209,11 +210,6 @@ if __name__ == "__main__":
     gps_config = RaspilotGPSProviderConfig()
     gps_provider = RaspilotGPSProvider(gps_config)
     builder.gps_provider = gps_provider
-
-    # Servo controller initialization
-    servo_controller_config = RaspilotServoControllerConfig()
-    servo_controller = RaspilotServoController(servo_controller_config)
-    builder.servo_controller = servo_controller
 
     # Android provider initialization
     android_provider = AndroidProvider(AndroidProviderConfig(config.general_port))

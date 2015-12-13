@@ -29,9 +29,9 @@ class OrientationProvider(BaseProvider):
     def set_neutral(self):
         """
         Current orientation will be saved as if the device roll and pitch will be equal to 0.
-        :return: returns nothing
+        :return: returns True if operation was successful, False otherwise
         """
-        pass
+        return False
 
 
 class OrientationProviderConfig(BaseProviderConfig):

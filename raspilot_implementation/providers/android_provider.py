@@ -39,16 +39,16 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
         :return: returns nothing
         """
         super()._on_data_received(data)
-        deserialized_data = json.loads(data)
+        deserialized_data = json.loads(data.decode('utf-8'))
         valid_command = self._validate_command(deserialized_data)
         if valid_command:
-            command_name = deserialized_data[COMMAND_KEY]
-            command_id = deserialized_data[ID_KEY]
-            command_data = deserialized_data[DATA_KEY]
-            request = deserialized_data[REQUEST_KEY]
+            command_name = deserialized_data.get(COMMAND_KEY, None)
+            command_id = deserialized_data.get(ID_KEY, None)
+            command_data = deserialized_data.get(DATA_KEY, None)
+            request = deserialized_data.get(REQUEST_KEY, None)
             response = None
             if RESPONSE_KEY in deserialized_data:
-                response = deserialized_data[RESPONSE_KEY]
+                response = deserialized_data.get(RESPONSE_KEY, None)
             self.raspilot.execute_command(command_name, command_id, command_data, request, response)
 
     def send_command(self, command):

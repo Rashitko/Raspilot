@@ -149,6 +149,15 @@ class Raspilot:
             return self.__orientation_provider.start()
         return True
 
+    def __start_gps_provider(self):
+        """
+        Starts the GPSProvider if a provider is set.
+        :return: returns True, if no provider is set, else return the result of provider start
+        """
+        if self.__gps_provider is not None:
+            return self.__gps_provider.start()
+        return True
+
     def start(self):
         """
         Starts the Raspilot with available providers and blocks till the Raspilot is running.
@@ -174,9 +183,15 @@ class Raspilot:
             self.__logger.warning('Orientation provider failed to start')
             init_messages.append('Warning! Orientation provider failed to start.')
 
+        if self.__start_gps_provider():
+            self.__logger.info('GPS provider started')
+        else:
+            self.__logger.warning('GPS provider failed to start')
+            init_messages.append('Warning! GPS provider failed to start')
+
         self.__start_custom_providers(init_messages)
 
-        # TODO: gps, servo controller
+        # TODO: servo controller
 
         self.__init_complete_event.set()
         self.__logger.info('Initialization complete, Raspilot is now running!')
@@ -224,6 +239,8 @@ class Raspilot:
             self.__websockets_provider.stop()
         if self.__orientation_provider:
             self.__orientation_provider.stop()
+        if self.__gps_provider:
+            self.__gps_provider.stop()
         self.__stop_custom_providers()
         self.__stop_self_event.set()
 
@@ -303,6 +320,10 @@ class Raspilot:
     @property
     def commands_executor(self):
         return self.__commands_executor
+
+    @property
+    def gps_provider(self):
+        return self.__gps_provider
 
 
 class RaspilotBuilder:

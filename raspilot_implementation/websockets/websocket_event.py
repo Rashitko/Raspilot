@@ -26,7 +26,7 @@ class WebsocketEvent:
         self.__logger = logging.getLogger('raspilot.log')
         self.__event_name = message[0]
         payload = message[1]
-        self.__id = payload.get('id', str(uuid.uuid4()))
+        self.__id = payload.get('id', None)
         self.__channel = payload.get('channel')
         self.__data = payload.get('data')
         self.__token = payload.get('token')

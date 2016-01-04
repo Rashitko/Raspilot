@@ -1,7 +1,7 @@
-from raspilot.commands.command import Command
+from raspilot_implementation.commands.command import RaspilotCommand
 
 
-class SpeakCommand(Command):
+class SpeakCommand(RaspilotCommand):
 
     NAME = 'speak'
 

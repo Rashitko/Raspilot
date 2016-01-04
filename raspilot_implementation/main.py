@@ -2,6 +2,7 @@ import configparser
 import datetime
 import logging
 import sys
+import os
 from threading import Thread
 
 from colorlog import ColoredFormatter
@@ -16,6 +17,8 @@ from raspilot_implementation.providers.orientation_provider import (RaspilotOrie
                                                                     RaspilotOrientationProviderConfig)
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
 from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
+
+LOGS_DIR_PATH = '../logs/'
 
 date_format = "%Y-%m-%d %H:%M:%S"
 
@@ -46,6 +49,7 @@ class RaspilotConfig:
         self.__default_port = cfg['DEFAULT']['Protocol']
         self.__base_url = "{}://{}:{}".format(self.__default_protocol, self.__server_address, self.__default_protocol)
         self.__logging_level = cfg['DEFAULT']['Logging level']
+        self.__logs_path = cfg['DEFAULT']['Logs Path']
 
         self.__websockets_port = cfg['WEBSOCKETS']['Port']
         self.__websockets_path = cfg['WEBSOCKETS']['Address']
@@ -134,6 +138,10 @@ class RaspilotConfig:
     def logging_level(self):
         return self.__logging_level
 
+    @property
+    def logs_path(self):
+        return self.__logs_path
+
 
 def logging_level_name_to_value(level_name):
     """
@@ -164,7 +172,7 @@ def start_raspilot(rasp):
     rasp.start()
 
 
-def init_logger(level):
+def init_logger(level, logs_path):
     """
     Initializes the Raspilot logger.
     :param level: logging level of the created logger
@@ -173,7 +181,9 @@ def init_logger(level):
     logging.addLevelName(TRANSMISSION_LEVEL_NUM, "TRANSMISSION")
     logger = logging.getLogger('raspilot.log')
     logger.setLevel(level)
-    fh = logging.FileHandler("raspilog-{}.log".format(datetime.datetime.now().strftime("%Y-%m-%d")))
+    if not os.path.exists(logs_path):
+        os.makedirs(logs_path)
+    fh = logging.FileHandler("{}raspilog-{}.log".format(LOGS_DIR_PATH, datetime.datetime.now().strftime("%Y-%m-%d")))
     fh.setLevel(level)
     message_format = '%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\t''[FILE]%(pathname)s:%(lineno)s\n\t''[THREAD]%(threadName)s'
     formatter = ColoredFormatter(message_format, date_format)
@@ -188,7 +198,7 @@ def init_logger(level):
 
 if __name__ == "__main__":
     config = RaspilotConfig()
-    init_logger(config.logging_level)
+    init_logger(config.logging_level, config.logs_path)
     builder = RaspilotBuilder()
 
     # Websockets provider initialization

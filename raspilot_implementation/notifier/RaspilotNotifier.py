@@ -1,4 +1,4 @@
-import json
+import logging
 
 from raspilot.notifier.base_notifier import BaseNotifier
 
@@ -18,6 +18,7 @@ class RaspilotNotifier(BaseNotifier):
         :return: returns nothing
         """
         super().__init__(update_freq, error_limit)
+        self.__logger = logging.getLogger('raspilot.log')
         self.__namespace = namespace
 
     def _prepare_message(self):
@@ -26,11 +27,17 @@ class RaspilotNotifier(BaseNotifier):
         :return: created event
         """
         orientation = self.raspilot.orientation_provider.current_orientation()
+        location = self.raspilot.gps_provider.location
         if orientation:
             orientation_data = orientation.to_json()
         else:
             orientation_data = {'error': {'message': 'current orientation was null'}}
-        data = {'orientation': orientation_data}
+        if location:
+            location_data = location.to_json()
+        else:
+            location_data = {'error': {'message': 'current location was null'}}
+        data = {'orientation': orientation_data, 'location': location_data}
+        self.__logger.info("Sending telemetry update: {}".format(data))
         return data
 
     def _serialize_message(self, message):

@@ -1,8 +1,9 @@
 import configparser
 import datetime
 import logging
-import sys
 import os
+import socket
+import sys
 from threading import Thread
 
 from colorlog import ColoredFormatter
@@ -50,6 +51,8 @@ class RaspilotConfig:
         self.__base_url = "{}://{}:{}".format(self.__default_protocol, self.__server_address, self.__default_protocol)
         self.__logging_level = cfg['DEFAULT']['Logging level']
         self.__logs_path = cfg['DEFAULT']['Logs Path']
+        self.__discovery_port = cfg.getint('DEFAULT', 'Discovery port')
+        self.__discovery_reply_port = cfg.getint('DEFAULT', 'Discovery reply port')
 
         self.__websockets_port = cfg['WEBSOCKETS']['Port']
         self.__websockets_path = cfg['WEBSOCKETS']['Address']
@@ -142,6 +145,14 @@ class RaspilotConfig:
     def logs_path(self):
         return self.__logs_path
 
+    @property
+    def discovery_port(self):
+        return self.__discovery_port
+
+    @property
+    def discovery_reply_port(self):
+        return self.__discovery_reply_port
+
 
 def logging_level_name_to_value(level_name):
     """
@@ -196,6 +207,26 @@ def init_logger(level, logs_path):
     logger.propagate = False
 
 
+def raspilot_discovery(discovery_port, reply_port):
+    """
+    Listens for discovery messages and announce IP address which can be used to connect to the raspilot service
+    :param discovery_port port to listen for messages
+    :param reply_port port to reply to with the discovery message
+    :return: returns nothing
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind(('', discovery_port))
+    print("Waiting for discovery request...")
+    (_, address) = s.recvfrom(1024)
+    print("connection from address {}".format(address))
+    my_address = socket.gethostbyname(socket.gethostname()).encode('utf-8')
+    reply_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    reply_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    reply_socket.sendto(bytes(my_address), (address[0], reply_port))
+    reply_socket.close()
+    s.close()
+
+
 if __name__ == "__main__":
     config = RaspilotConfig()
     init_logger(config.logging_level, config.logs_path)
@@ -236,9 +267,12 @@ if __name__ == "__main__":
     raspilot = builder.build()
     raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")
     raspilot_thread.start()
-    raspilot.wait_for_init_complete()
     try:
-        input()
+        raspilot.wait_for_init_complete()
+        announcer_thread = Thread(target=raspilot_discovery, args=(config.discovery_port, config.discovery_reply_port,),
+                                  name="RASPILOT_DISCOVERY")
+        announcer_thread.start()
+        raspilot_thread.join()
     except KeyboardInterrupt:
         pass
     finally:

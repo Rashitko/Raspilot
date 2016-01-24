@@ -2,13 +2,12 @@ import configparser
 import datetime
 import logging
 import os
-import socket
 import sys
 from threading import Thread
 
 from colorlog import ColoredFormatter
 
-from raspilot.raspilot import RaspilotBuilder
+from raspilot_implementation.raspilot_impl import RaspilotImplBuilder
 from raspilot_implementation.commands.ahi_command_handler import SetNeutralAhiHandler
 from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
 from raspilot_implementation.notifier.RaspilotNotifier import RaspilotNotifier
@@ -207,30 +206,10 @@ def init_logger(level, logs_path):
     logger.propagate = False
 
 
-def raspilot_discovery(discovery_port, reply_port):
-    """
-    Listens for discovery messages and announce IP address which can be used to connect to the raspilot service
-    :param discovery_port port to listen for messages
-    :param reply_port port to reply to with the discovery message
-    :return: returns nothing
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('', discovery_port))
-    print("Waiting for discovery request...")
-    (_, address) = s.recvfrom(1024)
-    print("connection from address {}".format(address))
-    my_address = socket.gethostbyname(socket.gethostname()).encode('utf-8')
-    reply_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    reply_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    reply_socket.sendto(bytes(my_address), (address[0], reply_port))
-    reply_socket.close()
-    s.close()
-
-
 if __name__ == "__main__":
     config = RaspilotConfig()
     init_logger(config.logging_level, config.logs_path)
-    builder = RaspilotBuilder()
+    builder = RaspilotImplBuilder(config.discovery_port, config.discovery_reply_port)
 
     # Websockets provider initialization
     websockets_config = RaspilotWebsocketsConfig(config)
@@ -269,9 +248,7 @@ if __name__ == "__main__":
     raspilot_thread.start()
     try:
         raspilot.wait_for_init_complete()
-        announcer_thread = Thread(target=raspilot_discovery, args=(config.discovery_port, config.discovery_reply_port,),
-                                  name="RASPILOT_DISCOVERY")
-        announcer_thread.start()
+        raspilot.enable_discovery()
         raspilot_thread.join()
     except KeyboardInterrupt:
         pass

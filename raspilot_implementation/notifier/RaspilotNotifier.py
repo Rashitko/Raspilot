@@ -2,6 +2,8 @@ import logging
 
 from raspilot.notifier.base_notifier import BaseNotifier
 
+TRANSMISSION_LOG_LEVEL = 9
+
 
 class RaspilotNotifier(BaseNotifier):
     """
@@ -37,7 +39,7 @@ class RaspilotNotifier(BaseNotifier):
         else:
             location_data = {'error': {'message': 'current location was null'}}
         data = {'orientation': orientation_data, 'location': location_data}
-        self.__logger.info("Sending telemetry update: {}".format(data))
+        self.__logger.log(TRANSMISSION_LOG_LEVEL, "Sending telemetry update: {}".format(data))
         return data
 
     def _serialize_message(self, message):

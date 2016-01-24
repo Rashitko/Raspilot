@@ -5,8 +5,8 @@ from threading import RLock
 from raspilot.providers.orientation_provider import OrientationProvider, OrientationProviderConfig
 from raspilot_implementation.providers.socket_provider import SocketProvider
 
-FMT = "!ddd"
-RECV_BYTES = 24
+FMT = "!fff"
+RECV_BYTES = struct.calcsize(FMT)
 MAX_CONNECTIONS = 1
 HOST = ''
 

@@ -20,6 +20,7 @@ class RaspilotImpl(Raspilot):
         :return: returns nothing
         """
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(('', self.__discovery_port))
         print("Waiting for discovery request...")
         (_, address) = s.recvfrom(1024)

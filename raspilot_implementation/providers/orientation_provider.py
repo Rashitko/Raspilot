@@ -3,9 +3,10 @@ import struct
 from threading import RLock
 
 from raspilot.providers.orientation_provider import OrientationProvider, OrientationProviderConfig
+from raspilot_implementation.pid.pid_controller import PID
 from raspilot_implementation.providers.socket_provider import SocketProvider
 
-FMT = "!fff"
+FMT = "!ffffff"
 RECV_BYTES = struct.calcsize(FMT)
 MAX_CONNECTIONS = 1
 HOST = ''
@@ -19,6 +20,8 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
         self.__orientation = None
         self.__offset_orientation = Orientation(0, 0, 0)
         self.__prop_lock = RLock()
+        self.__pitch_stabilise_pid = PID()
+        self.__pitch_rate_pid = PID()
 
     def _on_data_received(self, data):
         """
@@ -30,7 +33,12 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
         :return: returns nothing
         """
         with self.__prop_lock:
-            (roll, pitch, yaw) = struct.unpack(FMT, data)
+            (roll, pitch, yaw, x_angular, y_angular, z_angular) = struct.unpack(FMT, data)
+            desired_pitch_rot_rate = self.__pitch_stabilise_pid.update(pitch)
+            # print("pitch stabilize PID: {0:.8f}".format(desired_pitch_rot_rate))
+            self.__pitch_rate_pid.setPoint(desired_pitch_rot_rate)
+            pidded_pitch = self.__pitch_rate_pid.update(x_angular)
+            print("pitch rate PID: {0:.8f}".format(pidded_pitch))
             self.__orientation = Orientation(roll, pitch, yaw)
 
     def current_orientation(self):

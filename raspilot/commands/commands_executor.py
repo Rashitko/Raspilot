@@ -22,7 +22,7 @@ class CommandsExecutor:
         self.__send_lock = RLock()
         self.__queue = Queue()
         self.__running = True
-        self.__thread = Thread(target=self.__message_loop, name="COMMANDS_EXECUTOR_MESSAGE_THREAD", daemon=False)
+        self.__thread = Thread(target=self.__message_loop, name="COMMANDS_EXECUTOR_MESSAGE_THREAD")
         self.messages_thread.start()
         self.__raspilot = None
 

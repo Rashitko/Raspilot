@@ -6,7 +6,7 @@ from raspilot.providers.orientation_provider import OrientationProvider, Orienta
 from raspilot_implementation.pid.pid_controller import PID
 from raspilot_implementation.providers.socket_provider import SocketProvider
 
-FMT = "!ffffff"
+FMT = "!hhhhhh"
 RECV_BYTES = struct.calcsize(FMT)
 MAX_CONNECTIONS = 1
 HOST = ''

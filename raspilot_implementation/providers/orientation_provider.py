@@ -38,7 +38,7 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
             # print("pitch stabilize PID: {0:.8f}".format(desired_pitch_rot_rate))
             self.__pitch_rate_pid.setPoint(desired_pitch_rot_rate)
             pidded_pitch = self.__pitch_rate_pid.update(x_angular)
-            print("pitch rate PID: {0:.8f}".format(pidded_pitch))
+            # print("pitch rate PID: {0:.8f}".format(pidded_pitch))
             self.__orientation = Orientation(roll, pitch, yaw)
 
     def current_orientation(self):

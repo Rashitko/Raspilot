@@ -9,15 +9,28 @@ import serial.tools.list_ports
 from raspilot.providers.rx_provider import RXProvider, RXConfig
 from raspilot_implementation.rc_command import RCChannelValues
 
-ARDUINO_PORT_KEYWORD = "Arduino"
-BAUD_RATE = 115200
-FMT = "hhhhh"
-CHANNELS_COUNT = 5
-
 
 class RaspilotRXProvider(RXProvider):
+    ARDUINO_PORT_KEYWORD = "Arduino"
+    FMT = "hhhhh"
+    """
+    Default FMT used to unpack the struct received from Arduino
+    """
+
+    CHANNELS_COUNT = 5
+    """
+    Default number of channels read by Arduino from the RX
+    """
+
     def __init__(self, config):
+        """
+        Creates a new 'RaspilotRXProvider'. This provider is used with Arduino (connected via a serial port) which
+        sends PWM frequencies read from the radio RX.
+        :param config: config used to configure this provider
+        :return: returns nothing
+        """
         super().__init__(config)
+        self.__baud_rate = config.baud_rate
         self.__port = None
         self.__reading_thread = None
         self.__run = False
@@ -25,12 +38,17 @@ class RaspilotRXProvider(RXProvider):
         self.__channels = None
 
     def start(self):
+        """
+        Tries to find Arduino a connect with it over the serial port. If Arduino is found and serial is successfully
+        opened, loop which receives the data from Arduino is started (in separate Thread).
+        :return: True if connection was successful, False otherwise
+        """
         super().start()
-        port = ArduinoProber.search_arduino_com_port(ARDUINO_PORT_KEYWORD)
+        port = ArduinoProber.search_arduino_com_port(self.ARDUINO_PORT_KEYWORD)
         if port:
-            self.__logger.info("Arduino found on port {}".format(port))
+            self.__logger.info("Arduino found on port {}. Opening connection with baud rate {}".format(port, self.__baud_rate))
             try:
-                self.__port = serial.Serial(port, BAUD_RATE)
+                self.__port = serial.Serial(port, self.__baud_rate)
                 self.__run = True
                 self.__reading_thread = Thread(target=self.__read_serial_loop, name="RX_INPUT_THREAD")
                 self.__reading_thread.start()
@@ -41,12 +59,21 @@ class RaspilotRXProvider(RXProvider):
         return self.__port is not None
 
     def __read_serial_loop(self):
+        """
+        While provider is started reads data from serial port. If port is not opened (might be because of an Exception),
+        ArduinoProber is used to find Arduino and new serial.Serial() instance is created. Exceptions which might be
+        risen during the communication and data processing are handled here. After stop of this provider is the port
+        closed and Thread exits.
+        :return: returns nothing
+        """
         while self.__run:
             try:
                 if not self.__port.isOpen():
-                    self.__port.open()
-                data = self.__port.read(struct.calcsize(FMT))
-                channels = struct.unpack(FMT, data)
+                    port = ArduinoProber.search_arduino_com_port(self.ARDUINO_PORT_KEYWORD)
+                    if port:
+                        self.__port = serial.Serial(port, self.__baud_rate)
+                data = self.__port.read(struct.calcsize(self.FMT))
+                channels = struct.unpack(self.FMT, data)
                 received_channels_count = len(channels)
                 if received_channels_count == self.get_channels_count():
                     self.__channels = RCChannelValues(channels)
@@ -60,15 +87,20 @@ class RaspilotRXProvider(RXProvider):
                 self.__logger.error(struct_ex)
             except Exception as e:
                 self.__logger.error(e)
+                self.__port.close()
         self.__port.close()
 
     def stop(self):
+        """
+        Sets the flag, so loop receiving data from Arduino will exit.
+        :return: returns True
+        """
         super().stop()
         self.__run = False
         return True
 
     def get_channels_count(self):
-        return CHANNELS_COUNT
+        return self.CHANNELS_COUNT
 
     def get_channels(self):
         return self.__channels
@@ -100,7 +132,17 @@ class RaspilotRXProvider(RXProvider):
 
 
 class RaspilotRXConfig(RXConfig):
-    pass
+    def __init__(self, baud_rate):
+        super().__init__()
+        self.__baud_rate = baud_rate
+
+    @property
+    def baud_rate(self):
+        return self.__baud_rate
+
+    @baud_rate.setter
+    def baud_rate(self, value):
+        self.__baud_rate = value
 
 
 class ArduinoProber:

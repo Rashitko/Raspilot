@@ -298,6 +298,7 @@ class Raspilot:
             if request and command_id:
                 self.__commands_executor.notify_command_failed(command_name, data, command_id, response)
 
+    @property
     def named_provider(self, provider_name):
         """
         If provider with given name is available, then it is returned. Otherwise None is returned.

@@ -68,6 +68,8 @@ class RaspilotConfig:
         self.__updates_freq = cfg.getint('TELEMETRY', 'Updates frequency')
         self.__updates_error_limit = cfg.getint('TELEMETRY', 'Error limit')
 
+        self.__baud_rate = cfg.getint('ARDUINO', 'Baud rate')
+
     @property
     def username(self):
         return self.__username
@@ -152,6 +154,10 @@ class RaspilotConfig:
     def discovery_reply_port(self):
         return self.__discovery_reply_port
 
+    @property
+    def baud_rate(self):
+        return self.__baud_rate
+
 
 def logging_level_name_to_value(level_name):
     """
@@ -217,7 +223,7 @@ if __name__ == "__main__":
     builder.websockets_provider = provider
 
     # RX provider initialization
-    rx_config = RaspilotRXConfig()
+    rx_config = RaspilotRXConfig(config.baud_rate)
     rx_provider = RaspilotRXProvider(rx_config)
     builder.rx_provider = rx_provider
 

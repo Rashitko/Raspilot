@@ -1,5 +1,12 @@
 class RCChannelValues:
-    CHANNELS_MAP = {'ailerons': 1, 'elevator': 2, 'throttle': 3, 'rudder': 4, 'aux': 5}
+    """
+    Wrapper class for PWM values read by Arduino from the radio RX.
+    """
+
+    CHANNELS_MAP = {'ailerons': 0, 'elevator': 1, 'throttle': 2, 'rudder': 3, 'aux': 4}
+    """
+    Default mapping of channels to their indices in the channels tuple
+    """
 
     def __init__(self, channels):
         self.__channels = channels

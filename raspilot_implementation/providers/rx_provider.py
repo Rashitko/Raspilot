@@ -7,7 +7,7 @@ import serial.serialutil
 import serial.tools.list_ports
 
 from raspilot.providers.rx_provider import RXProvider, RXConfig
-from raspilot_implementation.rc_command import RCChannelValues
+from raspilot_implementation.utils.rc_command import RCChannelValues
 
 
 class RaspilotRXProvider(RXProvider):

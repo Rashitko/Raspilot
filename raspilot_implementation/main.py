@@ -7,6 +7,7 @@ from threading import Thread
 
 from colorlog import ColoredFormatter
 
+from raspilot_implementation.RaspilotFlightController import RaspilotFlightController
 from raspilot_implementation.raspilot_impl import RaspilotImplBuilder
 from raspilot_implementation.commands.ahi_command_handler import SetNeutralAhiHandler
 from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
@@ -248,6 +249,9 @@ if __name__ == "__main__":
 
     # Notifier initialization
     builder.notifier = RaspilotNotifier(config.updates_namespace, config.updates_freq, config.updates_error_limit)
+
+    # Flight controller initialization
+    builder.flight_controller = RaspilotFlightController()
 
     raspilot = builder.build()
     raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")

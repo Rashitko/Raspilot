@@ -36,6 +36,7 @@ class Raspilot:
         self.__commands_executor.raspilot = self
         self.__custom_providers = raspilot_builder.custom_providers
         self.__notifier = raspilot_builder.notifier
+        self.__flight_controller = raspilot_builder.flight_controller
 
         self.__init_messages = []
 
@@ -45,8 +46,20 @@ class Raspilot:
         self.__init_gps_provider()
         self.__init_servo_controller()
         self.__init_notifier()
+        self.__init_flight_controller()
 
         self.__init_custom_providers()
+
+    def __init_flight_controller(self):
+        """
+        Initializes the FlightController if set
+        :return: returns nothing
+        """
+        if self.__flight_controller is not None:
+            self.__flight_controller.raspilot = self
+            self.__flight_controller.initialize()
+        else:
+            self.__logger.warning('Flight controller not available')
 
     def __init_websockets_provider(self):
         """
@@ -199,7 +212,21 @@ class Raspilot:
         if init_messages != [] and self.commands_executor:
             self.commands_executor.send_command(SpeakCommand(init_messages))
         self.__start_notifier()
+        if self.__start_flight_controller():
+            self.__logger.info('Flight controller started')
+        else:
+            self.__logger.warning('Flight controller failed to start')
+            init_messages.append('Warning! Flight controller failed to start')
         self.__stop_self_event.wait()
+
+    def __start_flight_controller(self):
+        """
+        Starts the flight controller if any.
+        :return: True if controller is set and started successfully, False otherwise
+        """
+        if self.__flight_controller:
+            return self.__flight_controller.start()
+        return True
 
     def __start_notifier(self):
         """
@@ -241,6 +268,8 @@ class Raspilot:
             self.__orientation_provider.stop()
         if self.__gps_provider:
             self.__gps_provider.stop()
+        if self.__flight_controller:
+            self.__flight_controller.stop()
         self.__stop_custom_providers()
         self.__stop_self_event.set()
 
@@ -298,7 +327,6 @@ class Raspilot:
             if request and command_id:
                 self.__commands_executor.notify_command_failed(command_name, data, command_id, response)
 
-    @property
     def named_provider(self, provider_name):
         """
         If provider with given name is available, then it is returned. Otherwise None is returned.
@@ -326,6 +354,10 @@ class Raspilot:
     def gps_provider(self):
         return self.__gps_provider
 
+    @property
+    def rx_provider(self):
+        return self.__rx_provider
+
 
 class RaspilotBuilder:
     """
@@ -345,6 +377,7 @@ class RaspilotBuilder:
         self.__commands_executor = None
         self.__custom_providers = []
         self.__notifier = None
+        self.__flight_controller = None
 
     def add_custom_provider(self, provider):
         """
@@ -413,6 +446,14 @@ class RaspilotBuilder:
     @notifier.setter
     def notifier(self, value):
         self.__notifier = value
+
+    @property
+    def flight_controller(self):
+        return self.__flight_controller
+
+    @flight_controller.setter
+    def flight_controller(self, value):
+        self.__flight_controller = value
 
     def build(self):
         """

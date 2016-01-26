@@ -52,8 +52,8 @@ class RaspilotRXProvider(RXProvider):
                 self.__run = True
                 self.__reading_thread = Thread(target=self.__read_serial_loop, name="RX_INPUT_THREAD")
                 self.__reading_thread.start()
-            except serial.SerialException:
-                pass
+            except serial.SerialException as e:
+                self.__logger.error(e)
         else:
             self.__logger.warn("Arduino NOT found")
         return self.__port is not None

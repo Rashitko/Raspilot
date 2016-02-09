@@ -6,19 +6,30 @@ from raspilot.providers.orientation_provider import OrientationProvider, Orienta
 from raspilot_implementation.pid.pid_controller import PID
 from raspilot_implementation.providers.socket_provider import SocketProvider
 
-FMT = "!hhhhhh"
-RECV_BYTES = struct.calcsize(FMT)
+SERIALIZATION_SCALE_FACTOR = 100
+
 MAX_CONNECTIONS = 1
 HOST = ''
 
 
 class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
+
+    MESSAGE_COMPONENTS = 6
+    FMT = '!' + 'h' * MESSAGE_COMPONENTS
+    RECV_BYTES = struct.calcsize(FMT)
+
+    ROLL_INDEX = 0
+    PITCH_INDEX = 1
+    AZIMUTH_INDEX = 2
+    X_ANGULAR_INDEX = 3
+    Y_ANGULAR_INDEX = 4
+    Z_ANGULAR_INDEX = 5
+
     def __init__(self, config):
-        SocketProvider.__init__(self, port=config.orientation_port, recv_size=RECV_BYTES)
+        SocketProvider.__init__(self, port=config.orientation_port, recv_size=RaspilotOrientationProvider.RECV_BYTES)
         OrientationProvider.__init__(self, config)
         self.__logger = logging.getLogger('raspilot.log')
         self.__orientation = None
-        self.__offset_orientation = Orientation(0, 0, 0)
         self.__prop_lock = RLock()
         self.__pitch_stabilise_pid = PID()
         self.__pitch_rate_pid = PID()
@@ -33,34 +44,33 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
         :return: returns nothing
         """
         with self.__prop_lock:
-            (roll, pitch, yaw, x_angular, y_angular, z_angular) = struct.unpack(FMT, data)
-            desired_pitch_rot_rate = self.__pitch_stabilise_pid.update(pitch)
-            # print("pitch stabilize PID: {0:.8f}".format(desired_pitch_rot_rate))
-            self.__pitch_rate_pid.setPoint(desired_pitch_rot_rate)
-            pidded_pitch = self.__pitch_rate_pid.update(x_angular)
-            # print("pitch rate PID: {0:.8f}".format(pidded_pitch))
-            self.__orientation = Orientation(roll, pitch, yaw)
+            self.__orientation = self.__read_orientation(struct.unpack(RaspilotOrientationProvider.FMT, data))
+
+    @staticmethod
+    def __read_orientation(orientation_tuple):
+        """
+        Reads the orientation from the orientation tuple. The tuple must have particular data under following keys:
+         RaspilotOrientationProvider#ROLL_INDEX
+         RaspilotOrientationProvider#ROLL_PITCH
+         RaspilotOrientationProvider#ROLL_AZIMUTH
+         RaspilotOrientationProvider#X_ANGULAR
+         RaspilotOrientationProvider#Y_ANGULAR
+         RaspilotOrientationProvider#Z_ANGULAR.
+        No exceptions are handled here.
+        :param orientation_tuple: tuple to read data from
+        :return: new Orientation
+        """
+        orientation_tuple = tuple(x / SERIALIZATION_SCALE_FACTOR for x in orientation_tuple)
+        roll = orientation_tuple[RaspilotOrientationProvider.ROLL_INDEX]
+        pitch = orientation_tuple[RaspilotOrientationProvider.PITCH_INDEX]
+        azimuth = orientation_tuple[RaspilotOrientationProvider.AZIMUTH_INDEX]
+        x_angular = orientation_tuple[RaspilotOrientationProvider.X_ANGULAR_INDEX]
+        y_angular = orientation_tuple[RaspilotOrientationProvider.Y_ANGULAR_INDEX]
+        z_angular = orientation_tuple[RaspilotOrientationProvider.Z_ANGULAR_INDEX]
+        return Orientation(roll, pitch, azimuth, x_angular, y_angular, z_angular)
 
     def current_orientation(self):
-        return self.__get_offset_orientation()
-
-    def __get_offset_orientation(self):
-        """
-        Returns orientation which is modified with the offsets. Offsets are set with the set_neutral method.
-        :return: returns Orientation
-        """
-        if self.__orientation:
-            return Orientation(
-                    self.__orientation.roll - self.__offset_orientation.roll,
-                    self.__orientation.pitch - self.__offset_orientation.pitch,
-                    self.__orientation.yaw)
-        else:
-            return None
-
-    def set_neutral(self):
-        self.__logger.info("Neutral orientation set.")
-        self.__offset_orientation = self.current_orientation()
-        return self.__offset_orientation is not None
+        return self.__orientation
 
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):
@@ -84,17 +94,23 @@ class Orientation:
     Wrapper class for the roll pitch and yaw angles.
     """
 
-    def __init__(self, roll, pitch, yaw):
+    def __init__(self, roll, pitch, yaw, x_angular, y_angular, z_angular):
         """
-        Creates a new 'Orientation' with roll, pitch and yaw angles specified.
+        Creates a new 'Orientation' with roll, pitch, yaw angles and angular speeds specified.
         :param roll: roll angle in degrees
         :param pitch: pitch angle in degrees
-        :param yaw: yaw andle in degrees
+        :param yaw: yaw angle in degrees
+        :param x_angular: angular speed around x-axis
+        :param y_angular: angular speed around y-axis
+        :param z_angular: angular speed around z-axis
         :return: returns nothing
         """
         self.__roll = roll
         self.__pitch = pitch
         self.__yaw = yaw
+        self.__x_angular = x_angular
+        self.__y_angular = y_angular
+        self.__z_angular = z_angular
 
     def to_json(self):
         return {'roll': self.roll, 'pitch': self.pitch, 'yaw': self.roll}
@@ -110,3 +126,15 @@ class Orientation:
     @property
     def yaw(self):
         return self.__yaw
+
+    @property
+    def x_angular(self):
+        return self.__x_angular
+
+    @property
+    def y_angular(self):
+        return self.__y_angular
+
+    @property
+    def z_angular(self):
+        return self.__z_angular

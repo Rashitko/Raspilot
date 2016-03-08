@@ -1,3 +1,5 @@
+import logging
+
 from raspilot.providers.gps_provider import GPSProvider, GPSProviderConfig
 from raspilot_implementation.commands.gps_location_handler import GPSLocationHandler
 
@@ -17,6 +19,10 @@ class RaspilotGPSProvider(GPSProvider):
     Custom implementation of the GPSProvider which is used in cooperation with the Android device.
     """
 
+    def __init__(self, config):
+        super().__init__(config)
+        self.__logger = logging.getLogger('raspilot.log')
+
     def start(self):
         """
         Adds a command handler for gps messages passed via the AndroidProvider.
@@ -33,6 +39,7 @@ class RaspilotGPSProvider(GPSProvider):
         :return: returns True if location was set, False otherwise
         """
         location = GPSLocation.create(data)
+        self.__logger.debug('Received location: {}'.format(location))
         if location:
             self._location = location
             return True

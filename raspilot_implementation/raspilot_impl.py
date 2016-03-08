@@ -1,4 +1,5 @@
 import socket
+import logging
 from threading import Thread
 
 from raspilot.raspilot import Raspilot, RaspilotBuilder
@@ -19,15 +20,17 @@ class RaspilotImpl(Raspilot):
         :param reply_port port to reply to with the discovery message
         :return: returns nothing
         """
+        logger = logging.getLogger('raspilot.log')
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(('', self.__discovery_port))
-        print("Waiting for discovery request...")
+        logger.info("Waiting for discovery request...")
         (_, address) = s.recvfrom(1024)
-        print("connection from address {}".format(address))
+        logger.info("connection from address {}".format(address))
         my_address = socket.gethostbyname(socket.gethostname()).encode('utf-8')
         reply_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         reply_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        logger.info('Replying to {}'.format(address[0]))
         reply_socket.sendto(bytes(my_address), (address[0], self.__reply_port))
         reply_socket.close()
         s.close()

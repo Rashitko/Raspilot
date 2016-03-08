@@ -18,7 +18,9 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         :param port: port to bind to
         :return: created socket which is bound to the specified port
         """
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        logger = logging.getLogger('raspilot.log')
+        logger.info('Opening socket on {}:{}'.format(HOST, port))
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, port))
         return s
@@ -31,7 +33,6 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         self.__socket = None
         self.__data_process_lock = RLock()
         self.__receive = True
-        self.__connection = None
         self.__address = None
         self.__socket_listening_event = Event()
         self.__client_connected_event = Event()
@@ -56,31 +57,20 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         is called
         :return: returns nothing
         """
-        self.__socket.listen(MAX_CONNECTIONS)
         self.__socket_listening_event.set()
         while self.__receive:
             try:
-                connection, address = self.__socket.accept()
-                self._on_client_connected(connection, address)
-                self.__logger.info("Client on address {} connected".format(address))
-                while self.__receive:
-                    try:
-                        with self.__data_process_lock:
-                            data = connection.recv(self.__recv_size)
-                            if not data:
-                                break
-                            self.__handle_data(data)
-                    except DataProcessingError:
-                        self.__logger.warning("Wrong data received, ignoring them")
-                    except OSError:
-                        pass
-                # connection.close()
-                # self.__logger.info("Connection closed")
-                self._on_connection_closed()
-            except ConnectionAbortedError:
-                pass
+                with self.__data_process_lock:
+                    (data, address) = self.__socket.recvfrom(1024)
+                    if not data:
+                        break
+                    self.__handle_data(data)
+            except DataProcessingError:
+                self.__logger.warning("Wring data received, ignoring them")
             except OSError:
                 pass
+        self.__socket.close()
+        self._on_connection_closed()
 
     def __handle_data(self, data):
         """
@@ -108,39 +98,25 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         Sets client connection and address to None
         :return: returns nothing
         """
-        self.__connection = None
         self.__address = None
         try:
             self.__queue.put_nowait(None)
         except Full:
             self.__logger.error("Message queue was full. Dropping the message.")
 
-    def _on_client_connected(self, connection, address):
+    def _on_client_connected(self, address):
         """
         Called when a client connects. Client connected event is set, so RaspilotOrientationProvider.wait_for_client()
         is no longer blocked.
-        :param connection: new connection
         :param address: client address
         :return: returns nothing
         """
-        self.__connection = connection
         self.__address = address
         self.__client_connected_event.set()
         Thread(target=self._send_loop, name="SOCKET_PROVIDER_OUT_{}".format(self.__class__.__name__)).start()
 
     def _send_loop(self):
-        self.__logger.debug("Starting send loop")
-        while self.__connection:
-            message = self.__queue.get()
-            if message and self.__connection:
-                self.__logger.info("Sending message to Android.\n{}".format(message))
-                self.__connection.send(message.encode())
-            else:
-                self.__logger.debug("message: {}, connection: {}, source:{}".format(message, self.__connection,
-                                                                                    self.__class__.__name__))
-                self.__logger.info("Client connection already closed or no messages available")
-            self.__queue.task_done()
-        self.__logger.debug("Exiting the send loop")
+        raise NotImplementedError("Send loop not implemented yet")
 
     def send(self, message):
         """
@@ -164,10 +140,6 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
     def stop(self):
         super().stop()
         self.__receive = False
-        if self.__connection:
-            self.__logger.debug("Shutting down and closing the connection")
-            self.__connection.shutdown(socket.SHUT_RDWR)
-            # self.__connection.close()
         if self.__socket:
             self.__socket.close()
         try:

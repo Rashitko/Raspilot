@@ -7,6 +7,7 @@ from threading import Thread
 
 from colorlog import ColoredFormatter
 
+from raspilot.alarmist import AlarmistConfig, Alarmist
 from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 
 from raspilot_implementation.RaspilotFlightController import RaspilotFlightController
@@ -75,6 +76,10 @@ class RaspilotConfig:
         self.__baud_rate = cfg.getint('ARDUINO', 'Baud rate')
 
         self.__black_box_delay = cfg.getint('BLACK BOX', 'Recording delay') / 1000
+
+        self.__panic_threshold = cfg.getint('UTILIZATION', 'Panic Threshold')
+        self.__calm_down_threshold = cfg.getint('UTILIZATION', 'Calm Down Threshold')
+        self.__utilization_delay = cfg.getint('UTILIZATION', 'Delay') / 1000
 
     @property
     def username(self):
@@ -167,6 +172,18 @@ class RaspilotConfig:
     @property
     def black_box_delay(self):
         return self.__black_box_delay
+
+    @property
+    def panic_threshold(self):
+        return self.__panic_threshold
+
+    @property
+    def calm_down_threshold(self):
+        return self.__calm_down_threshold
+
+    @property
+    def utilization_delay(self):
+        return self.__utilization_delay
 
 
 def logging_level_name_to_value(level_name):
@@ -262,10 +279,18 @@ if __name__ == "__main__":
     # Flight controller initialization
     builder.flight_controller = RaspilotFlightController()
 
+    # BlackBox controller initialization
     black_box_controller_config = BlackBoxControllerConfig()
     black_box_controller_config.delay = config.black_box_delay
     black_box_controller_config.black_box = RaspilotBlackBox()
     builder.black_box_controller = BlackBoxController(black_box_controller_config)
+
+    # Alarmist initialization
+    alarmist_config = AlarmistConfig()
+    alarmist_config.panic_threshold = config.panic_threshold
+    alarmist_config.calm_down_threshold = config.calm_down_threshold
+    alarmist_config.delay = config.utilization_delay
+    builder.alarmist = Alarmist(alarmist_config)
 
     raspilot = builder.build()
     raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")

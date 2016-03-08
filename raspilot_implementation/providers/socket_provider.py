@@ -19,7 +19,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         :return: created socket which is bound to the specified port
         """
         logger = logging.getLogger('raspilot.log')
-        logger.info('Opening socket on {}:{}'.format(HOST, port))
+        logger.debug('Opening socket on {}:{}'.format(HOST, port))
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, port))

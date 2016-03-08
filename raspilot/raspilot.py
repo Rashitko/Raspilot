@@ -1,6 +1,7 @@
 import logging
 from threading import Event
 
+from raspilot.alarmist import AlarmistConfig, Alarmist
 from raspilot.commands.commands_executor import CommandsExecutor, CommandExecutionError
 from raspilot.providers.orientation_provider import OrientationProvider
 from raspilot.providers.websockets_provider import WebsocketsProvider
@@ -30,6 +31,7 @@ class Raspilot:
         self.__gps_provider = raspilot_builder.gps_provider
         self.__servo_controller = raspilot_builder.servo_controller
         self.__black_box_controller = raspilot_builder.black_box_controller or BlackBoxController(BlackBoxControllerConfig())
+        self.__alarmist = raspilot_builder.alarmist or Alarmist(AlarmistConfig())
         self.__stop_self_event = Event()
         self.__init_complete_event = Event()
         self.__commands_executor = raspilot_builder.commands_executor
@@ -42,6 +44,10 @@ class Raspilot:
 
         self.__init_messages = []
 
+        self.__alarmist.raspilot = self
+        self.__alarmist.initialize()
+        self.__black_box_controller.raspilot = self
+        self.__black_box_controller.initialize()
         self.__init_rx_provider()
         self.__init_websockets_provider()
         self.__init_orientation_provider()
@@ -179,12 +185,17 @@ class Raspilot:
         :return: return nothing
         """
         init_messages = []
+        self.__logger.info('Starting Raspilot...')
+        if self.__alarmist.on_start():
+            self.__logger.info('Alarmist started')
+        else:
+            self.__logger.error('Alarmist failed to start')
+            init_messages.append('Error! Alarmist failed to start')
         if self.__black_box_controller.on_start():
             self.__logger.info('BlackBox controller started')
         else:
             self.__logger.error('BlackBox controller failed to start')
             init_messages.append('Error! Black box controller failed to start')
-        self.__logger.info('Starting Raspilot...')
         if self._start_rx_provider():
             self.__logger.info('RX provider started')
         else:
@@ -287,6 +298,7 @@ class Raspilot:
             self.__flight_controller.stop()
         self.__stop_custom_providers()
         self.__black_box_controller.on_stop()
+        self.__alarmist.on_stop()
         self._after_stop()
         self.__stop_self_event.set()
 
@@ -393,6 +405,7 @@ class RaspilotBuilder:
         Constructs a new 'RaspilotBuilder' with all providers set as None.
         :return: returns nothing
         """
+        self.__alarmist = None
         self.__websockets_provider = WebsocketsProvider
         self.__rx_provider = None
         self.__orientation_provider = OrientationProvider
@@ -487,6 +500,14 @@ class RaspilotBuilder:
     @black_box_controller.setter
     def black_box_controller(self, value):
         self.__black_box_controller = value
+
+    @property
+    def alarmist(self):
+        return self.__alarmist
+
+    @alarmist.setter
+    def alarmist(self, value):
+        self.__alarmist = value
 
     def build(self):
         """

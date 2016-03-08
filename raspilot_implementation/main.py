@@ -258,7 +258,6 @@ if __name__ == "__main__":
     raspilot_thread.start()
     try:
         raspilot.wait_for_init_complete()
-        raspilot.enable_discovery()
         raspilot_thread.join()
     except KeyboardInterrupt:
         pass

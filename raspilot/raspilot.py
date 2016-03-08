@@ -206,18 +206,26 @@ class Raspilot:
 
         # TODO: servo controller
 
-        self.__init_complete_event.set()
         self.__logger.info('Initialization complete, Raspilot is now running!')
         init_messages.append('Initialization complete.')
-        if init_messages != [] and self.commands_executor:
-            self.commands_executor.send_command(SpeakCommand(init_messages))
         self.__start_notifier()
         if self.__start_flight_controller():
             self.__logger.info('Flight controller started')
         else:
             self.__logger.warning('Flight controller failed to start')
             init_messages.append('Warning! Flight controller failed to start')
+        self.__init_complete_event.set()
+        if init_messages != [] and self.commands_executor:
+            self.commands_executor.send_command(SpeakCommand(init_messages))
+        self._after_start()
         self.__stop_self_event.wait()
+
+    def _after_start(self):
+        """
+        Callback after start of the Raspilot.
+        :return: returns nothing
+        """
+        pass
 
     def __start_flight_controller(self):
         """
@@ -271,7 +279,15 @@ class Raspilot:
         if self.__flight_controller:
             self.__flight_controller.stop()
         self.__stop_custom_providers()
+        self._after_stop()
         self.__stop_self_event.set()
+
+    def _after_stop(self):
+        """
+        Callback after stop of the Raspilot
+        :return: returns nothing
+        """
+        pass
 
     def __stop_custom_providers(self):
         """

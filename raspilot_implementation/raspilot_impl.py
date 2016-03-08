@@ -1,3 +1,5 @@
+import logging
+
 from raspilot.raspilot import Raspilot, RaspilotBuilder
 from raspilot_implementation.disocvery.discovery_service import DiscoveryService
 
@@ -5,6 +7,7 @@ from raspilot_implementation.disocvery.discovery_service import DiscoveryService
 class RaspilotImpl(Raspilot):
     def __init__(self, raspilot_builder):
         super().__init__(raspilot_builder)
+        self.__logger = logging.getLogger('raspilot.log')
         self.__discovery_service = DiscoveryService(raspilot_builder.discovery_port, raspilot_builder.reply_port)
 
     def _after_start(self):
@@ -22,6 +25,17 @@ class RaspilotImpl(Raspilot):
         """
         super()._after_stop()
         self.__discovery_service.disable_discovery()
+
+    def _start_flight_controller(self):
+        """
+        Starts the flight controller only if the RX provider is available. Otherwise false is returned.
+        :return: result of the controller's start, or False if the RX provider is not available
+        """
+        if self.rx_provider.started:
+            return super()._start_flight_controller()
+        else:
+            self.__logger.warn('RX provider not available, skipping start of the flight controller')
+            return False
 
 
 class RaspilotImplBuilder(RaspilotBuilder):

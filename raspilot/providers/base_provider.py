@@ -11,6 +11,7 @@ class BaseProvider(object):
         :return: returns nothing
         """
         self.__raspilot = None
+        self.__started = False
         if name:
             self.__name = name
         else:
@@ -23,6 +24,13 @@ class BaseProvider(object):
         """
         pass
 
+    def on_start(self):
+        """
+        Called by the Raspilot, starts the provider. Subclasses should override start method instead of this one.
+        :return: returns nothing
+        """
+        self.__started = self.start()
+
     def start(self):
         """
         Called after initializations, can be called multiple times.
@@ -31,6 +39,13 @@ class BaseProvider(object):
         if not self.__raspilot:
             raise ValueError("Raspilot must be set prior to start")
         return False
+
+    def on_stop(self):
+        """
+        Called by the Raspilot, stops the provider. Subclasses should override stop method instead of this one.
+        :return: returns nothing
+        """
+        self.__started = not self.stop()
 
     def stop(self):
         """
@@ -51,6 +66,10 @@ class BaseProvider(object):
     def name(self):
         return self.__name
 
+    @property
+    def started(self):
+        return self.__started
+
 
 class BaseProviderConfig:
     """
@@ -59,4 +78,3 @@ class BaseProviderConfig:
 
     def __init__(self):
         pass
-

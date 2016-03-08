@@ -135,40 +135,40 @@ class Raspilot:
             self.__notifier.raspilot = self
             self.__notifier.initialize()
 
-    def __start_rx_provider(self):
+    def _start_rx_provider(self):
         """
         starts the RXProvider if a provider is set
         :return: returns True, if no provider is set, else return the result of provider start
         """
         if self.__rx_provider is not None:
-            return self.__rx_provider.start()
+            return self.__rx_provider.on_start()
         return True
 
-    def __start_websockets_provider(self):
+    def _start_websockets_provider(self):
         """
         starts the WebsocketsProvider if a provider is set
         :return: returns True, if no provider is set, else return the result of provider start
         """
         if self.__websockets_provider is not None:
-            return self.__websockets_provider.start()
+            return self.__websockets_provider.on_start()
         return True
 
-    def __start_orientation_provider(self):
+    def _start_orientation_provider(self):
         """
         starts the OrientationProvider if a provider is set
         :return: returns True, if no provider is set, else return the result of provider start
         """
         if self.__orientation_provider is not None:
-            return self.__orientation_provider.start()
+            return self.__orientation_provider.on_start()
         return True
 
-    def __start_gps_provider(self):
+    def _start_gps_provider(self):
         """
         Starts the GPSProvider if a provider is set.
         :return: returns True, if no provider is set, else return the result of provider start
         """
         if self.__gps_provider is not None:
-            return self.__gps_provider.start()
+            return self.__gps_provider.on_start()
         return True
 
     def start(self):
@@ -178,38 +178,38 @@ class Raspilot:
         """
         init_messages = []
         self.__logger.info('Starting Raspilot...')
-        if self.__start_rx_provider():
+        if self._start_rx_provider():
             self.__logger.info('RX provider started')
         else:
             self.__logger.warning('RX provider failed to start')
             init_messages.append('Warning! Receiver provider failed to start.')
 
-        if self.__start_websockets_provider():
+        if self._start_websockets_provider():
             self.__logger.info('Websockets provider started')
         else:
             self.__logger.warning('Websockets provider failed to start')
             init_messages.append('Warning! Websocket provider failed to start.')
 
-        if self.__start_orientation_provider():
+        if self._start_orientation_provider():
             self.__logger.info('Orientation provider started')
         else:
             self.__logger.warning('Orientation provider failed to start')
             init_messages.append('Warning! Orientation provider failed to start.')
 
-        if self.__start_gps_provider():
+        if self._start_gps_provider():
             self.__logger.info('GPS provider started')
         else:
             self.__logger.warning('GPS provider failed to start')
             init_messages.append('Warning! GPS provider failed to start')
 
-        self.__start_custom_providers(init_messages)
+        self._start_custom_providers(init_messages)
 
         # TODO: servo controller
 
         self.__logger.info('Initialization complete, Raspilot is now running!')
         init_messages.append('Initialization complete.')
-        self.__start_notifier()
-        if self.__start_flight_controller():
+        self._start_notifier()
+        if self._start_flight_controller():
             self.__logger.info('Flight controller started')
         else:
             self.__logger.warning('Flight controller failed to start')
@@ -227,16 +227,16 @@ class Raspilot:
         """
         pass
 
-    def __start_flight_controller(self):
+    def _start_flight_controller(self):
         """
         Starts the flight controller if any.
         :return: True if controller is set and started successfully, False otherwise
         """
         if self.__flight_controller:
-            return self.__flight_controller.start()
+            return self.__flight_controller.on_start()
         return True
 
-    def __start_notifier(self):
+    def _start_notifier(self):
         """
         Starts the notifier if any.
         :return: returns nothing
@@ -244,13 +244,13 @@ class Raspilot:
         if self.__notifier:
             self.__notifier.start()
 
-    def __start_custom_providers(self, init_messages):
+    def _start_custom_providers(self, init_messages):
         """
         Starts custom providers, if any.
         :return: returns nothing
         """
         for provider in self.__custom_providers:
-            started = provider.start()
+            started = provider.on_start()
             name = provider.__class__.__name__
             if started:
                 self.__logger.info("Custom provider '{}' started".format(name))
@@ -269,15 +269,15 @@ class Raspilot:
         if self.__notifier:
             self.__notifier.stop()
         if self.__rx_provider:
-            self.__rx_provider.stop()
+            self.__rx_provider.on_stop()
         if self.__websockets_provider:
-            self.__websockets_provider.stop()
+            self.__websockets_provider.on_stop()
         if self.__orientation_provider:
-            self.__orientation_provider.stop()
+            self.__orientation_provider.on_stop()
         if self.__gps_provider:
-            self.__gps_provider.stop()
+            self.__gps_provider.on_stop()
         if self.__flight_controller:
-            self.__flight_controller.stop()
+            self.__flight_controller.on_stop()
         self.__stop_custom_providers()
         self._after_stop()
         self.__stop_self_event.set()
@@ -295,7 +295,7 @@ class Raspilot:
         :return: returns nothing
         """
         for provider in self.__custom_providers:
-            provider.stop()
+            provider.on_stop()
 
     def wait_for_init_complete(self):
         """

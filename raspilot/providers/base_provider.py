@@ -30,6 +30,7 @@ class BaseProvider(object):
         :return: returns nothing
         """
         self.__started = self.start()
+        return self.__started
 
     def start(self):
         """
@@ -46,6 +47,7 @@ class BaseProvider(object):
         :return: returns nothing
         """
         self.__started = not self.stop()
+        return not self.started
 
     def stop(self):
         """

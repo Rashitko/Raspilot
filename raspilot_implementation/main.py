@@ -7,7 +7,10 @@ from threading import Thread
 
 from colorlog import ColoredFormatter
 
+from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
+
 from raspilot_implementation.RaspilotFlightController import RaspilotFlightController
+from raspilot_implementation.black_box.black_box import RaspilotBlackBox
 from raspilot_implementation.raspilot_impl import RaspilotImplBuilder
 from raspilot_implementation.commands.ahi_command_handler import SetNeutralAhiHandler
 from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
@@ -70,6 +73,8 @@ class RaspilotConfig:
         self.__updates_error_limit = cfg.getint('TELEMETRY', 'Error limit')
 
         self.__baud_rate = cfg.getint('ARDUINO', 'Baud rate')
+
+        self.__black_box_delay = cfg.getint('BLACK BOX', 'Recording delay') / 1000
 
     @property
     def username(self):
@@ -158,6 +163,10 @@ class RaspilotConfig:
     @property
     def baud_rate(self):
         return self.__baud_rate
+
+    @property
+    def black_box_delay(self):
+        return self.__black_box_delay
 
 
 def logging_level_name_to_value(level_name):
@@ -252,6 +261,11 @@ if __name__ == "__main__":
 
     # Flight controller initialization
     builder.flight_controller = RaspilotFlightController()
+
+    black_box_controller_config = BlackBoxControllerConfig()
+    black_box_controller_config.delay = config.black_box_delay
+    black_box_controller_config.black_box = RaspilotBlackBox()
+    builder.black_box_controller = BlackBoxController(black_box_controller_config)
 
     raspilot = builder.build()
     raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")

@@ -5,6 +5,9 @@ from raspilot_implementation.disocvery.discovery_service import DiscoveryService
 
 
 class RaspilotImpl(Raspilot):
+    """
+    Custom implementation of the Raspilot. Adds the discovery service for the Android devices.
+    """
     def __init__(self, raspilot_builder):
         super().__init__(raspilot_builder)
         self.__logger = logging.getLogger('raspilot.log')

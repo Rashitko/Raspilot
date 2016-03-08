@@ -5,6 +5,7 @@ from raspilot.commands.commands_executor import CommandsExecutor, CommandExecuti
 from raspilot.providers.orientation_provider import OrientationProvider
 from raspilot.providers.websockets_provider import WebsocketsProvider
 from raspilot_implementation.commands.speak_command import SpeakCommand
+from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 
 
 def nop():
@@ -28,6 +29,7 @@ class Raspilot:
         self.__orientation_provider = raspilot_builder.orientation_provider
         self.__gps_provider = raspilot_builder.gps_provider
         self.__servo_controller = raspilot_builder.servo_controller
+        self.__black_box_controller = raspilot_builder.black_box_controller or BlackBoxController(BlackBoxControllerConfig())
         self.__stop_self_event = Event()
         self.__init_complete_event = Event()
         self.__commands_executor = raspilot_builder.commands_executor
@@ -177,29 +179,34 @@ class Raspilot:
         :return: return nothing
         """
         init_messages = []
+        if self.__black_box_controller.on_start():
+            self.__logger.info('BlackBox controller started')
+        else:
+            self.__logger.error('BlackBox controller failed to start')
+            init_messages.append('Error! Black box controller failed to start')
         self.__logger.info('Starting Raspilot...')
         if self._start_rx_provider():
             self.__logger.info('RX provider started')
         else:
-            self.__logger.warning('RX provider failed to start')
+            self.__logger.error('RX provider failed to start')
             init_messages.append('Warning! Receiver provider failed to start.')
 
         if self._start_websockets_provider():
             self.__logger.info('Websockets provider started')
         else:
-            self.__logger.warning('Websockets provider failed to start')
+            self.__logger.error('Websockets provider failed to start')
             init_messages.append('Warning! Websocket provider failed to start.')
 
         if self._start_orientation_provider():
             self.__logger.info('Orientation provider started')
         else:
-            self.__logger.warning('Orientation provider failed to start')
+            self.__logger.error('Orientation provider failed to start')
             init_messages.append('Warning! Orientation provider failed to start.')
 
         if self._start_gps_provider():
             self.__logger.info('GPS provider started')
         else:
-            self.__logger.warning('GPS provider failed to start')
+            self.__logger.error('GPS provider failed to start')
             init_messages.append('Warning! GPS provider failed to start')
 
         self._start_custom_providers(init_messages)
@@ -255,12 +262,12 @@ class Raspilot:
             if started:
                 self.__logger.info("Custom provider '{}' started".format(name))
             else:
-                self.__logger.warning("Custom provider '{}' failed to start".format(name))
+                self.__logger.error("Custom provider '{}' failed to start".format(name))
                 init_messages.append('Warning! Custom provider {} failed to start'.format(name))
 
     def stop(self):
         """
-        Stops all available providers, notifier and then stops self.
+        Stops all available providers, notifier, black box and then stops self.
         :return: return nothing
         """
         self.__logger.info('Stopping Raspilot')
@@ -277,8 +284,9 @@ class Raspilot:
         if self.__gps_provider:
             self.__gps_provider.on_stop()
         if self.__flight_controller:
-            self.__flight_controller.on_stop()
+            self.__flight_controller.stop()
         self.__stop_custom_providers()
+        self.__black_box_controller.on_stop()
         self._after_stop()
         self.__stop_self_event.set()
 
@@ -394,6 +402,7 @@ class RaspilotBuilder:
         self.__custom_providers = []
         self.__notifier = None
         self.__flight_controller = None
+        self.__black_box_controller = None
 
     def add_custom_provider(self, provider):
         """
@@ -470,6 +479,14 @@ class RaspilotBuilder:
     @flight_controller.setter
     def flight_controller(self, value):
         self.__flight_controller = value
+
+    @property
+    def black_box_controller(self):
+        return self.__black_box_controller
+
+    @black_box_controller.setter
+    def black_box_controller(self, value):
+        self.__black_box_controller = value
 
     def build(self):
         """

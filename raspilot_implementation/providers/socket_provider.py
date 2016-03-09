@@ -32,10 +32,10 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         self.__recv_size = recv_size
         self.__socket = None
         self.__data_process_lock = RLock()
-        self.__receive = True
-        self.__address = None
+        self.__run = True
+        self.__client_address = None
         self.__socket_listening_event = Event()
-        self.__client_connected_event = Event()
+        self.__client_available_event = Event()
         self.__queue = Queue()
         self.__recv_lock = RLock()
 
@@ -45,6 +45,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         try:
             self.__socket = self.__create_socket(self.__port)
             Thread(target=self._process, name="SOCKET_PROVIDER_IN_{}".format(self.__class__.__name__)).start()
+            Thread(target=self._send_loop, name="SOCKET_PROVIDER_OUT_{}".format(self.__class__.__name__)).start()
             self.__socket_listening_event.wait()
             return True
         except Exception as e:
@@ -53,24 +54,26 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
 
     def _process(self):
         """
-        Opens the socket and waits for the connection, then receives data until SocketProvider.stop()
-        is called
+        Opens the socket and receives data until SocketProvider.stop() is called.
         :return: returns nothing
         """
         self.__socket_listening_event.set()
-        while self.__receive:
+        while self.__run:
             try:
                 with self.__data_process_lock:
                     (data, address) = self.__socket.recvfrom(1024)
                     if not data:
                         break
+                    if address:
+                        self.client_address = address[0]
+                        if not self.__client_available_event.is_set():
+                            self.__client_available_event.set()
                     self.__handle_data(data)
             except DataProcessingError:
-                self.__logger.warning("Wring data received, ignoring them")
+                self.__logger.warning("Wrong data received, ignoring them")
             except OSError:
                 pass
         self.__socket.close()
-        self._on_connection_closed()
 
     def __handle_data(self, data):
         """
@@ -93,30 +96,15 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         """
         pass
 
-    def _on_connection_closed(self):
-        """
-        Sets client connection and address to None
-        :return: returns nothing
-        """
-        self.__address = None
-        try:
-            self.__queue.put_nowait(None)
-        except Full:
-            self.__logger.error("Message queue was full. Dropping the message.")
-
-    def _on_client_connected(self, address):
-        """
-        Called when a client connects. Client connected event is set, so RaspilotOrientationProvider.wait_for_client()
-        is no longer blocked.
-        :param address: client address
-        :return: returns nothing
-        """
-        self.__address = address
-        self.__client_connected_event.set()
-        Thread(target=self._send_loop, name="SOCKET_PROVIDER_OUT_{}".format(self.__class__.__name__)).start()
-
     def _send_loop(self):
-        raise NotImplementedError("Send loop not implemented yet")
+        self.__client_available_event.wait()
+        while self.__run:
+            data = self.__queue.get()
+            if data:
+                self.__logger.info('Sending data to Android device on {}:{}'.format(self.__client_address, self.__port))
+                self.__socket.sendto(data, (self.__client_address, self.__port))
+            self.__queue.task_done()
+        self.__logger.debug('Exiting send loop')
 
     def send(self, message):
         """
@@ -125,27 +113,29 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         :return: returns nothing
         """
         try:
-            self.__queue.put_nowait(message)
+            self.__queue.put_nowait(bytes(message.encode('UTF-8')))
         except Full:
             self.__logger.error("Message queue was full. Dropping the message.")
 
-    def wait_for_client(self):
-        """
-        Returns when a new client is connected.
-        :return: returns client address
-        """
-        self.__client_connected_event.wait()
-        return self.__address
-
     def stop(self):
         super().stop()
-        self.__receive = False
+        self.__run = False
         if self.__socket:
             self.__socket.close()
         try:
             self.__queue.put_nowait(None)
         except Full:
             self.__logger.error("Message queue was full. Dropping the message.")
+        self.__client_available_event.set()
+
+    @property
+    def client_address(self):
+        return self.__client_address
+
+    @client_address.setter
+    def client_address(self, value):
+        self.__client_address = value
+        self.__client_available_event.set()
 
 
 class DataProcessingError(Exception):

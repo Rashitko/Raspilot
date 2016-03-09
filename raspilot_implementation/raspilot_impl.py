@@ -11,7 +11,7 @@ class RaspilotImpl(Raspilot):
     def __init__(self, raspilot_builder):
         super().__init__(raspilot_builder)
         self.__logger = logging.getLogger('raspilot.log')
-        self.__discovery_service = DiscoveryService(raspilot_builder.discovery_port, raspilot_builder.reply_port)
+        self.__discovery_service = DiscoveryService(raspilot_builder.discovery_port, raspilot_builder.reply_port, self)
 
     def _after_start(self):
         """

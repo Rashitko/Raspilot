@@ -2,11 +2,11 @@ import logging
 from threading import Event
 
 from raspilot.alarmist import AlarmistConfig, Alarmist
+from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 from raspilot.commands.commands_executor import CommandsExecutor, CommandExecutionError
 from raspilot.providers.orientation_provider import OrientationProvider
 from raspilot.providers.websockets_provider import WebsocketsProvider
 from raspilot_implementation.commands.speak_command import SpeakCommand
-from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 
 
 def nop():
@@ -30,7 +30,8 @@ class Raspilot:
         self.__orientation_provider = raspilot_builder.orientation_provider
         self.__gps_provider = raspilot_builder.gps_provider
         self.__servo_controller = raspilot_builder.servo_controller
-        self.__black_box_controller = raspilot_builder.black_box_controller or BlackBoxController(BlackBoxControllerConfig())
+        self.__black_box_controller = raspilot_builder.black_box_controller or BlackBoxController(
+            BlackBoxControllerConfig())
         self.__alarmist = raspilot_builder.alarmist or Alarmist(AlarmistConfig())
         self.__stop_self_event = Event()
         self.__init_complete_event = Event()
@@ -362,6 +363,14 @@ class Raspilot:
         except CommandExecutionError:
             if request and command_id:
                 self.__commands_executor.notify_command_failed(command_name, data, command_id, response)
+
+    def send_command(self, command):
+        """
+        Sends the command via.
+        :param command: command to be sent
+        :return: returns nothing
+        """
+        self.__commands_executor.send_command(command)
 
     def named_provider(self, provider_name):
         """

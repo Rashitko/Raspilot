@@ -37,8 +37,12 @@ class Alarmist(BaseProvider):
         while self.__control:
             utilization = psutil.cpu_percent()
             if utilization > self.__panic_threshold and self.__state is not STATE_WAS_PANIC:
+                self.__logger.warn('PANIC MODE, UTILIZATION {}'.format(utilization))
+                self.__state = STATE_WAS_PANIC
                 self._panic(utilization)
             elif utilization < self.__calm_down_threshold and self.__state is not STATE_WAS_OK:
+                self.__logger.warn('CALMED DOWN, UTILIZATION {}'.format(utilization))
+                self.__state = STATE_WAS_OK
                 self._calm_down(utilization)
             time.sleep(self.__delay)
         self.__control_thread = None
@@ -48,12 +52,22 @@ class Alarmist(BaseProvider):
         return True
 
     def _panic(self, utilization):
-        self.__logger.warn('PANIC MODE, UTILIZATION {}'.format(utilization))
-        self.__state = STATE_WAS_PANIC
+        """
+        Called once, when the panic mode is entered. Subclasses should execute operations related to entering panic
+        mode.
+        :param utilization: cpu utilization percentage when entered panic mode
+        :return: returns nothing
+        """
+        pass
 
     def _calm_down(self, utilization):
-        self.__logger.warn('CALMED DOWN, UTILIZATION {}'.format(utilization))
-        self.__state = STATE_WAS_OK
+        """
+        Called once, when the calm down mode is entered. Subclasses should execute operations related to exiting panic
+        mode.
+        :param utilization: cpu utilization percentage when entered calm down mode
+        :return: returns nothing
+        """
+        pass
 
 
 class AlarmistConfig(BaseProviderConfig):

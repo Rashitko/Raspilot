@@ -7,12 +7,9 @@ from threading import Thread
 
 from colorlog import ColoredFormatter
 
-from raspilot.alarmist import AlarmistConfig, Alarmist
 from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
-
 from raspilot_implementation.RaspilotFlightController import RaspilotFlightController
 from raspilot_implementation.black_box.black_box import RaspilotBlackBox
-from raspilot_implementation.raspilot_impl import RaspilotImplBuilder
 from raspilot_implementation.commands.ahi_command_handler import SetNeutralAhiHandler
 from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
 from raspilot_implementation.notifier.RaspilotNotifier import RaspilotNotifier
@@ -22,6 +19,8 @@ from raspilot_implementation.providers.orientation_provider import (RaspilotOrie
                                                                     RaspilotOrientationProviderConfig)
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
 from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
+from raspilot_implementation.raspilot_alarmist import RaspilotAlarmist, RaspilotAlarmistConfig
+from raspilot_implementation.raspilot_impl import RaspilotImplBuilder
 
 LOGS_DIR_PATH = '../logs/'
 
@@ -79,7 +78,9 @@ class RaspilotConfig:
 
         self.__panic_threshold = cfg.getint('UTILIZATION', 'Panic Threshold')
         self.__calm_down_threshold = cfg.getint('UTILIZATION', 'Calm Down Threshold')
-        self.__utilization_delay = cfg.getint('UTILIZATION', 'Delay') / 1000
+        self.__utilization_delay = cfg.getint('UTILIZATION', 'Check Delay') / 1000
+        self.__panic_delay = cfg.getint('UTILIZATION', 'Panic Delay') / 1000
+        self.__calm_down_delay = cfg.getint('UTILIZATION', 'Calm Down Delay') / 1000
 
     @property
     def username(self):
@@ -185,6 +186,14 @@ class RaspilotConfig:
     def utilization_delay(self):
         return self.__utilization_delay
 
+    @property
+    def panic_delay(self):
+        return self.__panic_delay
+
+    @property
+    def calm_down_delay(self):
+        return self.__calm_down_delay
+
 
 def logging_level_name_to_value(level_name):
     """
@@ -286,11 +295,13 @@ if __name__ == "__main__":
     builder.black_box_controller = BlackBoxController(black_box_controller_config)
 
     # Alarmist initialization
-    alarmist_config = AlarmistConfig()
+    alarmist_config = RaspilotAlarmistConfig()
     alarmist_config.panic_threshold = config.panic_threshold
     alarmist_config.calm_down_threshold = config.calm_down_threshold
     alarmist_config.delay = config.utilization_delay
-    builder.alarmist = Alarmist(alarmist_config)
+    alarmist_config.panic_delay = config.panic_delay
+    alarmist_config.calm_down_delay = config.calm_down_delay
+    builder.alarmist = RaspilotAlarmist(alarmist_config)
 
     raspilot = builder.build()
     raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")

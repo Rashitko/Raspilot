@@ -2,13 +2,17 @@ import logging
 import socket
 from threading import Thread
 
+from raspilot.raspilot import Raspilot
+from raspilot_implementation.providers.android_provider import AndroidProvider
+
 
 class DiscoveryService:
     """
     Classed used in the discovery stage by the Android device.
     """
 
-    def __init__(self, discovery_port, reply_port):
+    def __init__(self, discovery_port, reply_port, raspilot):
+        self.__raspilot = raspilot
         self.__discovery_port = discovery_port
         self.__reply_port = reply_port
         self.__discovery_thread = None
@@ -35,6 +39,10 @@ class DiscoveryService:
                 self.__logger.info('Replying to {}'.format(address[0]))
                 reply_socket.sendto(bytes(my_address), (address[0], self.__reply_port))
                 reply_socket.close()
+                self.__raspilot.orientation_provider.client_address = address[0]
+                provider = self.__raspilot.named_provider(AndroidProvider.NAME)
+                if provider:
+                    provider.client_address = address[0]
         except OSError:
             pass
         self.__logger.debug('Discovery shut down')

@@ -1,4 +1,5 @@
 import json
+import logging
 
 import raspilot.providers.base_provider
 import raspilot_implementation.providers.socket_provider
@@ -25,6 +26,7 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
         :return: returns nothing
         """
         super().__init__(config.port, RECV_SIZE, AndroidProvider.NAME)
+        self.__logger = logging.getLogger('raspilot.log')
 
     def _on_data_received(self, data):
         """
@@ -57,6 +59,8 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
         :param command: command to be sent
         :return: returns nothing
         """
+        self.__logger.info('Sending command {} to Android'.format(command.name))
+        self.__logger.debug('Command contains data {}'.format(command.data))
         self.send(json.dumps(command.serialize()) + '\n')
 
     @staticmethod

@@ -30,6 +30,7 @@ class RaspilotNotifier(BaseNotifier):
         """
         orientation = self.raspilot.orientation_provider.current_orientation()
         location = self.raspilot.gps_provider.location
+        utilization = self.raspilot.alarmist.utilization
         if orientation:
             orientation_data = orientation.to_json()
         else:
@@ -38,7 +39,11 @@ class RaspilotNotifier(BaseNotifier):
             location_data = location.to_json()
         else:
             location_data = {'error': {'message': 'current location was null'}}
-        data = {'orientation': orientation_data, 'location': location_data}
+        if utilization:
+            utilization_data = {'cpu': utilization}
+        else:
+            utilization_data = {'error': {'message': 'current location was null'}}
+        data = {'orientation': orientation_data, 'location': location_data, 'utilization': utilization_data}
         self.__logger.log(TRANSMISSION_LOG_LEVEL, "Sending telemetry update: {}".format(data))
         return data
 

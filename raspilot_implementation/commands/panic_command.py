@@ -12,10 +12,21 @@ class PanicCommand(RaspilotCommand):
     Name of the command
     """
 
-    def __init__(self, delay):
-        super().__init__(PanicCommand.NAME, {'delay': delay}, False, None, target=RaspilotCommand.TARGET_ANDROID)
+    def __init__(self, panic, delay, utilization):
+        super().__init__(PanicCommand.NAME, {'delay': delay, 'panic': panic, 'utilization': utilization}, False, None,
+                         target=RaspilotCommand.TARGET_ANDROID)
         self.__delay = delay
+        self.__panic = panic
+        self.__utilization = utilization
 
     @property
     def delay(self):
         return self.__delay
+
+    @property
+    def panic(self):
+        return self.__panic
+
+    @property
+    def utilization(self):
+        return self.__utilization

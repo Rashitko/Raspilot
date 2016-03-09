@@ -403,6 +403,10 @@ class Raspilot:
     def rx_provider(self):
         return self.__rx_provider
 
+    @property
+    def alarmist(self):
+        return self.__alarmist
+
 
 class RaspilotBuilder:
     """

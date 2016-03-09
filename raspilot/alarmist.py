@@ -26,6 +26,7 @@ class Alarmist(BaseProvider):
         self.__control = True
         self.__control_thread = None
         self.__state = STATE_WAS_OK
+        self.__utilization = 0
 
     def start(self):
         if self.__control_thread is None:
@@ -35,15 +36,15 @@ class Alarmist(BaseProvider):
 
     def __control_loop(self):
         while self.__control:
-            utilization = psutil.cpu_percent()
-            if utilization > self.__panic_threshold and self.__state is not STATE_WAS_PANIC:
-                self.__logger.warn('PANIC MODE, UTILIZATION {}'.format(utilization))
+            self.__utilization = psutil.cpu_percent()
+            if self.__utilization > self.__panic_threshold and self.__state is not STATE_WAS_PANIC:
+                self.__logger.warn('PANIC MODE, UTILIZATION {}'.format(self.__utilization))
                 self.__state = STATE_WAS_PANIC
-                self._panic(utilization)
-            elif utilization < self.__calm_down_threshold and self.__state is not STATE_WAS_OK:
-                self.__logger.warn('CALMED DOWN, UTILIZATION {}'.format(utilization))
+                self._panic(self.__utilization)
+            elif self.__utilization < self.__calm_down_threshold and self.__state is not STATE_WAS_OK:
+                self.__logger.warn('CALMED DOWN, UTILIZATION {}'.format(self.__utilization))
                 self.__state = STATE_WAS_OK
-                self._calm_down(utilization)
+                self._calm_down(self.__utilization)
             time.sleep(self.__delay)
         self.__control_thread = None
 
@@ -68,6 +69,10 @@ class Alarmist(BaseProvider):
         :return: returns nothing
         """
         pass
+
+    @property
+    def utilization(self):
+        return self.__utilization
 
 
 class AlarmistConfig(BaseProviderConfig):

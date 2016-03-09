@@ -36,7 +36,7 @@ class BlackBoxController(BaseProvider):
         Notifies the black box to record the current status and sleeps for the specified amount of time
         :return: returns nothing
         """
-        self.__logger.debug('Starting BlackBox with delay interval {}ms'.format(self.__delay))
+        self.__logger.debug('Starting BlackBox with delay interval {}ms'.format(self.__delay * 1000))
         while self.__record:
             self.__black_box.record()
             time.sleep(self.__delay)

@@ -38,7 +38,7 @@ class BlackBoxController(BaseProvider):
         """
         self.__logger.debug('Starting BlackBox with delay interval {}ms'.format(self.__delay * 1000))
         while self.__record:
-            self.__black_box.record()
+            self.__black_box.record(self.raspilot)
             time.sleep(self.__delay)
         self.__logger.info('BlackBox recordings stopped.')
         self.__recording_thread = None
@@ -81,9 +81,10 @@ class BlackBox:
     relevant data in this method.
     """
 
-    def record(self):
+    def record(self, raspilot):
         """
         Called periodically by the BlackBoxController. Relevant data should be persisted for additional analysis.
+        :param raspilot raspilot instance
         :return: returns nothing
         """
         pass

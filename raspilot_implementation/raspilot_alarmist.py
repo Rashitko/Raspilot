@@ -36,7 +36,7 @@ class RaspilotAlarmist(Alarmist):
         :return: returns nothing
         """
         super()._calm_down(utilization)
-        self.raspilot.send_command(PanicCommand(False, self.__panic_delay, utilization))
+        self.raspilot.send_command(PanicCommand(False, self.__calm_down_delay, utilization))
         # TODO: Send message to Arduino
 
 

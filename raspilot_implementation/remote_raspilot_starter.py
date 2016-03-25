@@ -7,7 +7,8 @@ class RemoteRaspilotStarter(Starter):
     RemoteRaspilotStarter.DISABLED_PROVIDERS
     """
 
-    DISABLED_PROVIDERS = ['RaspilotRXProvider', 'RaspilotFlightController', 'RaspilotServoController']
+    DISABLED_PROVIDERS = ['RaspilotRXProvider', 'RaspilotFlightController', 'RaspilotServoController',
+                          'RaspilotWebsocketsProvider']
     """
     Class names of the providers which are not started
     """

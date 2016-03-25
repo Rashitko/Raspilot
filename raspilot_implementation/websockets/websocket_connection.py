@@ -47,6 +47,7 @@ class WebsocketConnection:
         Disconnects the socket.
         :return: returns nothing
         """
+        self.__logger.debug('Disconnecting websocket app')
         self.__websocket_app.close()
 
     def reconnect(self):

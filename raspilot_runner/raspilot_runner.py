@@ -37,7 +37,7 @@ class RaspilotRunner:
         :return: returns nothing
         """
         if self.__connection:
-            data = {'message': 'Raspilot ready', 'spawned': True, 'error': None}
+            data = {'message': 'Raspilot ready', 'spawned': True, 'error': None, 'myAddress': self.__address[0]}
             serialized_data = json.dumps(data) + '\n'
             raw_data = bytes(serialized_data.encode('utf-8'))
             self.__connection.send(raw_data)

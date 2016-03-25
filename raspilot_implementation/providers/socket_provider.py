@@ -22,6 +22,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         logger.debug('Opening socket on {}:{}'.format(HOST, port))
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(1)
         s.bind((HOST, port))
         return s
 
@@ -122,8 +123,6 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
     def stop(self):
         super().stop()
         self.__run = False
-        if self.__socket:
-            self.__socket.close()
         try:
             self.__queue.put_nowait(None)
         except Full:

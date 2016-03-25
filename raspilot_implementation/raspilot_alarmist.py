@@ -44,6 +44,7 @@ class RaspilotAlarmistConfig(AlarmistConfig):
     """
     Config object for the RaspilotAlarmist.
     """
+
     def __init__(self):
         super().__init__()
         self.__panic_delay = DEFAULT_PANIC_DELAY

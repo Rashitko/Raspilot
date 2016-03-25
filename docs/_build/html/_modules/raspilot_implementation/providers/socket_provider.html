@@ -1,46 +1,49 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
     <title>raspilot_implementation.providers.socket_provider &mdash; Raspilot 1 documentation</title>
-    
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
+
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css"/>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css"/>
+
     <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT: '../../../',
+            VERSION: '1',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE: true
+        };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html"/>
+    <link rel="up" title="Module code" href="../../index.html"/>
 
-  </head>
-  <body role="document">  
 
-    <div class="document">
-      <div class="documentwrapper">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+</head>
+<body role="document">
+
+<div class="document">
+    <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
-            
-  <h1>Source code for raspilot_implementation.providers.socket_provider</h1><div class="highlight"><pre>
+            <div class="body" role="main">
+
+                <h1>Source code for raspilot_implementation.providers.socket_provider</h1>
+                <div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">RLock</span><span class="p">,</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Event</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span
+                        class="n">RLock</span><span class="p">,</span> <span class="n">Thread</span><span
+                        class="p">,</span> <span class="n">Event</span>
 <span class="kn">import</span> <span class="nn">raspilot.providers.base_provider</span>
 
 <span class="n">HOST</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
@@ -48,179 +51,279 @@
 <span class="n">RECV_BYTES</span> <span class="o">=</span> <span class="mi">1024</span>
 
 
-<div class="viewcode-block" id="SocketProvider"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.SocketProvider">[docs]</a><span class="k">class</span> <span class="nc">SocketProvider</span><span class="p">(</span><span class="n">raspilot</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">base_provider</span><span class="o">.</span><span class="n">BaseProvider</span><span class="p">):</span>
+<div class="viewcode-block" id="SocketProvider"><a class="viewcode-back"
+                                                   href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.SocketProvider">[docs]</a><span
+        class="k">class</span> <span class="nc">SocketProvider</span><span class="p">(</span><span
+        class="n">raspilot</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span
+        class="n">base_provider</span><span class="o">.</span><span class="n">BaseProvider</span><span
+        class="p">):</span>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">__create_socket</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates and bind a socket to the specified port</span>
-<span class="sd">        :param port: port to bind to</span>
-<span class="sd">        :return: created socket which is bound to the specified port</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">HOST</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">s</span>
+    <span class="k">def</span> <span class="nf">__create_socket</span><span class="p">(</span><span
+            class="n">port</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Creates and bind a socket to the specified port</span>
+    <span class="sd">        :param port: port to bind to</span>
+    <span class="sd">        :return: created socket which is bound to the specified port</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span
+            class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span
+            class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span
+            class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span
+            class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span>
+    <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">HOST</span><span
+            class="p">,</span> <span class="n">port</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">s</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">recv_size</span><span class="p">):</span>
-        <span class="n">raspilot</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span class="n">base_provider</span><span class="o">.</span><span class="n">BaseProvider</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;raspilot.log&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__port</span> <span class="o">=</span> <span class="n">port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__recv_size</span> <span class="o">=</span> <span class="n">recv_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__data_process_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__receive</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__address</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__socket_listening_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__client_connected_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">recv_size</span><span
+            class="p">):</span>
+    <span class="n">raspilot</span><span class="o">.</span><span class="n">providers</span><span class="o">.</span><span
+            class="n">base_provider</span><span class="o">.</span><span class="n">BaseProvider</span><span
+            class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span> <span class="o">=</span> <span
+            class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span
+            class="p">(</span><span class="s">&#39;raspilot.log&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__port</span> <span class="o">=</span> <span
+            class="n">port</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__recv_size</span> <span class="o">=</span>
+    <span class="n">recv_size</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span> <span class="o">=</span> <span
+            class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__data_process_lock</span> <span
+            class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__receive</span> <span class="o">=</span> <span
+            class="bp">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span> <span class="o">=</span>
+    <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__address</span> <span class="o">=</span> <span
+            class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__socket_listening_event</span> <span class="o">=</span>
+    <span class="n">Event</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__client_connected_event</span> <span class="o">=</span>
+    <span class="n">Event</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SocketProvider.start"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.SocketProvider.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <div class="viewcode-block" id="SocketProvider.start"><a class="viewcode-back"
+                                                             href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.SocketProvider.start">[docs]</a>
+        <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span
+                class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span
+                class="p">()</span>
         <span class="c"># noinspection PyBroadException</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__create_socket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__port</span><span class="p">)</span>
-            <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__socket_listening_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-            <span class="k">return</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span> <span class="o">=</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__create_socket</span><span
+                class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__port</span><span
+                class="p">)</span>
+        <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span
+                class="bp">self</span><span class="o">.</span><span class="n">_process</span><span
+                class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__socket_listening_event</span><span
+                class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">True</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">False</span></div>
+        <span class="k">return</span> <span class="bp">False</span></div>
 
-    <span class="k">def</span> <span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Opens the socket and waits for the connection, then receives data until SocketProvider.stop()</span>
-<span class="sd">        is called</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">MAX_CONNECTIONS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__socket_listening_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">__receive</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">connection</span><span class="p">,</span> <span class="n">address</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_on_client_connected</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Client {} on address {} connected&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">address</span><span class="p">))</span>
-                <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">__receive</span><span class="p">:</span>
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data_process_lock</span><span class="p">:</span>
-                            <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__recv_size</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
-                                <span class="k">break</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">__handle_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                    <span class="k">except</span> <span class="n">DataProcessingError</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Wrong data received, ignoring them&quot;</span><span class="p">)</span>
-                    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-                        <span class="k">pass</span>
-                <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Connection closed&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_on_connection_closed</span><span class="p">()</span>
-            <span class="k">except</span> <span class="n">ConnectionAbortedError</span><span class="p">:</span>
-                <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">__handle_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Catches all Exceptions during the data processing and rises a DataProcessingError instead.</span>
-<span class="sd">        :param data: received data</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_on_data_received</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Error during data processing. Error was {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">DataProcessingError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_on_data_received</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Processes the received data.</span>
-<span class="sd">        :param data: received data</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">_on_connection_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets client connection and address to None</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__address</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="k">def</span> <span class="nf">_on_client_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Called when a client connects. Client connected event is set, so RaspilotOrientationProvider.wait_for_client()</span>
-<span class="sd">        is no longer blocked.</span>
-<span class="sd">        :param connection: new connection</span>
-<span class="sd">        :param address: client address</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span> <span class="o">=</span> <span class="n">connection</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__address</span> <span class="o">=</span> <span class="n">address</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__client_connected_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-
-<div class="viewcode-block" id="SocketProvider.wait_for_client"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.SocketProvider.wait_for_client">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns when a new client is connected.</span>
-<span class="sd">        :return: returns client address</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__client_connected_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__address</span></div>
-
-<div class="viewcode-block" id="SocketProvider.stop"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.SocketProvider.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__receive</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
-
-
-<div class="viewcode-block" id="DataProcessingError"><a class="viewcode-back" href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.DataProcessingError">[docs]</a><span class="k">class</span> <span class="nc">DataProcessingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_process</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Error thrown when processing error. Throwing this error result in ignoring the received data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">        Opens the socket and waits for the connection, then receives data until SocketProvider.stop()</span>
+    <span class="sd">        is called</span>
+    <span class="sd">        :return: returns nothing</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span><span class="o">.</span><span
+            class="n">listen</span><span class="p">(</span><span class="n">MAX_CONNECTIONS</span><span
+            class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__socket_listening_event</span><span
+            class="o">.</span><span class="n">set</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">__receive</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+    <span class="n">connection</span><span class="p">,</span> <span class="n">address</span> <span class="o">=</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span><span class="o">.</span><span
+            class="n">accept</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_on_client_connected</span><span
+            class="p">(</span><span class="n">connection</span><span class="p">,</span> <span
+            class="n">address</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">info</span><span class="p">(</span><span
+            class="s">&quot;Client {} on address {} connected&quot;</span><span class="o">.</span><span
+            class="n">format</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span>
+    <span class="n">address</span><span class="p">))</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">__receive</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">__data_process_lock</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span
+            class="n">recv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span
+            class="n">__recv_size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+    <span class="k">break</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__handle_data</span><span
+            class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">DataProcessingError</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">warning</span><span class="p">(</span><span class="s">&quot;Wrong data received, ignoring them&quot;</span><span
+            class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+    <span class="k">pass</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">info</span><span class="p">(</span><span class="s">&quot;Connection closed&quot;</span><span
+            class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_on_connection_closed</span><span
+            class="p">()</span>
+    <span class="k">except</span> <span class="n">ConnectionAbortedError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__handle_data</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Catches all Exceptions during the data processing and rises a DataProcessingError instead.</span>
+    <span class="sd">        :param data: received data</span>
+    <span class="sd">        :return: returns nothing</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_on_data_received</span><span class="p">(</span><span
+            class="n">data</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span
+            class="n">e</span><span class="p">:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Error during data processing. Error was {}&quot;</span><span
+            class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span
+            class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">DataProcessingError</span><span class="p">(</span><span class="n">message</span><span
+            class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_on_data_received</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Processes the received data.</span>
+    <span class="sd">        :param data: received data</span>
+    <span class="sd">        :return: returns nothing</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_on_connection_closed</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Sets client connection and address to None</span>
+    <span class="sd">        :return: returns nothing</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span> <span class="o">=</span>
+    <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__address</span> <span class="o">=</span> <span
+            class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">_on_client_connected</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span>
+    <span class="n">address</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Called when a client connects. Client connected event is set, so RaspilotOrientationProvider.wait_for_client()</span>
+    <span class="sd">        is no longer blocked.</span>
+    <span class="sd">        :param connection: new connection</span>
+    <span class="sd">        :param address: client address</span>
+    <span class="sd">        :return: returns nothing</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span> <span class="o">=</span>
+    <span class="n">connection</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__address</span> <span class="o">=</span> <span
+            class="n">address</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__client_connected_event</span><span
+            class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+    <div class="viewcode-block" id="SocketProvider.wait_for_client"><a class="viewcode-back"
+                                                                       href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.SocketProvider.wait_for_client">[docs]</a>
+        <span class="k">def</span> <span class="nf">wait_for_client</span><span class="p">(</span><span
+                class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">        Returns when a new client is connected.</span>
+        <span class="sd">        :return: returns client address</span>
+        <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__client_connected_event</span><span
+                class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span
+                class="n">__address</span></div>
+
+    <div class="viewcode-block" id="SocketProvider.stop"><a class="viewcode-back"
+                                                            href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.SocketProvider.stop">[docs]</a>
+        <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span
+                class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span
+                class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__receive</span> <span class="o">=</span>
+        <span class="bp">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span
+                class="n">__connection</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__connection</span><span
+                class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span
+                class="n">__socket</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__socket</span><span class="o">.</span><span
+                class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+<div class="viewcode-block" id="DataProcessingError"><a class="viewcode-back"
+                                                        href="../../../raspilot_implementation.providers.html#raspilot_implementation.providers.socket_provider.DataProcessingError">[docs]</a><span
+        class="k">class</span> <span class="nc">DataProcessingError</span><span class="p">(</span><span class="ne">Exception</span><span
+        class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">    Error thrown when processing error. Throwing this error result in ignoring the received data.</span>
+    <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
-</pre></div>
+</pre>
+                </div>
 
-          </div>
+            </div>
         </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+    <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <div class="relations">
+                <h3>Related Topics</h3>
+                <ul>
+                    <li><a href="../../../index.html">Documentation overview</a>
+                        <ul>
+                            <li><a href="../../index.html">Module code</a>
+                                <ul>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div id="searchbox" style="display: none" role="search">
+                <h3>Quick search</h3>
+                <form class="search" action="../../../search.html" method="get">
+                    <input type="text" name="q"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+            </div>
+            <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
-      </div>
-      <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2015, Michal Raška.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-    </div>
+    <div class="clearer"></div>
+</div>
+<div class="footer">
+    &copy;2015, Michal Raška.
 
-    
+    |
+    Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+    &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
 
-    
-  </body>
+</div>
+
+
+</body>
 </html>

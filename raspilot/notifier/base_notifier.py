@@ -1,6 +1,6 @@
 import json
-import time
 import logging
+import time
 from threading import Thread
 
 DEFAULT_ERROR_LIMIT = 100

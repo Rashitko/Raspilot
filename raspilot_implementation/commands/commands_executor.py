@@ -2,12 +2,11 @@ import logging
 
 from raspilot.commands.commands_executor import CommandsExecutor
 from raspilot_implementation.commands.command import RaspilotCommand
-from raspilot_implementation.websockets.websocket_event import WebsocketEvent
 from raspilot_implementation.providers.android_provider import AndroidProvider
+from raspilot_implementation.websockets.websocket_event import WebsocketEvent
 
 
 class RaspilotCommandsExecutor(CommandsExecutor):
-
     def __init__(self, android_provider):
         """
         Creates a new 'RaspilotCommandsExecutor' with specified android provider. Used to communicate with Android

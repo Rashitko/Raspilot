@@ -9,6 +9,7 @@ class OrientationProvider(BaseProvider):
     angles are obtain from the current_orientation method, but the custom implementation could return other values with
     different meaning.
     """
+
     def __init__(self, config):
         """
         Creates a new 'OrientationProvider' with specified config.

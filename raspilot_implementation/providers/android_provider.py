@@ -59,8 +59,6 @@ class AndroidProvider(raspilot_implementation.providers.socket_provider.SocketPr
         :param command: command to be sent
         :return: returns nothing
         """
-        self.__logger.info('Sending command {} to Android'.format(command.name))
-        self.__logger.debug('Command contains data {}'.format(command.data))
         self.send(json.dumps(command.serialize()) + '\n')
 
     @staticmethod

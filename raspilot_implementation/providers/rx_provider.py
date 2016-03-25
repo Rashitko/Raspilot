@@ -46,7 +46,8 @@ class RaspilotRXProvider(RXProvider):
         super().start()
         port = ArduinoProber.search_arduino_com_port(self.ARDUINO_PORT_KEYWORD)
         if port:
-            self.__logger.info("Arduino found on port {}. Opening connection with baud rate {}".format(port, self.__baud_rate))
+            self.__logger.info(
+                "Arduino found on port {}. Opening connection with baud rate {}".format(port, self.__baud_rate))
             try:
                 self.__port = serial.Serial(port, self.__baud_rate)
                 self.__run = True
@@ -79,7 +80,7 @@ class RaspilotRXProvider(RXProvider):
                     self.__channels = RCChannelValues(channels)
                 else:
                     self.__logger.error("Wrong number of channels received. Expected {} channels but got {}".format(
-                            self.get_channels_count(), received_channels_count))
+                        self.get_channels_count(), received_channels_count))
             except serial.SerialException as serial_ex:
                 self.__logger.error(serial_ex)
                 self.__port.close()

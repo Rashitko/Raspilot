@@ -2,7 +2,6 @@ import logging
 import socket
 from threading import Thread
 
-from raspilot.raspilot import Raspilot
 from raspilot_implementation.providers.android_provider import AndroidProvider
 
 

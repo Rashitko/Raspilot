@@ -19,15 +19,15 @@ raspilot.raspilot module
 ------------------------
 
 .. automodule:: raspilot.raspilot
-    :members:
-    :undoc-members:
-    :show-inheritance:
+:members:
+        :undoc-members:
+        :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: raspilot
-    :members:
-    :undoc-members:
-    :show-inheritance:
+:members:
+        :undoc-members:
+        :show-inheritance:

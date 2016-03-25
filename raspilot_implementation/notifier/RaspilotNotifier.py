@@ -25,7 +25,14 @@ class RaspilotNotifier(BaseNotifier):
 
     def _prepare_message(self):
         """
-        Creates an update message which contains orientation data
+        Creates an update message which contains orientation data, location, system state
+        :return: created event
+        """
+        return self.create_message()
+
+    def create_message(self):
+        """
+        Creates an update message which contains orientation data, location, system state
         :return: created event
         """
         orientation = self.raspilot.orientation_provider.current_orientation()

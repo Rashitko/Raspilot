@@ -1,5 +1,4 @@
 class FlightController:
-
     def __init__(self):
         self.__raspilot = None
 

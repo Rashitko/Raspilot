@@ -101,7 +101,8 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
         while self.__run:
             data = self.__queue.get()
             if data:
-                self.__logger.info('Sending data to Android device on {}:{}'.format(self.__client_address, self.__port))
+                self.__logger.log(9,
+                                  'Sending data to Android device on {}:{}'.format(self.__client_address, self.__port))
                 self.__socket.sendto(data, (self.__client_address, self.__port))
             self.__queue.task_done()
         self.__logger.debug('Exiting send loop')

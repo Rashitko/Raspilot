@@ -13,7 +13,6 @@ HOST = ''
 
 
 class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
-
     MESSAGE_COMPONENTS = 6
     FMT = '!' + 'h' * MESSAGE_COMPONENTS
     RECV_BYTES = struct.calcsize(FMT)

@@ -44,9 +44,9 @@ class RaspilotFlightController(FlightController):
             except ProviderValuesError as provider_value_error:
                 total_errors_count += 1
                 self.__logger.error(
-                        "{} gives invalid data. The data were {}".format(
-                            provider_value_error.provider.__class__.__name__,
-                            provider_value_error.values))
+                    "{} gives invalid data. The data were {}".format(
+                        provider_value_error.provider.__class__.__name__,
+                        provider_value_error.values))
             except Exception as e:
                 total_errors_count += 1
                 self.__logger.error(e)
@@ -55,8 +55,8 @@ class RaspilotFlightController(FlightController):
                     self.__flight_mode = self.FLIGHT_MODES['FULL_RX']
                     self.__control_dropped = True
                     self.__logger.fatal(
-                            "Too many errors if flight controller, dropping to full RX CONTROL mode. Future errors "
-                            "will be ignored")
+                        "Too many errors if flight controller, dropping to full RX CONTROL mode. Future errors "
+                        "will be ignored")
                 time.sleep(self.__control_loop_sleep)
 
     def __read_rx(self):

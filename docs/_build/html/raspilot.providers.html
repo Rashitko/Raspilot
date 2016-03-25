@@ -1,315 +1,572 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
     <title>raspilot.providers package &mdash; Raspilot 1 documentation</title>
-    
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
+
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+
     <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT: './',
+            VERSION: '1',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE: true
+        };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Raspilot 1 documentation" href="index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+    <link rel="top" title="Raspilot 1 documentation" href="index.html"/>
 
-  </head>
-  <body role="document">  
 
-    <div class="document">
-      <div class="documentwrapper">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+</head>
+<body role="document">
+
+<div class="document">
+    <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
-            
-  <div class="section" id="raspilot-providers-package">
-<h1>raspilot.providers package<a class="headerlink" href="#raspilot-providers-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-raspilot.providers.base_provider">
-<span id="raspilot-providers-base-provider-module"></span><h2>raspilot.providers.base_provider module<a class="headerlink" href="#module-raspilot.providers.base_provider" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot.providers.base_provider.BaseProvider">
-<em class="property">class </em><code class="descclassname">raspilot.providers.base_provider.</code><code class="descname">BaseProvider</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/base_provider.html#BaseProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.base_provider.BaseProvider" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Base provider class, which all other provider should extend. Defines the basic methods, which are common for
-all providers.</p>
-<dl class="method">
-<dt id="raspilot.providers.base_provider.BaseProvider.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/base_provider.html#BaseProvider.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.base_provider.BaseProvider.initialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called once, during Raspilot initialization. Before this call, self.__raspilot(raspilot_instance) is called.
-:return: returns nothing</p>
-</dd></dl>
+            <div class="body" role="main">
 
-<dl class="attribute">
-<dt id="raspilot.providers.base_provider.BaseProvider.raspilot">
-<code class="descname">raspilot</code><a class="headerlink" href="#raspilot.providers.base_provider.BaseProvider.raspilot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                <div class="section" id="raspilot-providers-package">
+                    <h1>raspilot.providers package<a class="headerlink" href="#raspilot-providers-package"
+                                                     title="Permalink to this headline">¶</a></h1>
+                    <div class="section" id="submodules">
+                        <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a>
+                        </h2>
+                    </div>
+                    <div class="section" id="module-raspilot.providers.base_provider">
+                        <span id="raspilot-providers-base-provider-module"></span>
+                        <h2>raspilot.providers.base_provider module<a class="headerlink"
+                                                                      href="#module-raspilot.providers.base_provider"
+                                                                      title="Permalink to this headline">¶</a></h2>
+                        <dl class="class">
+                            <dt id="raspilot.providers.base_provider.BaseProvider">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.base_provider.</code><code
+                                    class="descname">BaseProvider</code><span
+                                    class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot/providers/base_provider.html#BaseProvider"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.base_provider.BaseProvider"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <code class="xref py py-class docutils literal"><span
+                                    class="pre">object</span></code></p>
+                                <p>Base provider class, which all other provider should extend. Defines the basic
+                                    methods, which are common for
+                                    all providers.</p>
+                                <dl class="method">
+                            <dt id="raspilot.providers.base_provider.BaseProvider.initialize">
+                                <code class="descname">initialize</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/base_provider.html#BaseProvider.initialize"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.base_provider.BaseProvider.initialize"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called once, during Raspilot initialization. Before this call,
+                                self.__raspilot(raspilot_instance) is called.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.base_provider.BaseProvider.start">
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/base_provider.html#BaseProvider.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.base_provider.BaseProvider.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after initializations, can be called multiple times.
-:return: returns True, if start was successful, False otherwise</p>
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot.providers.base_provider.BaseProvider.raspilot">
+                                <code class="descname">raspilot</code><a class="headerlink"
+                                                                         href="#raspilot.providers.base_provider.BaseProvider.raspilot"
+                                                                         title="Permalink to this definition">¶</a></dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.base_provider.BaseProvider.stop">
-<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/base_provider.html#BaseProvider.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.base_provider.BaseProvider.stop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the provider should stop, usually when exiting the application.
-:return: returns True, if start was successful, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.base_provider.BaseProvider.start">
+                                <code class="descname">start</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/base_provider.html#BaseProvider.start"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.base_provider.BaseProvider.start"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called after initializations, can be called multiple times.
+                                :return: returns True, if start was successful, False otherwise</p>
+                            </dd>
+                        </dl>
 
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.base_provider.BaseProvider.stop">
+                                <code class="descname">stop</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/base_provider.html#BaseProvider.stop"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.base_provider.BaseProvider.stop"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called when the provider should stop, usually when exiting the application.
+                                :return: returns True, if start was successful, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="class">
-<dt id="raspilot.providers.base_provider.BaseProviderConfig">
-<em class="property">class </em><code class="descclassname">raspilot.providers.base_provider.</code><code class="descname">BaseProviderConfig</code><a class="reference internal" href="_modules/raspilot/providers/base_provider.html#BaseProviderConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.base_provider.BaseProviderConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Base class for providers config, all other providers config should extend this class.</p>
-</dd></dl>
+                        </dd></dl>
 
-</div>
-<div class="section" id="module-raspilot.providers.gps_provider">
-<span id="raspilot-providers-gps-provider-module"></span><h2>raspilot.providers.gps_provider module<a class="headerlink" href="#module-raspilot.providers.gps_provider" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot.providers.gps_provider.GPSProvider">
-<em class="property">class </em><code class="descclassname">raspilot.providers.gps_provider.</code><code class="descname">GPSProvider</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/gps_provider.html#GPSProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.gps_provider.GPSProvider" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#raspilot.providers.base_provider.BaseProvider" title="raspilot.providers.base_provider.BaseProvider"><code class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProvider</span></code></a></p>
-</dd></dl>
+                        <dl class="class">
+                            <dt id="raspilot.providers.base_provider.BaseProviderConfig">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.base_provider.</code><code
+                                    class="descname">BaseProviderConfig</code><a class="reference internal"
+                                                                                 href="_modules/raspilot/providers/base_provider.html#BaseProviderConfig"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.base_provider.BaseProviderConfig"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <code class="xref py py-class docutils literal"><span
+                                    class="pre">object</span></code></p>
+                                <p>Base class for providers config, all other providers config should extend this
+                                    class.</p>
+                            </dd>
+                        </dl>
 
-<dl class="class">
-<dt id="raspilot.providers.gps_provider.GPSProviderConfig">
-<em class="property">class </em><code class="descclassname">raspilot.providers.gps_provider.</code><code class="descname">GPSProviderConfig</code><a class="reference internal" href="_modules/raspilot/providers/gps_provider.html#GPSProviderConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.gps_provider.GPSProviderConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#raspilot.providers.base_provider.BaseProviderConfig" title="raspilot.providers.base_provider.BaseProviderConfig"><code class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProviderConfig</span></code></a></p>
-</dd></dl>
+                    </div>
+                    <div class="section" id="module-raspilot.providers.gps_provider">
+                        <span id="raspilot-providers-gps-provider-module"></span>
+                        <h2>raspilot.providers.gps_provider module<a class="headerlink"
+                                                                     href="#module-raspilot.providers.gps_provider"
+                                                                     title="Permalink to this headline">¶</a></h2>
+                        <dl class="class">
+                            <dt id="raspilot.providers.gps_provider.GPSProvider">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.gps_provider.</code><code
+                                    class="descname">GPSProvider</code><span
+                                    class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot/providers/gps_provider.html#GPSProvider"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.gps_provider.GPSProvider"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <a class="reference internal"
+                                             href="#raspilot.providers.base_provider.BaseProvider"
+                                             title="raspilot.providers.base_provider.BaseProvider"><code
+                                    class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProvider</span></code></a>
+                            </p>
+                            </dd>
+                        </dl>
 
-</div>
-<div class="section" id="module-raspilot.providers.orientation_provider">
-<span id="raspilot-providers-orientation-provider-module"></span><h2>raspilot.providers.orientation_provider module<a class="headerlink" href="#module-raspilot.providers.orientation_provider" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot.providers.orientation_provider.OrientationProvider">
-<em class="property">class </em><code class="descclassname">raspilot.providers.orientation_provider.</code><code class="descname">OrientationProvider</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/orientation_provider.html#OrientationProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.orientation_provider.OrientationProvider" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#raspilot.providers.base_provider.BaseProvider" title="raspilot.providers.base_provider.BaseProvider"><code class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProvider</span></code></a></p>
-<dl class="method">
-<dt id="raspilot.providers.orientation_provider.OrientationProvider.current_orientation">
-<code class="descname">current_orientation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/orientation_provider.html#OrientationProvider.current_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.orientation_provider.OrientationProvider.current_orientation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the current orientation or None. The returned type depends on the implementation. Default implementation
-returns None
-:return: returns the current orientation. Default implementation returns None</p>
-</dd></dl>
+                        <dl class="class">
+                            <dt id="raspilot.providers.gps_provider.GPSProviderConfig">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.gps_provider.</code><code
+                                    class="descname">GPSProviderConfig</code><a class="reference internal"
+                                                                                href="_modules/raspilot/providers/gps_provider.html#GPSProviderConfig"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.gps_provider.GPSProviderConfig"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <a class="reference internal"
+                                             href="#raspilot.providers.base_provider.BaseProviderConfig"
+                                             title="raspilot.providers.base_provider.BaseProviderConfig"><code
+                                    class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProviderConfig</span></code></a>
+                            </p>
+                            </dd>
+                        </dl>
 
-</dd></dl>
+                    </div>
+                    <div class="section" id="module-raspilot.providers.orientation_provider">
+                        <span id="raspilot-providers-orientation-provider-module"></span>
+                        <h2>raspilot.providers.orientation_provider module<a class="headerlink"
+                                                                             href="#module-raspilot.providers.orientation_provider"
+                                                                             title="Permalink to this headline">¶</a>
+                        </h2>
+                        <dl class="class">
+                            <dt id="raspilot.providers.orientation_provider.OrientationProvider">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.orientation_provider.</code><code
+                                    class="descname">OrientationProvider</code><span class="sig-paren">(</span><em>config</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/orientation_provider.html#OrientationProvider"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.orientation_provider.OrientationProvider"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <a class="reference internal"
+                                             href="#raspilot.providers.base_provider.BaseProvider"
+                                             title="raspilot.providers.base_provider.BaseProvider"><code
+                                    class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProvider</span></code></a>
+                            </p>
+                                <dl class="method">
+                            <dt id="raspilot.providers.orientation_provider.OrientationProvider.current_orientation">
+                                <code class="descname">current_orientation</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/orientation_provider.html#OrientationProvider.current_orientation"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.orientation_provider.OrientationProvider.current_orientation"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns the current orientation or None. The returned type depends on the
+                                implementation. Default implementation
+                                returns None
+                                :return: returns the current orientation. Default implementation returns None</p>
+                            </dd>
+                        </dl>
 
-<dl class="class">
-<dt id="raspilot.providers.orientation_provider.OrientationProviderConfig">
-<em class="property">class </em><code class="descclassname">raspilot.providers.orientation_provider.</code><code class="descname">OrientationProviderConfig</code><a class="reference internal" href="_modules/raspilot/providers/orientation_provider.html#OrientationProviderConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.orientation_provider.OrientationProviderConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#raspilot.providers.base_provider.BaseProviderConfig" title="raspilot.providers.base_provider.BaseProviderConfig"><code class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProviderConfig</span></code></a></p>
-</dd></dl>
+                        </dd></dl>
 
-</div>
-<div class="section" id="module-raspilot.providers.rx_provider">
-<span id="raspilot-providers-rx-provider-module"></span><h2>raspilot.providers.rx_provider module<a class="headerlink" href="#module-raspilot.providers.rx_provider" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot.providers.rx_provider.RXConfig">
-<em class="property">class </em><code class="descclassname">raspilot.providers.rx_provider.</code><code class="descname">RXConfig</code><a class="reference internal" href="_modules/raspilot/providers/rx_provider.html#RXConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.rx_provider.RXConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#raspilot.providers.base_provider.BaseProviderConfig" title="raspilot.providers.base_provider.BaseProviderConfig"><code class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProviderConfig</span></code></a></p>
-</dd></dl>
+                        <dl class="class">
+                            <dt id="raspilot.providers.orientation_provider.OrientationProviderConfig">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.orientation_provider.</code><code
+                                    class="descname">OrientationProviderConfig</code><a class="reference internal"
+                                                                                        href="_modules/raspilot/providers/orientation_provider.html#OrientationProviderConfig"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.orientation_provider.OrientationProviderConfig"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <a class="reference internal"
+                                             href="#raspilot.providers.base_provider.BaseProviderConfig"
+                                             title="raspilot.providers.base_provider.BaseProviderConfig"><code
+                                    class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProviderConfig</span></code></a>
+                            </p>
+                            </dd>
+                        </dl>
 
-<dl class="class">
-<dt id="raspilot.providers.rx_provider.RXProvider">
-<em class="property">class </em><code class="descclassname">raspilot.providers.rx_provider.</code><code class="descname">RXProvider</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/rx_provider.html#RXProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.rx_provider.RXProvider" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#raspilot.providers.base_provider.BaseProvider" title="raspilot.providers.base_provider.BaseProvider"><code class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProvider</span></code></a></p>
-</dd></dl>
+                    </div>
+                    <div class="section" id="module-raspilot.providers.rx_provider">
+                        <span id="raspilot-providers-rx-provider-module"></span>
+                        <h2>raspilot.providers.rx_provider module<a class="headerlink"
+                                                                    href="#module-raspilot.providers.rx_provider"
+                                                                    title="Permalink to this headline">¶</a></h2>
+                        <dl class="class">
+                            <dt id="raspilot.providers.rx_provider.RXConfig">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.rx_provider.</code><code
+                                    class="descname">RXConfig</code><a class="reference internal"
+                                                                       href="_modules/raspilot/providers/rx_provider.html#RXConfig"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.rx_provider.RXConfig"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <a class="reference internal"
+                                             href="#raspilot.providers.base_provider.BaseProviderConfig"
+                                             title="raspilot.providers.base_provider.BaseProviderConfig"><code
+                                    class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProviderConfig</span></code></a>
+                            </p>
+                            </dd>
+                        </dl>
 
-</div>
-<div class="section" id="module-raspilot.providers.websockets_provider">
-<span id="raspilot-providers-websockets-provider-module"></span><h2>raspilot.providers.websockets_provider module<a class="headerlink" href="#module-raspilot.providers.websockets_provider" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot.providers.websockets_provider.WebsocketsConfig">
-<em class="property">class </em><code class="descclassname">raspilot.providers.websockets_provider.</code><code class="descname">WebsocketsConfig</code><span class="sig-paren">(</span><em>retry_count=120</em>, <em>retry_delay=500</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#raspilot.providers.base_provider.BaseProviderConfig" title="raspilot.providers.base_provider.BaseProviderConfig"><code class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProviderConfig</span></code></a></p>
-<p>Used to initialize the WebsocketsProvider. All subclasses of the WebsocketProvider which has their own config,
-should extend this class.</p>
-<dl class="attribute">
-<dt id="raspilot.providers.websockets_provider.WebsocketsConfig.reconnect_delay">
-<code class="descname">reconnect_delay</code><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsConfig.reconnect_delay" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="class">
+                            <dt id="raspilot.providers.rx_provider.RXProvider">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.rx_provider.</code><code
+                                    class="descname">RXProvider</code><span
+                                    class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot/providers/rx_provider.html#RXProvider"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.rx_provider.RXProvider"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <a class="reference internal"
+                                             href="#raspilot.providers.base_provider.BaseProvider"
+                                             title="raspilot.providers.base_provider.BaseProvider"><code
+                                    class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProvider</span></code></a>
+                            </p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot.providers.websockets_provider.WebsocketsConfig.retry_count">
-<code class="descname">retry_count</code><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsConfig.retry_count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                    </div>
+                    <div class="section" id="module-raspilot.providers.websockets_provider">
+                        <span id="raspilot-providers-websockets-provider-module"></span>
+                        <h2>raspilot.providers.websockets_provider module<a class="headerlink"
+                                                                            href="#module-raspilot.providers.websockets_provider"
+                                                                            title="Permalink to this headline">¶</a>
+                        </h2>
+                        <dl class="class">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsConfig">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.websockets_provider.</code><code
+                                    class="descname">WebsocketsConfig</code><span class="sig-paren">(</span><em>retry_count=120</em>,
+                                <em>retry_delay=500</em><span class="sig-paren">)</span><a class="reference internal"
+                                                                                           href="_modules/raspilot/providers/websockets_provider.html#WebsocketsConfig"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsConfig"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <a class="reference internal"
+                                             href="#raspilot.providers.base_provider.BaseProviderConfig"
+                                             title="raspilot.providers.base_provider.BaseProviderConfig"><code
+                                    class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProviderConfig</span></code></a>
+                            </p>
+                                <p>Used to initialize the WebsocketsProvider. All subclasses of the WebsocketProvider
+                                    which has their own config,
+                                    should extend this class.</p>
+                                <dl class="attribute">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsConfig.reconnect_delay">
+                                <code class="descname">reconnect_delay</code><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsConfig.reconnect_delay"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsConfig.retry_count">
+                                <code class="descname">retry_count</code><a class="headerlink"
+                                                                            href="#raspilot.providers.websockets_provider.WebsocketsConfig.retry_count"
+                                                                            title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="class">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider">
-<em class="property">class </em><code class="descclassname">raspilot.providers.websockets_provider.</code><code class="descname">WebsocketsProvider</code><span class="sig-paren">(</span><em>websockets_config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#raspilot.providers.base_provider.BaseProvider" title="raspilot.providers.base_provider.BaseProvider"><code class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProvider</span></code></a></p>
-<p>Abstract WebsocketProvider which provides the basic methods for work with websockets</p>
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connects the websocket.
-:return: returns nothing</p>
-</dd></dl>
+                        </dd></dl>
 
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.disconnect">
-<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnect the websocket.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="class">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider">
+                                <em class="property">class </em><code class="descclassname">raspilot.providers.websockets_provider.</code><code
+                                    class="descname">WebsocketsProvider</code><span class="sig-paren">(</span><em>websockets_config</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <a class="reference internal"
+                                             href="#raspilot.providers.base_provider.BaseProvider"
+                                             title="raspilot.providers.base_provider.BaseProvider"><code
+                                    class="xref py py-class docutils literal"><span class="pre">raspilot.providers.base_provider.BaseProvider</span></code></a>
+                            </p>
+                                <p>Abstract WebsocketProvider which provides the basic methods for work with
+                                    websockets</p>
+                                <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.connect">
+                                <code class="descname">connect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.connect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.connect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Connects the websocket.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.on_close">
-<code class="descname">on_close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.on_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.on_close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when connection is closed. This can happen after an error, or when the connection was closed in normal
-way.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.disconnect">
+                                <code class="descname">disconnect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.disconnect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.disconnect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Disconnect the websocket.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.on_error">
-<code class="descname">on_error</code><span class="sig-paren">(</span><em>error</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.on_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.on_error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when an error occurred. Tries to reconnect if reconnection limit is not reached
-:param error: occurred error
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.on_close">
+                                <code class="descname">on_close</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.on_close"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.on_close"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called when connection is closed. This can happen after an error, or when the
+                                connection was closed in normal
+                                way.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.reconnect">
-<code class="descname">reconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.reconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.reconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reconnects the websocket. Called after connection drop.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.on_error">
+                                <code class="descname">on_error</code><span
+                                    class="sig-paren">(</span><em>error</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.on_error"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.on_error"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called when an error occurred. Tries to reconnect if reconnection limit is not
+                                reached
+                                :param error: occurred error
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.reconnect_delay">
-<code class="descname">reconnect_delay</code><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.reconnect_delay" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.reconnect">
+                                <code class="descname">reconnect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.reconnect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.reconnect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Reconnects the websocket. Called after connection drop.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.retry_count">
-<code class="descname">retry_count</code><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.retry_count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.reconnect_delay">
+                                <code class="descname">reconnect_delay</code><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.reconnect_delay"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.send_telemetry_update_message">
-<code class="descname">send_telemetry_update_message</code><span class="sig-paren">(</span><em>message</em>, <em>success=None</em>, <em>failure=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.send_telemetry_update_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.send_telemetry_update_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sends the message. The default implementation fails to send the message. Callbacks should have one
-parameter - message.
-:param message: message to be sent
-:param success: success callback, run if transmission was successful
-:param failure: failure callback, run if transmission failed
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.retry_count">
+                                <code class="descname">retry_count</code><a class="headerlink"
+                                                                            href="#raspilot.providers.websockets_provider.WebsocketsProvider.retry_count"
+                                                                            title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.should_reconnect">
-<code class="descname">should_reconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.should_reconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.should_reconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if should try to reconnect, False otherwise
-:return: True if should try to reconnect, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.send_telemetry_update_message">
+                                <code class="descname">send_telemetry_update_message</code><span
+                                    class="sig-paren">(</span><em>message</em>, <em>success=None</em>,
+                                <em>failure=None</em><span class="sig-paren">)</span><a class="reference internal"
+                                                                                        href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.send_telemetry_update_message"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.send_telemetry_update_message"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Sends the message. The default implementation fails to send the message. Callbacks
+                                should have one
+                                parameter - message.
+                                :param message: message to be sent
+                                :param success: success callback, run if transmission was successful
+                                :param failure: failure callback, run if transmission failed
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.start">
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.should_reconnect">
+                                <code class="descname">should_reconnect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.should_reconnect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.should_reconnect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True if should try to reconnect, False otherwise
+                                :return: True if should try to reconnect, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot.providers.websockets_provider.WebsocketsProvider.stop">
-<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot.providers.websockets_provider.WebsocketsProvider.stop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.start">
+                                <code class="descname">start</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.start"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.start"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot.providers.websockets_provider.WebsocketsProvider.stop">
+                                <code class="descname">stop</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot/providers/websockets_provider.html#WebsocketsProvider.stop"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot.providers.websockets_provider.WebsocketsProvider.stop"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-</div>
-<div class="section" id="module-raspilot.providers">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-raspilot.providers" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+                        </dd></dl>
+
+                    </div>
+                    <div class="section" id="module-raspilot.providers">
+                        <span id="module-contents"></span>
+                        <h2>Module contents<a class="headerlink" href="#module-raspilot.providers"
+                                              title="Permalink to this headline">¶</a></h2>
+                    </div>
+                </div>
 
 
-          </div>
+            </div>
         </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+    </div>
+    <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">raspilot.providers package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-raspilot.providers.base_provider">raspilot.providers.base_provider module</a></li>
-<li><a class="reference internal" href="#module-raspilot.providers.gps_provider">raspilot.providers.gps_provider module</a></li>
-<li><a class="reference internal" href="#module-raspilot.providers.orientation_provider">raspilot.providers.orientation_provider module</a></li>
-<li><a class="reference internal" href="#module-raspilot.providers.rx_provider">raspilot.providers.rx_provider module</a></li>
-<li><a class="reference internal" href="#module-raspilot.providers.websockets_provider">raspilot.providers.websockets_provider module</a></li>
-<li><a class="reference internal" href="#module-raspilot.providers">Module contents</a></li>
-</ul>
-</li>
-</ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/raspilot.providers.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+                <li><a class="reference internal" href="#">raspilot.providers package</a>
+                    <ul>
+                        <li><a class="reference internal" href="#submodules">Submodules</a></li>
+                        <li><a class="reference internal" href="#module-raspilot.providers.base_provider">raspilot.providers.base_provider
+                            module</a></li>
+                        <li><a class="reference internal" href="#module-raspilot.providers.gps_provider">raspilot.providers.gps_provider
+                            module</a></li>
+                        <li><a class="reference internal" href="#module-raspilot.providers.orientation_provider">raspilot.providers.orientation_provider
+                            module</a></li>
+                        <li><a class="reference internal" href="#module-raspilot.providers.rx_provider">raspilot.providers.rx_provider
+                            module</a></li>
+                        <li><a class="reference internal" href="#module-raspilot.providers.websockets_provider">raspilot.providers.websockets_provider
+                            module</a></li>
+                        <li><a class="reference internal" href="#module-raspilot.providers">Module contents</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="relations">
+                <h3>Related Topics</h3>
+                <ul>
+                    <li><a href="index.html">Documentation overview</a>
+                        <ul>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div role="note" aria-label="source link">
+                <h3>This Page</h3>
+                <ul class="this-page-menu">
+                    <li><a href="_sources/raspilot.providers.txt"
+                           rel="nofollow">Show Source</a></li>
+                </ul>
+            </div>
+            <div id="searchbox" style="display: none" role="search">
+                <h3>Quick search</h3>
+                <form class="search" action="search.html" method="get">
+                    <input type="text" name="q"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+            </div>
+            <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
-      </div>
-      <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2015, Michal Raška.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-      |
-      <a href="_sources/raspilot.providers.txt"
-          rel="nofollow">Page source</a>
-    </div>
+    <div class="clearer"></div>
+</div>
+<div class="footer">
+    &copy;2015, Michal Raška.
 
-    
+    |
+    Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+    &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
 
-    
-  </body>
+    |
+    <a href="_sources/raspilot.providers.txt"
+       rel="nofollow">Page source</a>
+</div>
+
+
+</body>
 </html>

@@ -2,8 +2,8 @@ import unittest
 
 from raspilot.commands.base_command_handler import BaseCommandHandler, ActionExecutionError
 from raspilot.commands.command import Command
-from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
 from raspilot_implementation.commands.ahi_command_handler import SetNeutralAhiHandler
+from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
 
 
 class CommandExecutorTests(unittest.TestCase):

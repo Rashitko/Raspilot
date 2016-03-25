@@ -1,128 +1,152 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
     <title>raspilot_implementation.notifier.RaspilotNotifier &mdash; Raspilot 1 documentation</title>
-    
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
+
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css"/>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css"/>
+
     <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT: '../../../',
+            VERSION: '1',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE: true
+        };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html"/>
+    <link rel="up" title="Module code" href="../../index.html"/>
 
-  </head>
-  <body role="document">  
 
-    <div class="document">
-      <div class="documentwrapper">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+</head>
+<body role="document">
+
+<div class="document">
+    <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
-            
-  <h1>Source code for raspilot_implementation.notifier.RaspilotNotifier</h1><div class="highlight"><pre>
+            <div class="body" role="main">
+
+                <h1>Source code for raspilot_implementation.notifier.RaspilotNotifier</h1>
+                <div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">json</span>
 
-<span class="kn">from</span> <span class="nn">raspilot.notifier.base_notifier</span> <span class="kn">import</span> <span class="n">BaseNotifier</span>
+<span class="kn">from</span> <span class="nn">raspilot.notifier.base_notifier</span> <span
+                        class="kn">import</span> <span class="n">BaseNotifier</span>
 
 
-<div class="viewcode-block" id="RaspilotNotifier"><a class="viewcode-back" href="../../../raspilot_implementation.notifier.html#raspilot_implementation.notifier.RaspilotNotifier.RaspilotNotifier">[docs]</a><span class="k">class</span> <span class="nc">RaspilotNotifier</span><span class="p">(</span><span class="n">BaseNotifier</span><span class="p">):</span>
+<div class="viewcode-block" id="RaspilotNotifier"><a class="viewcode-back"
+                                                     href="../../../raspilot_implementation.notifier.html#raspilot_implementation.notifier.RaspilotNotifier.RaspilotNotifier">[docs]</a><span
+        class="k">class</span> <span class="nc">RaspilotNotifier</span><span class="p">(</span><span class="n">BaseNotifier</span><span
+        class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An extension to the BaseNotifier which uses the websocket_rails events.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">    An extension to the BaseNotifier which uses the websocket_rails events.</span>
+    <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">update_freq</span><span class="p">,</span> <span class="n">error_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new &#39;RaspilotNotifier&#39; which will send updates as websocket_rails events. These events will have the</span>
-<span class="sd">        specified namespace</span>
-<span class="sd">        :param namespace: namespace of the events</span>
-<span class="sd">        :param update_freq: how often the updates will be send, in milliseconds</span>
-<span class="sd">        :param error_limit: how many sequential errors can occur when sending updates before stopping updates</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">update_freq</span><span class="p">,</span> <span class="n">error_limit</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__namespace</span> <span class="o">=</span> <span class="n">namespace</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span
+            class="n">update_freq</span><span class="p">,</span> <span class="n">error_limit</span><span
+            class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Creates a new &#39;RaspilotNotifier&#39; which will send updates as websocket_rails events. These events will have the</span>
+    <span class="sd">        specified namespace</span>
+    <span class="sd">        :param namespace: namespace of the events</span>
+    <span class="sd">        :param update_freq: how often the updates will be send, in milliseconds</span>
+    <span class="sd">        :param error_limit: how many sequential errors can occur when sending updates before stopping updates</span>
+    <span class="sd">        :return: returns nothing</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span
+            class="p">(</span><span class="n">update_freq</span><span class="p">,</span> <span
+            class="n">error_limit</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__namespace</span> <span class="o">=</span>
+    <span class="n">namespace</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates an update message which contains orientation data</span>
-<span class="sd">        :return: created event</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">orientation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raspilot</span><span class="o">.</span><span class="n">orientation_provider</span><span class="o">.</span><span class="n">current_orientation</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">orientation</span><span class="p">:</span>
-            <span class="n">orientation_data</span> <span class="o">=</span> <span class="n">orientation</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">orientation_data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="s">&#39;current orientation was null&#39;</span><span class="p">}}</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;orientation&#39;</span><span class="p">:</span> <span class="n">orientation_data</span><span class="p">}</span>
-        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">def</span> <span class="nf">_prepare_message</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Creates an update message which contains orientation data</span>
+    <span class="sd">        :return: created event</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">orientation</span> <span class="o">=</span> <span class="bp">self</span><span
+            class="o">.</span><span class="n">raspilot</span><span class="o">.</span><span class="n">orientation_provider</span><span
+            class="o">.</span><span class="n">current_orientation</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">orientation</span><span class="p">:</span>
+    <span class="n">orientation_data</span> <span class="o">=</span> <span class="n">orientation</span><span
+            class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+    <span class="n">orientation_data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;error&#39;</span><span
+            class="p">:</span> <span class="p">{</span><span class="s">&#39;message&#39;</span><span class="p">:</span>
+    <span class="s">&#39;current orientation was null&#39;</span><span class="p">}}</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span
+            class="s">&#39;orientation&#39;</span><span class="p">:</span> <span class="n">orientation_data</span><span
+            class="p">}</span>
+    <span class="k">return</span> <span class="n">data</span>
 
-    <span class="k">def</span> <span class="nf">_serialize_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Message serialization is not needed, it will be serialized later in the websockets module</span>
-<span class="sd">        :param message message which should be sent</span>
-<span class="sd">        :return: message</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">message</span></div>
-</pre></div>
+    <span class="k">def</span> <span class="nf">_serialize_message</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Message serialization is not needed, it will be serialized later in the websockets module</span>
+    <span class="sd">        :param message message which should be sent</span>
+    <span class="sd">        :return: message</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">message</span></div>
+</pre>
+                </div>
 
-          </div>
+            </div>
         </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+    <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <div class="relations">
+                <h3>Related Topics</h3>
+                <ul>
+                    <li><a href="../../../index.html">Documentation overview</a>
+                        <ul>
+                            <li><a href="../../index.html">Module code</a>
+                                <ul>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div id="searchbox" style="display: none" role="search">
+                <h3>Quick search</h3>
+                <form class="search" action="../../../search.html" method="get">
+                    <input type="text" name="q"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+            </div>
+            <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
-      </div>
-      <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2015, Michal Raška.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-    </div>
+    <div class="clearer"></div>
+</div>
+<div class="footer">
+    &copy;2015, Michal Raška.
 
-    
+    |
+    Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+    &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
 
-    
-  </body>
+</div>
+
+
+</body>
 </html>

@@ -1,509 +1,905 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
     <title>raspilot_implementation.websockets package &mdash; Raspilot 1 documentation</title>
-    
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
+
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+
     <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT: './',
+            VERSION: '1',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE: true
+        };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Raspilot 1 documentation" href="index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+    <link rel="top" title="Raspilot 1 documentation" href="index.html"/>
 
-  </head>
-  <body role="document">  
 
-    <div class="document">
-      <div class="documentwrapper">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+</head>
+<body role="document">
+
+<div class="document">
+    <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
-            
-  <div class="section" id="raspilot-implementation-websockets-package">
-<h1>raspilot_implementation.websockets package<a class="headerlink" href="#raspilot-implementation-websockets-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-raspilot_implementation.websockets.websocket_channel">
-<span id="raspilot-implementation-websockets-websocket-channel-module"></span><h2>raspilot_implementation.websockets.websocket_channel module<a class="headerlink" href="#module-raspilot_implementation.websockets.websocket_channel" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel">
-<em class="property">class </em><code class="descclassname">raspilot_implementation.websockets.websocket_channel.</code><code class="descname">WebsocketChannel</code><span class="sig-paren">(</span><em>channel_name</em>, <em>dispatcher</em>, <em>private=False</em>, <em>success=&lt;function nop&gt;</em>, <em>failure=&lt;function nop&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Websocket channel used for communication between subscribers.</p>
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel.bind">
-<code class="descname">bind</code><span class="sig-paren">(</span><em>event_name</em>, <em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Binds and callback for the given event name.
-:param event_name: event name to bind to
-:param callback: callback which should be run
-:return: returns nothing</p>
-</dd></dl>
+            <div class="body" role="main">
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel.destroy">
-<code class="descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel.destroy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unsubscribes from the channel.
-:return: returns nothing</p>
-</dd></dl>
+                <div class="section" id="raspilot-implementation-websockets-package">
+                    <h1>raspilot_implementation.websockets package<a class="headerlink"
+                                                                     href="#raspilot-implementation-websockets-package"
+                                                                     title="Permalink to this headline">¶</a></h1>
+                    <div class="section" id="submodules">
+                        <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a>
+                        </h2>
+                    </div>
+                    <div class="section" id="module-raspilot_implementation.websockets.websocket_channel">
+                        <span id="raspilot-implementation-websockets-websocket-channel-module"></span>
+                        <h2>raspilot_implementation.websockets.websocket_channel module<a class="headerlink"
+                                                                                          href="#module-raspilot_implementation.websockets.websocket_channel"
+                                                                                          title="Permalink to this headline">¶</a>
+                        </h2>
+                        <dl class="class">
+                            <dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel">
+                                <em class="property">class </em><code class="descclassname">raspilot_implementation.websockets.websocket_channel.</code><code
+                                    class="descname">WebsocketChannel</code><span class="sig-paren">(</span><em>channel_name</em>,
+                                <em>dispatcher</em>, <em>private=False</em>, <em>success=&lt;function nop&gt;</em>, <em>failure=&lt;function
+                                nop&gt;</em><span class="sig-paren">)</span><a class="reference internal"
+                                                                               href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <code class="xref py py-class docutils literal"><span
+                                    class="pre">object</span></code></p>
+                                <p>Websocket channel used for communication between subscribers.</p>
+                                <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel.bind">
+                                <code class="descname">bind</code><span class="sig-paren">(</span><em>event_name</em>,
+                                <em>callback</em><span class="sig-paren">)</span><a class="reference internal"
+                                                                                    href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel.bind"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel.bind"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Binds and callback for the given event name.
+                                :param event_name: event name to bind to
+                                :param callback: callback which should be run
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel.dispatch">
-<code class="descname">dispatch</code><span class="sig-paren">(</span><em>event_name</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel.dispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel.dispatch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run callbacks for the received event.
-:param event_name: event name of the received event
-:param message: message which will be dispatched
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel.destroy">
+                                <code class="descname">destroy</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel.destroy"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel.destroy"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Unsubscribes from the channel.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel.trigger">
-<code class="descname">trigger</code><span class="sig-paren">(</span><em>event_name</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel.trigger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Publishes the event to the channel.
-:param event_name: event name of the event
-:param message: message which should be in the event
-:return: return True if message was transmitted, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel.dispatch">
+                                <code class="descname">dispatch</code><span
+                                    class="sig-paren">(</span><em>event_name</em>, <em>message</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel.dispatch"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel.dispatch"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Run callbacks for the received event.
+                                :param event_name: event name of the received event
+                                :param message: message which will be dispatched
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_channel.WebsocketChannel.trigger">
+                                <code class="descname">trigger</code><span class="sig-paren">(</span><em>event_name</em>,
+                                <em>message</em><span class="sig-paren">)</span><a class="reference internal"
+                                                                                   href="_modules/raspilot_implementation/websockets/websocket_channel.html#WebsocketChannel.trigger"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_channel.WebsocketChannel.trigger"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Publishes the event to the channel.
+                                :param event_name: event name of the event
+                                :param message: message which should be in the event
+                                :return: return True if message was transmitted, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="function">
-<dt id="raspilot_implementation.websockets.websocket_channel.nop">
-<code class="descclassname">raspilot_implementation.websockets.websocket_channel.</code><code class="descname">nop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_channel.html#nop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_channel.nop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        </dd></dl>
 
-</div>
-<div class="section" id="module-raspilot_implementation.websockets.websocket_connection">
-<span id="raspilot-implementation-websockets-websocket-connection-module"></span><h2>raspilot_implementation.websockets.websocket_connection module<a class="headerlink" href="#module-raspilot_implementation.websockets.websocket_connection" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection">
-<em class="property">class </em><code class="descclassname">raspilot_implementation.websockets.websocket_connection.</code><code class="descname">WebsocketConnection</code><span class="sig-paren">(</span><em>url</em>, <em>dispatcher</em>, <em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Websocket connection. Used to send, receive messages.</p>
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connects to the server.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="function">
+                            <dt id="raspilot_implementation.websockets.websocket_channel.nop">
+                                <code class="descclassname">raspilot_implementation.websockets.websocket_channel.</code><code
+                                    class="descname">nop</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_channel.html#nop"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_channel.nop"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.connection_id">
-<code class="descname">connection_id</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.connection_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                    </div>
+                    <div class="section" id="module-raspilot_implementation.websockets.websocket_connection">
+                        <span id="raspilot-implementation-websockets-websocket-connection-module"></span>
+                        <h2>raspilot_implementation.websockets.websocket_connection module<a class="headerlink"
+                                                                                             href="#module-raspilot_implementation.websockets.websocket_connection"
+                                                                                             title="Permalink to this headline">¶</a>
+                        </h2>
+                        <dl class="class">
+                            <dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection">
+                                <em class="property">class </em><code class="descclassname">raspilot_implementation.websockets.websocket_connection.</code><code
+                                    class="descname">WebsocketConnection</code><span
+                                    class="sig-paren">(</span><em>url</em>, <em>dispatcher</em>, <em>username</em>, <em>password</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <code class="xref py py-class docutils literal"><span
+                                    class="pre">object</span></code></p>
+                                <p>Websocket connection. Used to send, receive messages.</p>
+                                <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.connect">
+                                <code class="descname">connect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.connect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.connect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Connects to the server.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.disconnect">
-<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnects the socket.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.connection_id">
+                                <code class="descname">connection_id</code><a class="headerlink"
+                                                                              href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.connection_id"
+                                                                              title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.raw_send">
-<code class="descname">raw_send</code><span class="sig-paren">(</span><em>message</em>, <em>success</em>, <em>failure</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.raw_send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.raw_send" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sends a raw message via the websocket. If the transmission fails failure callback is executed (if set).
-If the transmission is successful the success callback is executed (if set). It is not verified that someone
-receives the message, only transmission success is reported. Callbacks should have one parameter - message.
-:param message: message to be sent
-:param success: success callback
-:param failure: failure callback
-:return: True if transmission is successful, False otherwise.</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.disconnect">
+                                <code class="descname">disconnect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.disconnect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.disconnect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Disconnects the socket.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.reconnect">
-<code class="descname">reconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.reconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.reconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reconnects to the server. WebsocketApp is closed, newly created and WebsocketConnection.connect() is called
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.raw_send">
+                                <code class="descname">raw_send</code><span class="sig-paren">(</span><em>message</em>,
+                                <em>success</em>, <em>failure</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.raw_send"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.raw_send"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Sends a raw message via the websocket. If the transmission fails failure callback is
+                                executed (if set).
+                                If the transmission is successful the success callback is executed (if set). It is not
+                                verified that someone
+                                receives the message, only transmission success is reported. Callbacks should have one
+                                parameter - message.
+                                :param message: message to be sent
+                                :param success: success callback
+                                :param failure: failure callback
+                                :return: True if transmission is successful, False otherwise.</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.trigger">
-<code class="descname">trigger</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.trigger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sends event to the server. If not connected, event is added to the queue.
-:param event: event to send
-:return: returns True if message was transmitted, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.reconnect">
+                                <code class="descname">reconnect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.reconnect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.reconnect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Reconnects to the server. WebsocketApp is closed, newly created and
+                                WebsocketConnection.connect() is called
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_connection.WebsocketConnection.trigger">
+                                <code class="descname">trigger</code><span class="sig-paren">(</span><em>event</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_connection.html#WebsocketConnection.trigger"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_connection.WebsocketConnection.trigger"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Sends event to the server. If not connected, event is added to the queue.
+                                :param event: event to send
+                                :return: returns True if message was transmitted, False otherwise</p>
+                            </dd>
+                        </dl>
 
-</div>
-<div class="section" id="module-raspilot_implementation.websockets.websocket_dispatcher">
-<span id="raspilot-implementation-websockets-websocket-dispatcher-module"></span><h2>raspilot_implementation.websockets.websocket_dispatcher module<a class="headerlink" href="#module-raspilot_implementation.websockets.websocket_dispatcher" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher">
-<em class="property">class </em><code class="descclassname">raspilot_implementation.websockets.websocket_dispatcher.</code><code class="descname">WebsocketDispatcher</code><span class="sig-paren">(</span><em>provider</em>, <em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Dispatcher for the websockets. Main class for work with websockets.</p>
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.bind">
-<code class="descname">bind</code><span class="sig-paren">(</span><em>event_name</em>, <em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Binds a callback for a event name.
-:param event_name: event name to bind
-:param callback: callback which will be called
-:return: returns nothing</p>
-</dd></dl>
+                        </dd></dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connects to the server.
-:return: returns nothing</p>
-</dd></dl>
+                    </div>
+                    <div class="section" id="module-raspilot_implementation.websockets.websocket_dispatcher">
+                        <span id="raspilot-implementation-websockets-websocket-dispatcher-module"></span>
+                        <h2>raspilot_implementation.websockets.websocket_dispatcher module<a class="headerlink"
+                                                                                             href="#module-raspilot_implementation.websockets.websocket_dispatcher"
+                                                                                             title="Permalink to this headline">¶</a>
+                        </h2>
+                        <dl class="class">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher">
+                                <em class="property">class </em><code class="descclassname">raspilot_implementation.websockets.websocket_dispatcher.</code><code
+                                    class="descname">WebsocketDispatcher</code><span class="sig-paren">(</span><em>provider</em>,
+                                <em>username</em>, <em>password</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <code class="xref py py-class docutils literal"><span
+                                    class="pre">object</span></code></p>
+                                <p>Dispatcher for the websockets. Main class for work with websockets.</p>
+                                <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.bind">
+                                <code class="descname">bind</code><span class="sig-paren">(</span><em>event_name</em>,
+                                <em>callback</em><span class="sig-paren">)</span><a class="reference internal"
+                                                                                    href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.bind"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.bind"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Binds a callback for a event name.
+                                :param event_name: event name to bind
+                                :param callback: callback which will be called
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.connection_id">
-<code class="descname">connection_id</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.connection_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.connect">
+                                <code class="descname">connect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.connect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.connect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Connects to the server.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.disconnect">
-<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnects the websocket.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.connection_id">
+                                <code class="descname">connection_id</code><a class="headerlink"
+                                                                              href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.connection_id"
+                                                                              title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.is_connected">
-<code class="descname">is_connected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.is_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.is_connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if connected, false otherwise
-:return: True if connected, false otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.disconnect">
+                                <code class="descname">disconnect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.disconnect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.disconnect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Disconnects the websocket.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.is_subscribed">
-<code class="descname">is_subscribed</code><span class="sig-paren">(</span><em>channel_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.is_subscribed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.is_subscribed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True, if given channel name is subscribed, False otherwise.
-:param channel_name: name of the channel
-:return: True, if given channel name is subscribed, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.is_connected">
+                                <code class="descname">is_connected</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.is_connected"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.is_connected"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True if connected, false otherwise
+                                :return: True if connected, false otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_close">
-<code class="descname">on_close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.on_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when connection is closed because of an error, or because of normal disconnect. Notifies the provider.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.is_subscribed">
+                                <code class="descname">is_subscribed</code><span class="sig-paren">(</span><em>channel_name</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.is_subscribed"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.is_subscribed"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True, if given channel name is subscribed, False otherwise.
+                                :param channel_name: name of the channel
+                                :return: True, if given channel name is subscribed, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_error">
-<code class="descname">on_error</code><span class="sig-paren">(</span><em>error</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.on_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_error" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when an error occur. Notifies the provider.
-:param error: error occurred
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_close">
+                                <code class="descname">on_close</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.on_close"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_close"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called when connection is closed because of an error, or because of normal
+                                disconnect. Notifies the provider.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_new_message">
-<code class="descname">on_new_message</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.on_new_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_new_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when new message arrived. Creates a WebsocketEvent from the message and dispatch this event. In case of
-&#8216;ping&#8217;, events, &#8216;pong&#8217; is automatically send. In case of &#8216;client_connected&#8217; event, the connection id is saved.</p>
-<blockquote>
-<div>In case of &#8216;channel&#8217; event, the message is dispatched to the channel.</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> &#8211; received message</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">returns nothing.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_error">
+                                <code class="descname">on_error</code><span
+                                    class="sig-paren">(</span><em>error</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.on_error"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_error"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called when an error occur. Notifies the provider.
+                                :param error: error occurred
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_open">
-<code class="descname">on_open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.on_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_open" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when connection is opened. Notifies the provider.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_new_message">
+                                <code class="descname">on_new_message</code><span
+                                    class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.on_new_message"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_new_message"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called when new message arrived. Creates a WebsocketEvent from the message and
+                                dispatch this event. In case of
+                                &#8216;ping&#8217;, events, &#8216;pong&#8217; is automatically send. In case of &#8216;client_connected&#8217;
+                                event, the connection id is saved.</p>
+                                <blockquote>
+                                    <div>In case of &#8216;channel&#8217; event, the message is dispatched to the
+                                        channel.
+                                    </div>
+                                </blockquote>
+                                <table class="docutils field-list" frame="void" rules="none">
+                                    <col class="field-name"/>
+                                    <col class="field-body"/>
+                                    <tbody valign="top">
+                                    <tr class="field-odd field">
+                                        <th class="field-name">Parameters:</th>
+                                        <td class="field-body"><strong>message</strong> &#8211; received message</td>
+                                    </tr>
+                                    <tr class="field-even field">
+                                        <th class="field-name">Returns:</th>
+                                        <td class="field-body">returns nothing.</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.raw_send">
-<code class="descname">raw_send</code><span class="sig-paren">(</span><em>message</em>, <em>success</em>, <em>failure</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.raw_send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.raw_send" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sends a raw message via the websocket. If the transmission fails failure callback is executed (if set).
-If the transmission is successful the success callback is executed (if set). It is not verified that someone
-receives the message, only transmission success is reported. Callbacks should have one parameter - message.
-:param message: message to be sent
-:param success: success callback
-:param failure: failure callback
-:return: True if transmission is successful, False otherwise.</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_open">
+                                <code class="descname">on_open</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.on_open"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.on_open"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Called when connection is opened. Notifies the provider.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.reconnect">
-<code class="descname">reconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.reconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.reconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reconnects.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.raw_send">
+                                <code class="descname">raw_send</code><span class="sig-paren">(</span><em>message</em>,
+                                <em>success</em>, <em>failure</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.raw_send"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.raw_send"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Sends a raw message via the websocket. If the transmission fails failure callback is
+                                executed (if set).
+                                If the transmission is successful the success callback is executed (if set). It is not
+                                verified that someone
+                                receives the message, only transmission success is reported. Callbacks should have one
+                                parameter - message.
+                                :param message: message to be sent
+                                :param success: success callback
+                                :param failure: failure callback
+                                :return: True if transmission is successful, False otherwise.</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.should_reconnect">
-<code class="descname">should_reconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.should_reconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.should_reconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True, if should reconnect, False, otherwise
-:return: True, if should reconnect, False, otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.reconnect">
+                                <code class="descname">reconnect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.reconnect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.reconnect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Reconnects.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.state">
-<code class="descname">state</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.state" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.should_reconnect">
+                                <code class="descname">should_reconnect</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.should_reconnect"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.should_reconnect"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True, if should reconnect, False, otherwise
+                                :return: True, if should reconnect, False, otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.subscribe">
-<code class="descname">subscribe</code><span class="sig-paren">(</span><em>channel_name</em>, <em>success=&lt;function nop&gt;</em>, <em>failure=&lt;function nop&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.subscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.subscribe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Subscribes the public channel.
-:param channel_name: name of the channel
-:param success: success callback
-:param failure: failure callback
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.state">
+                                <code class="descname">state</code><a class="headerlink"
+                                                                      href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.state"
+                                                                      title="Permalink to this definition">¶</a></dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.subscribe_private">
-<code class="descname">subscribe_private</code><span class="sig-paren">(</span><em>channel_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.subscribe_private"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.subscribe_private" title="Permalink to this definition">¶</a></dt>
-<dd><p>Subscribes the private channel.
-:param channel_name: name of the channel
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.subscribe">
+                                <code class="descname">subscribe</code><span
+                                    class="sig-paren">(</span><em>channel_name</em>, <em>success=&lt;function
+                                nop&gt;</em>, <em>failure=&lt;function nop&gt;</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.subscribe"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.subscribe"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Subscribes the public channel.
+                                :param channel_name: name of the channel
+                                :param success: success callback
+                                :param failure: failure callback
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.trigger">
-<code class="descname">trigger</code><span class="sig-paren">(</span><em>event_name</em>, <em>data</em>, <em>success_callback=&lt;function nop&gt;</em>, <em>failure_callback=&lt;function nop&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.trigger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates event with given name and data sends it. If the event is successfully executed then the success callback
-is run, otherwise failure callback is run.
-:param event_name: name for the event
-:param data: data sent in the event
-:param success_callback: callback for success
-:param failure_callback: callback for failure
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.subscribe_private">
+                                <code class="descname">subscribe_private</code><span class="sig-paren">(</span><em>channel_name</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.subscribe_private"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.subscribe_private"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Subscribes the private channel.
+                                :param channel_name: name of the channel
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.trigger_event">
-<code class="descname">trigger_event</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.trigger_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.trigger_event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sends event, which was previously created.
-:param event: event which should be sent
-:return: returns True if message was transmitted, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.trigger">
+                                <code class="descname">trigger</code><span class="sig-paren">(</span><em>event_name</em>,
+                                <em>data</em>, <em>success_callback=&lt;function nop&gt;</em>, <em>failure_callback=&lt;function
+                                nop&gt;</em><span class="sig-paren">)</span><a class="reference internal"
+                                                                               href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.trigger"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.trigger"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Creates event with given name and data sends it. If the event is successfully
+                                executed then the success callback
+                                is run, otherwise failure callback is run.
+                                :param event_name: name for the event
+                                :param data: data sent in the event
+                                :param success_callback: callback for success
+                                :param failure_callback: callback for failure
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.unsubscribe">
-<code class="descname">unsubscribe</code><span class="sig-paren">(</span><em>channel_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.unsubscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.unsubscribe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unsubscribes the channel.
-:param channel_name: name of the channel
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.trigger_event">
+                                <code class="descname">trigger_event</code><span
+                                    class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.trigger_event"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.trigger_event"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Sends event, which was previously created.
+                                :param event: event which should be sent
+                                :return: returns True if message was transmitted, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.url">
-<code class="descname">url</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.unsubscribe">
+                                <code class="descname">unsubscribe</code><span class="sig-paren">(</span><em>channel_name</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.unsubscribe"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.unsubscribe"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Unsubscribes the channel.
+                                :param channel_name: name of the channel
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.wait_for_connection">
-<code class="descname">wait_for_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.wait_for_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.wait_for_connection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Blocks until connection is successfully created, or till the connection fails.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.url">
+                                <code class="descname">url</code><a class="headerlink"
+                                                                    href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.url"
+                                                                    title="Permalink to this definition">¶</a></dt>
+                            <dd></dd>
+                        </dl>
 
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.wait_for_connection">
+                                <code class="descname">wait_for_connection</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_dispatcher.html#WebsocketDispatcher.wait_for_connection"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_dispatcher.WebsocketDispatcher.wait_for_connection"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Blocks until connection is successfully created, or till the connection fails.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-</div>
-<div class="section" id="module-raspilot_implementation.websockets.websocket_event">
-<span id="raspilot-implementation-websockets-websocket-event-module"></span><h2>raspilot_implementation.websockets.websocket_event module<a class="headerlink" href="#module-raspilot_implementation.websockets.websocket_event" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent">
-<em class="property">class </em><code class="descclassname">raspilot_implementation.websockets.websocket_event.</code><code class="descname">WebsocketEvent</code><span class="sig-paren">(</span><em>message</em>, <em>success_callback=&lt;function nop&gt;</em>, <em>failure_callback=&lt;function nop&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Event representation used in the websocket.</p>
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.channel">
-<code class="descname">channel</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.channel" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        </dd></dl>
 
-<dl class="classmethod">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_event">
-<em class="property">classmethod </em><code class="descname">create_event</code><span class="sig-paren">(</span><em>namespace</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.create_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an WebsocketEvent containing the data for regular updates.
-:param namespace: event namespace (type) under which the data will be transferred
-:param data: data which should be contained in the event
-:return: newly created WebsocketEvent with regular data updates</p>
-</dd></dl>
+                    </div>
+                    <div class="section" id="module-raspilot_implementation.websockets.websocket_event">
+                        <span id="raspilot-implementation-websockets-websocket-event-module"></span>
+                        <h2>raspilot_implementation.websockets.websocket_event module<a class="headerlink"
+                                                                                        href="#module-raspilot_implementation.websockets.websocket_event"
+                                                                                        title="Permalink to this headline">¶</a>
+                        </h2>
+                        <dl class="class">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent">
+                                <em class="property">class </em><code class="descclassname">raspilot_implementation.websockets.websocket_event.</code><code
+                                    class="descname">WebsocketEvent</code><span
+                                    class="sig-paren">(</span><em>message</em>, <em>success_callback=&lt;function nop&gt;</em>,
+                                <em>failure_callback=&lt;function nop&gt;</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Bases: <code class="xref py py-class docutils literal"><span
+                                    class="pre">object</span></code></p>
+                                <p>Event representation used in the websocket.</p>
+                                <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.channel">
+                                <code class="descname">channel</code><a class="headerlink"
+                                                                        href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.channel"
+                                                                        title="Permalink to this definition">¶</a></dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="classmethod">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_pong">
-<em class="property">classmethod </em><code class="descname">create_pong</code><span class="sig-paren">(</span><em>connection_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.create_pong"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_pong" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a pong event.
-:param connection_id: id of the current connection
-:return: newly created pong event</p>
-</dd></dl>
+                        <dl class="classmethod">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_event">
+                                <em class="property">classmethod </em><code class="descname">create_event</code><span
+                                    class="sig-paren">(</span><em>namespace</em>, <em>data</em><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.create_event"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_event"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Creates an WebsocketEvent containing the data for regular updates.
+                                :param namespace: event namespace (type) under which the data will be transferred
+                                :param data: data which should be contained in the event
+                                :return: newly created WebsocketEvent with regular data updates</p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.data">
-<code class="descname">data</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="classmethod">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_pong">
+                                <em class="property">classmethod </em><code class="descname">create_pong</code><span
+                                    class="sig-paren">(</span><em>connection_id</em><span class="sig-paren">)</span><a
+                                    class="reference internal"
+                                    href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.create_pong"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.create_pong"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Creates a pong event.
+                                :param connection_id: id of the current connection
+                                :return: newly created pong event</p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.event_name">
-<code class="descname">event_name</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.event_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.data">
+                                <code class="descname">data</code><a class="headerlink"
+                                                                     href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.data"
+                                                                     title="Permalink to this definition">¶</a></dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.id">
-<code class="descname">id</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.event_name">
+                                <code class="descname">event_name</code><a class="headerlink"
+                                                                           href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.event_name"
+                                                                           title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_channel">
-<code class="descname">is_channel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_channel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_channel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if is send in channel.
-:return: True if is send in channel, False otherwise</p>
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.id">
+                                <code class="descname">id</code><a class="headerlink"
+                                                                   href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.id"
+                                                                   title="Permalink to this definition">¶</a></dt>
+                            <dd></dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_client_connected">
-<code class="descname">is_client_connected</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_client_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_client_connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if is &#8216;client_connected&#8217; event.
-:return: True if is &#8216;client_connected&#8217; event, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_channel">
+                                <code class="descname">is_channel</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_channel"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_channel"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True if is send in channel.
+                                :return: True if is send in channel, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_ping">
-<code class="descname">is_ping</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_ping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_ping" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if is ping.
-:return: True if is ping, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_client_connected">
+                                <code class="descname">is_client_connected</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_client_connected"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_client_connected"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True if is &#8216;client_connected&#8217; event.
+                                :return: True if is &#8216;client_connected&#8217; event, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_result">
-<code class="descname">is_result</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_result" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if is result.
-:return: True if is result, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_ping">
+                                <code class="descname">is_ping</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_ping"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_ping"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True if is ping.
+                                :return: True if is ping, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_success">
-<code class="descname">is_success</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_success"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_success" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if is successful.
-:return: True if is successful, False otherwise</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_result">
+                                <code class="descname">is_result</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_result"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_result"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True if is result.
+                                :return: True if is result, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.run_callbacks">
-<code class="descname">run_callbacks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.run_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.run_callbacks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the successful callback if is successful and the callback is set, otherwise runs failure callback if the
-callback is set.
-:return: returns nothing</p>
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_success">
+                                <code class="descname">is_success</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.is_success"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.is_success"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Returns True if is successful.
+                                :return: True if is successful, False otherwise</p>
+                            </dd>
+                        </dl>
 
-<dl class="attribute">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.success">
-<code class="descname">success</code><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.success" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.run_callbacks">
+                                <code class="descname">run_callbacks</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.run_callbacks"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.run_callbacks"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Runs the successful callback if is successful and the callback is set, otherwise runs
+                                failure callback if the
+                                callback is set.
+                                :return: returns nothing</p>
+                            </dd>
+                        </dl>
 
-<dl class="method">
-<dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.to_json">
-<code class="descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.to_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Serializes the event into JSON
-:return: JSON representation of the event</p>
-</dd></dl>
+                        <dl class="attribute">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.success">
+                                <code class="descname">success</code><a class="headerlink"
+                                                                        href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.success"
+                                                                        title="Permalink to this definition">¶</a></dt>
+                            <dd></dd>
+                        </dl>
 
-</dd></dl>
+                        <dl class="method">
+                            <dt id="raspilot_implementation.websockets.websocket_event.WebsocketEvent.to_json">
+                                <code class="descname">to_json</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#WebsocketEvent.to_json"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.WebsocketEvent.to_json"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd><p>Serializes the event into JSON
+                                :return: JSON representation of the event</p>
+                            </dd>
+                        </dl>
 
-<dl class="function">
-<dt id="raspilot_implementation.websockets.websocket_event.nop">
-<code class="descclassname">raspilot_implementation.websockets.websocket_event.</code><code class="descname">nop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/raspilot_implementation/websockets/websocket_event.html#nop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#raspilot_implementation.websockets.websocket_event.nop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+                        </dd></dl>
 
-</div>
-<div class="section" id="module-raspilot_implementation.websockets">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-raspilot_implementation.websockets" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+                        <dl class="function">
+                            <dt id="raspilot_implementation.websockets.websocket_event.nop">
+                                <code class="descclassname">raspilot_implementation.websockets.websocket_event.</code><code
+                                    class="descname">nop</code><span class="sig-paren">(</span><span
+                                    class="sig-paren">)</span><a class="reference internal"
+                                                                 href="_modules/raspilot_implementation/websockets/websocket_event.html#nop"><span
+                                    class="viewcode-link">[source]</span></a><a class="headerlink"
+                                                                                href="#raspilot_implementation.websockets.websocket_event.nop"
+                                                                                title="Permalink to this definition">¶</a>
+                            </dt>
+                            <dd></dd>
+                        </dl>
+
+                    </div>
+                    <div class="section" id="module-raspilot_implementation.websockets">
+                        <span id="module-contents"></span>
+                        <h2>Module contents<a class="headerlink" href="#module-raspilot_implementation.websockets"
+                                              title="Permalink to this headline">¶</a></h2>
+                    </div>
+                </div>
 
 
-          </div>
+            </div>
         </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+    </div>
+    <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">raspilot_implementation.websockets package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-raspilot_implementation.websockets.websocket_channel">raspilot_implementation.websockets.websocket_channel module</a></li>
-<li><a class="reference internal" href="#module-raspilot_implementation.websockets.websocket_connection">raspilot_implementation.websockets.websocket_connection module</a></li>
-<li><a class="reference internal" href="#module-raspilot_implementation.websockets.websocket_dispatcher">raspilot_implementation.websockets.websocket_dispatcher module</a></li>
-<li><a class="reference internal" href="#module-raspilot_implementation.websockets.websocket_event">raspilot_implementation.websockets.websocket_event module</a></li>
-<li><a class="reference internal" href="#module-raspilot_implementation.websockets">Module contents</a></li>
-</ul>
-</li>
-</ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/raspilot_implementation.websockets.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+                <li><a class="reference internal" href="#">raspilot_implementation.websockets package</a>
+                    <ul>
+                        <li><a class="reference internal" href="#submodules">Submodules</a></li>
+                        <li><a class="reference internal"
+                               href="#module-raspilot_implementation.websockets.websocket_channel">raspilot_implementation.websockets.websocket_channel
+                            module</a></li>
+                        <li><a class="reference internal"
+                               href="#module-raspilot_implementation.websockets.websocket_connection">raspilot_implementation.websockets.websocket_connection
+                            module</a></li>
+                        <li><a class="reference internal"
+                               href="#module-raspilot_implementation.websockets.websocket_dispatcher">raspilot_implementation.websockets.websocket_dispatcher
+                            module</a></li>
+                        <li><a class="reference internal"
+                               href="#module-raspilot_implementation.websockets.websocket_event">raspilot_implementation.websockets.websocket_event
+                            module</a></li>
+                        <li><a class="reference internal" href="#module-raspilot_implementation.websockets">Module
+                            contents</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="relations">
+                <h3>Related Topics</h3>
+                <ul>
+                    <li><a href="index.html">Documentation overview</a>
+                        <ul>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div role="note" aria-label="source link">
+                <h3>This Page</h3>
+                <ul class="this-page-menu">
+                    <li><a href="_sources/raspilot_implementation.websockets.txt"
+                           rel="nofollow">Show Source</a></li>
+                </ul>
+            </div>
+            <div id="searchbox" style="display: none" role="search">
+                <h3>Quick search</h3>
+                <form class="search" action="search.html" method="get">
+                    <input type="text" name="q"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+            </div>
+            <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
-      </div>
-      <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2015, Michal Raška.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-      |
-      <a href="_sources/raspilot_implementation.websockets.txt"
-          rel="nofollow">Page source</a>
-    </div>
+    <div class="clearer"></div>
+</div>
+<div class="footer">
+    &copy;2015, Michal Raška.
 
-    
+    |
+    Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+    &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
 
-    
-  </body>
+    |
+    <a href="_sources/raspilot_implementation.websockets.txt"
+       rel="nofollow">Page source</a>
+</div>
+
+
+</body>
 </html>

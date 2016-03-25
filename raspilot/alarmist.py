@@ -1,8 +1,8 @@
 import logging
+import time
 from threading import Thread
 
 import psutil
-import time
 
 from raspilot.providers.base_provider import BaseProvider, BaseProviderConfig
 

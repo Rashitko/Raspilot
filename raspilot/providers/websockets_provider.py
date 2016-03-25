@@ -1,5 +1,5 @@
-import time
 import logging
+import time
 
 from raspilot.providers.base_provider import BaseProvider, BaseProviderConfig
 

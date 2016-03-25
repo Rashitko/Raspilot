@@ -407,6 +407,10 @@ class Raspilot:
     def alarmist(self):
         return self.__alarmist
 
+    @property
+    def notifier(self):
+        return self.__notifier
+
 
 class RaspilotBuilder:
     """

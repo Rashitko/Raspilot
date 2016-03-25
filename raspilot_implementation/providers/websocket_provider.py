@@ -1,6 +1,7 @@
+from threading import Event
+
 from raspilot.providers.websockets_provider import WebsocketsProvider, WebsocketsConfig
 from raspilot_implementation.websockets.websocket_dispatcher import WebsocketDispatcher
-from threading import Event
 
 CHANNEL_NAME_FORMAT = "device:{}"
 
@@ -69,7 +70,7 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
             return False
         channel_name = CHANNEL_NAME_FORMAT.format(self.__device_identifier)
         self.__channel = self.__dispatcher.subscribe(channel_name, success=self.__on_channel_connection,
-                                    failure=self.__on_channel_connection)
+                                                     failure=self.__on_channel_connection)
         self._wait_for_channel.wait()
         return self.__dispatcher.connection_id and self.__channel_connected
 
@@ -83,8 +84,11 @@ class RaspilotWebsocketsProvider(WebsocketsProvider):
         :param failure: failure callback
         :return: True if transmission is successful, False otherwise.
         """
-        trigger = self.__channel.trigger('telemetry.update', message)
-        return trigger
+        if self.__channel:
+            trigger = self.__channel.trigger('telemetry.update', message)
+            return trigger
+        else:
+            return False
 
     def send_message(self, message, success=None, failure=None):
         self.__dispatcher.trigger_event(message)

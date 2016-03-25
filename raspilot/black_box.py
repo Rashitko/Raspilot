@@ -1,7 +1,6 @@
 import logging
-from threading import Thread
-
 import time
+from threading import Thread
 
 from raspilot.providers.base_provider import BaseProvider, BaseProviderConfig
 

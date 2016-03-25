@@ -1,5 +1,4 @@
 import json
-import uuid
 import logging
 
 EVENT_TYPE_CLIENT_CONNECTED = 'client_connected'

@@ -1,300 +1,424 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
     <title>raspilot.notifier.base_notifier &mdash; Raspilot 1 documentation</title>
-    
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
+
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css"/>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css"/>
+
     <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT: '../../../',
+            VERSION: '1',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE: true
+        };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+    <link rel="top" title="Raspilot 1 documentation" href="../../../index.html"/>
+    <link rel="up" title="Module code" href="../../index.html"/>
 
-  </head>
-  <body role="document">  
 
-    <div class="document">
-      <div class="documentwrapper">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+</head>
+<body role="document">
+
+<div class="document">
+    <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
-            
-  <h1>Source code for raspilot.notifier.base_notifier</h1><div class="highlight"><pre>
+            <div class="body" role="main">
+
+                <h1>Source code for raspilot.notifier.base_notifier</h1>
+                <div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span
+                        class="n">Thread</span>
 
 <span class="n">DEFAULT_ERROR_LIMIT</span> <span class="o">=</span> <span class="mi">100</span>
 
 
-<div class="viewcode-block" id="BaseNotifier"><a class="viewcode-back" href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.BaseNotifier">[docs]</a><span class="k">class</span> <span class="nc">BaseNotifier</span><span class="p">:</span>
+<div class="viewcode-block" id="BaseNotifier"><a class="viewcode-back"
+                                                 href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.BaseNotifier">[docs]</a><span
+        class="k">class</span> <span class="nc">BaseNotifier</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class used by Raspilot to deliver periodical updates from the in-air device to the ground station.</span>
-<span class="sd">    Message content is obtained with the BaseNotifier.prepareMessage() method, which should be overridden in</span>
-<span class="sd">    the subclasses.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">    Class used by Raspilot to deliver periodical updates from the in-air device to the ground station.</span>
+    <span class="sd">    Message content is obtained with the BaseNotifier.prepareMessage() method, which should be overridden in</span>
+    <span class="sd">    the subclasses.</span>
+    <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_freq</span><span class="p">,</span> <span class="n">error_limit</span><span class="o">=</span><span class="n">DEFAULT_ERROR_LIMIT</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new &#39;BaseNotifier&#39; which will periodically send messages to the ground device.</span>
-<span class="sd">        :param update_freq: how often the update message should be sent, in milliseconds</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;raspilot.log&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__update_freq</span> <span class="o">=</span> <span class="n">update_freq</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__dispatch_errors</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__error_limit</span> <span class="o">=</span> <span class="n">error_limit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__notify</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">update_freq</span><span class="p">,</span> <span
+            class="n">error_limit</span><span class="o">=</span><span class="n">DEFAULT_ERROR_LIMIT</span><span
+            class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Creates a new &#39;BaseNotifier&#39; which will periodically send messages to the ground device.</span>
+    <span class="sd">        :param update_freq: how often the update message should be sent, in milliseconds</span>
+    <span class="sd">        :return: returns nothing</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span> <span class="o">=</span> <span
+            class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span
+            class="p">(</span><span class="s">&#39;raspilot.log&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__update_freq</span> <span class="o">=</span>
+    <span class="n">update_freq</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__dispatch_errors</span> <span
+            class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__error_limit</span> <span class="o">=</span>
+    <span class="n">error_limit</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__notify</span> <span class="o">=</span> <span
+            class="bp">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span> <span class="o">=</span> <span
+            class="bp">None</span>
 
-<div class="viewcode-block" id="BaseNotifier.initialize"><a class="viewcode-back" href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.BaseNotifier.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="viewcode-block" id="BaseNotifier.initialize"><a class="viewcode-back"
+                                                                href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.BaseNotifier.initialize">[docs]</a>
+        <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span
+                class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Called once before start. Used to initialize the notifier</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">        Called once before start. Used to initialize the notifier</span>
+        <span class="sd">        :return: returns nothing</span>
+        <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="BaseNotifier.start"><a class="viewcode-back" href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.BaseNotifier.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="viewcode-block" id="BaseNotifier.start"><a class="viewcode-back"
+                                                           href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.BaseNotifier.start">[docs]</a>
+        <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span
+                class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Starts the notifications.</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Raspilot must be set prior to start&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__notify</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__notify_loop</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+        <span class="sd">        Starts the notifications.</span>
+        <span class="sd">        :return: returns nothing</span>
+        <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span
+                class="n">__raspilot</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Raspilot must be set prior to start&quot;</span><span
+                class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__notify</span> <span class="o">=</span>
+        <span class="bp">True</span>
+        <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span
+                class="bp">self</span><span class="o">.</span><span class="n">__notify_loop</span><span
+                class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="BaseNotifier.stop"><a class="viewcode-back" href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.BaseNotifier.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="viewcode-block" id="BaseNotifier.stop"><a class="viewcode-back"
+                                                          href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.BaseNotifier.stop">[docs]</a>
+        <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span
+                class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stops the notifications.</span>
-<span class="sd">        :return: returns nothing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__notify</span> <span class="o">=</span> <span class="bp">False</span></div>
+        <span class="sd">        Stops the notifications.</span>
+        <span class="sd">        :return: returns nothing</span>
+        <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__notify</span> <span class="o">=</span>
+        <span class="bp">False</span></div>
 
-    <span class="k">def</span> <span class="nf">__notify_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on_preparation_error</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">on_serialization_error</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">on_transmission_error</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Periodically prepares the message and then tries to send it.</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">__notify</span><span class="p">:</span>
-            <span class="n">dispatched</span> <span class="o">=</span> <span class="bp">False</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__obtain_message</span><span class="p">()</span>
-                <span class="n">serialized_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__try_to_serialize</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-                <span class="n">dispatched</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dispatch_message</span><span class="p">(</span><span class="n">serialized_message</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__notify_loop</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">on_preparation_error</span><span class="o">=</span><span
+            class="bp">None</span><span class="p">,</span> <span class="n">on_serialization_error</span><span class="o">=</span><span
+            class="bp">None</span><span class="p">,</span> <span class="n">on_transmission_error</span><span
+            class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Periodically prepares the message and then tries to send it.</span>
+    <span class="sd">        :return:</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">__notify</span><span class="p">:</span>
+    <span class="n">dispatched</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">try</span><span class="p">:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">__obtain_message</span><span class="p">()</span>
+    <span class="n">serialized_message</span> <span class="o">=</span> <span class="bp">self</span><span
+            class="o">.</span><span class="n">__try_to_serialize</span><span class="p">(</span><span
+            class="n">message</span><span class="p">)</span>
+    <span class="n">dispatched</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">__dispatch_message</span><span class="p">(</span><span class="n">serialized_message</span><span
+            class="p">)</span>
 
-            <span class="k">except</span> <span class="n">MessagePreparationError</span> <span class="k">as</span> <span class="n">msgPrepError</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Message preparation failed. Error was {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msgPrepError</span><span class="o">.</span><span class="n">error</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">on_preparation_error</span><span class="p">:</span>
-                    <span class="n">on_preparation_error</span><span class="p">()</span>
-            <span class="k">except</span> <span class="n">MessageSerializationError</span> <span class="k">as</span> <span class="n">msgSerializationError</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Message serialization failed. Error was {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msgSerializationError</span><span class="o">.</span><span class="n">error</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">on_serialization_error</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
-                        <span class="n">message</span> <span class="o">=</span> <span class="bp">None</span>
-                    <span class="n">on_serialization_error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">MessageTransmissionError</span> <span class="k">as</span> <span class="n">msgTransmissionError</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Message failed to be sent. Error was {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msgTransmissionError</span><span class="o">.</span><span class="n">error</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">on_transmission_error</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
-                        <span class="n">message</span> <span class="o">=</span> <span class="bp">None</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">serialized_message</span><span class="p">:</span>
-                        <span class="n">serialized_message</span> <span class="o">=</span> <span class="bp">None</span>
-                    <span class="n">on_transmission_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">serialized_message</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">InterruptedError</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;InterruptedError occurred&quot;</span><span class="p">)</span>
-            <span class="k">finally</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">dispatched</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__dispatch_errors</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__dispatch_errors</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dispatch_errors</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__error_limit</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Updates error limit reached, stopping&quot;</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__update_freq</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">InterruptedError</span><span class="p">:</span>
-                    <span class="k">pass</span>
+    <span class="k">except</span> <span class="n">MessagePreparationError</span> <span class="k">as</span> <span
+            class="n">msgPrepError</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">error</span><span class="p">(</span><span class="s">&quot;Message preparation failed. Error was {}&quot;</span><span
+            class="o">.</span><span class="n">format</span><span class="p">(</span><span
+            class="n">msgPrepError</span><span class="o">.</span><span class="n">error</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">on_preparation_error</span><span class="p">:</span>
+    <span class="n">on_preparation_error</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">MessageSerializationError</span> <span class="k">as</span> <span
+            class="n">msgSerializationError</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">error</span><span class="p">(</span><span class="s">&quot;Message serialization failed. Error was {}&quot;</span><span
+            class="o">.</span><span class="n">format</span><span class="p">(</span><span
+            class="n">msgSerializationError</span><span class="o">.</span><span class="n">error</span><span
+            class="p">))</span>
+    <span class="k">if</span> <span class="n">on_serialization_error</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">on_serialization_error</span><span class="p">(</span><span class="n">message</span><span
+            class="p">)</span>
+    <span class="k">except</span> <span class="n">MessageTransmissionError</span> <span class="k">as</span> <span
+            class="n">msgTransmissionError</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">error</span><span class="p">(</span><span class="s">&quot;Message failed to be sent. Error was {}&quot;</span><span
+            class="o">.</span><span class="n">format</span><span class="p">(</span><span
+            class="n">msgTransmissionError</span><span class="o">.</span><span class="n">error</span><span
+            class="p">))</span>
+    <span class="k">if</span> <span class="n">on_transmission_error</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">serialized_message</span><span
+            class="p">:</span>
+    <span class="n">serialized_message</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">on_transmission_error</span><span class="p">(</span><span class="n">message</span><span
+            class="p">,</span> <span class="n">serialized_message</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">InterruptedError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span
+            class="s">&quot;InterruptedError occurred&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dispatched</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__dispatch_errors</span> <span
+            class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__dispatch_errors</span> <span
+            class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">__dispatch_errors</span> <span class="o">&gt;</span> <span class="bp">self</span><span
+            class="o">.</span><span class="n">__error_limit</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">error</span><span class="p">(</span><span class="s">&quot;Updates error limit reached, stopping&quot;</span><span
+            class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span
+            class="bp">self</span><span class="o">.</span><span class="n">__update_freq</span> <span class="o">/</span>
+    <span class="mi">1000</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">InterruptedError</span><span class="p">:</span>
+    <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">__obtain_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls self._prepare_message an catches all exceptions and throw MessagePreparationError instead</span>
-<span class="sd">        :return: returns prepared message</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_message</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MessagePreparationError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__obtain_message</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Calls self._prepare_message an catches all exceptions and throw MessagePreparationError instead</span>
+    <span class="sd">        :return: returns prepared message</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">_prepare_message</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span
+            class="n">e</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">MessagePreparationError</span><span class="p">(</span><span
+            class="n">e</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Prepares the message which will be sent as an regular update. The default implementation returns None.</span>
-<span class="sd">        :return: returns prepared message</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="nf">_prepare_message</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Prepares the message which will be sent as an regular update. The default implementation returns None.</span>
+    <span class="sd">        :return: returns prepared message</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">None</span>
 
-    <span class="k">def</span> <span class="nf">__try_to_serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls self._serialize_message() and catches all exceptions and throw MessageSerializationError instead.</span>
-<span class="sd">        :param message: message to be serialized</span>
-<span class="sd">        :return: returns serialized message</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MessageSerializationError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__try_to_serialize</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Calls self._serialize_message() and catches all exceptions and throw MessageSerializationError instead.</span>
+    <span class="sd">        :param message: message to be serialized</span>
+    <span class="sd">        :return: returns serialized message</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">_serialize_message</span><span class="p">(</span><span class="n">message</span><span
+            class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span
+            class="n">e</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">MessageSerializationError</span><span class="p">(</span><span
+            class="n">e</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_serialize_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Serializes the message. The default implementation serializes the message as a JSON.</span>
-<span class="sd">        :param message: message to be serialized</span>
-<span class="sd">        :return: serialized message</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_serialize_message</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Serializes the message. The default implementation serializes the message as a JSON.</span>
+    <span class="sd">        :param message: message to be serialized</span>
+    <span class="sd">        :return: serialized message</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span
+            class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">indent</span><span
+            class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__dispatch_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls self._send_message() an catches all exceptions and throw MessageTransmissionError instead</span>
-<span class="sd">        :param message: serialized message which should be sent</span>
-<span class="sd">        :return: returns returns True if message was sent, False, otherwise</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MessageTransmissionError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">sent</span>
+    <span class="k">def</span> <span class="nf">__dispatch_message</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Calls self._send_message() an catches all exceptions and throw MessageTransmissionError instead</span>
+    <span class="sd">        :param message: serialized message which should be sent</span>
+    <span class="sd">        :return: returns returns True if message was sent, False, otherwise</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+    <span class="n">sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">_send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span
+            class="n">e</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">MessageTransmissionError</span><span class="p">(</span><span class="n">e</span><span
+            class="p">)</span>
+    <span class="k">return</span> <span class="n">sent</span>
 
-    <span class="k">def</span> <span class="nf">_send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serialized_message</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">failure</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sends the regular update message if message is not None. Callbacks should have one parameter - message.</span>
-<span class="sd">        :param message: serialized message which should be sent</span>
-<span class="sd">        :param success: success callback, if the message was successfully sent</span>
-<span class="sd">        :param failure: failure callback, if the message transmission failed</span>
-<span class="sd">        :return: returns True if message was sent, False, otherwise</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">update_sent</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="k">if</span> <span class="n">serialized_message</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span><span class="o">.</span><span class="n">websocket_provider</span><span class="p">:</span>
-            <span class="n">update_sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span><span class="o">.</span><span class="n">websocket_provider</span><span class="o">.</span><span class="n">send_telemetry_update_message</span><span class="p">(</span><span class="n">serialized_message</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">update_sent</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Update transmission failed&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">update_sent</span>
+    <span class="k">def</span> <span class="nf">_send_message</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">serialized_message</span><span class="p">,</span> <span
+            class="n">success</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span
+            class="n">failure</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">        Sends the regular update message if message is not None. Callbacks should have one parameter - message.</span>
+    <span class="sd">        :param message: serialized message which should be sent</span>
+    <span class="sd">        :param success: success callback, if the message was successfully sent</span>
+    <span class="sd">        :param failure: failure callback, if the message transmission failed</span>
+    <span class="sd">        :return: returns True if message was sent, False, otherwise</span>
+    <span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">update_sent</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="n">serialized_message</span> <span class="ow">and</span> <span class="bp">self</span><span
+            class="o">.</span><span class="n">__raspilot</span><span class="o">.</span><span class="n">websocket_provider</span><span
+            class="p">:</span>
+    <span class="n">update_sent</span> <span class="o">=</span> <span class="bp">self</span><span
+            class="o">.</span><span class="n">__raspilot</span><span class="o">.</span><span class="n">websocket_provider</span><span
+            class="o">.</span><span class="n">send_telemetry_update_message</span><span class="p">(</span><span
+            class="n">serialized_message</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">update_sent</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__logger</span><span class="o">.</span><span
+            class="n">warning</span><span class="p">(</span><span
+            class="s">&quot;Update transmission failed&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">update_sent</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">update_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__update_freq</span>
+    <span class="k">def</span> <span class="nf">update_freq</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span
+            class="n">__update_freq</span>
 
     <span class="nd">@update_freq.setter</span>
-    <span class="k">def</span> <span class="nf">update_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__update_freq</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">def</span> <span class="nf">update_freq</span><span class="p">(</span><span
+            class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__update_freq</span> <span class="o">=</span>
+    <span class="n">value</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">raspilot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span>
+    <span class="k">def</span> <span class="nf">raspilot</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span>
 
     <span class="nd">@raspilot.setter</span>
-    <span class="k">def</span> <span class="nf">raspilot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span> <span class="o">=</span> <span class="n">value</span></div>
+    <span class="k">def</span> <span class="nf">raspilot</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__raspilot</span> <span class="o">=</span> <span
+            class="n">value</span></div>
 
 
-<div class="viewcode-block" id="MessagePreparationError"><a class="viewcode-back" href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.MessagePreparationError">[docs]</a><span class="k">class</span> <span class="nc">MessagePreparationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="MessagePreparationError"><a class="viewcode-back"
+                                                            href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.MessagePreparationError">[docs]</a><span
+        class="k">class</span> <span class="nc">MessagePreparationError</span><span class="p">(</span><span class="ne">Exception</span><span
+        class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Error thrown when an exception during the _prepare_message is risen.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">    Error thrown when an exception during the _prepare_message is risen.</span>
+    <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__error</span> <span class="o">=</span> <span class="n">error</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">error</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__error</span> <span class="o">=</span> <span
+            class="n">error</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__error</span></div>
-
-
-<div class="viewcode-block" id="MessageTransmissionError"><a class="viewcode-back" href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.MessageTransmissionError">[docs]</a><span class="k">class</span> <span class="nc">MessageTransmissionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Error thrown when an exception during the _send_message is risen.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__error</span> <span class="o">=</span> <span class="n">error</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__error</span></div>
-
-
-<div class="viewcode-block" id="MessageSerializationError"><a class="viewcode-back" href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.MessageSerializationError">[docs]</a><span class="k">class</span> <span class="nc">MessageSerializationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Error thrown when an exception during the _serialize_message is risen.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__error</span> <span class="o">=</span> <span class="n">error</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__error</span></div>
-</pre></div>
-
-          </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__error</span>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+
+
+<div class="viewcode-block" id="MessageTransmissionError"><a class="viewcode-back"
+                                                             href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.MessageTransmissionError">[docs]</a><span
+        class="k">class</span> <span class="nc">MessageTransmissionError</span><span class="p">(</span><span class="ne">Exception</span><span
+        class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">    Error thrown when an exception during the _send_message is risen.</span>
+    <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">error</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__error</span> <span class="o">=</span> <span
+            class="n">error</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__error</span>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+<div class="viewcode-block" id="MessageSerializationError"><a class="viewcode-back"
+                                                              href="../../../raspilot.notifier.html#raspilot.notifier.base_notifier.MessageSerializationError">[docs]</a><span
+        class="k">class</span> <span class="nc">MessageSerializationError</span><span class="p">(</span><span
+        class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">    Error thrown when an exception during the _serialize_message is risen.</span>
+    <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">,</span> <span class="n">error</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__error</span> <span class="o">=</span> <span
+            class="n">error</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span
+            class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__error</span>
+</div>
+</pre>
+                </div>
+
+            </div>
         </div>
-      </div>
-      <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2015, Michal Raška.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
+    <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <div class="relations">
+                <h3>Related Topics</h3>
+                <ul>
+                    <li><a href="../../../index.html">Documentation overview</a>
+                        <ul>
+                            <li><a href="../../index.html">Module code</a>
+                                <ul>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div id="searchbox" style="display: none" role="search">
+                <h3>Quick search</h3>
+                <form class="search" action="../../../search.html" method="get">
+                    <input type="text" name="q"/>
+                    <input type="submit" value="Go"/>
+                    <input type="hidden" name="check_keywords" value="yes"/>
+                    <input type="hidden" name="area" value="default"/>
+                </form>
+                <p class="searchtip" style="font-size: 90%">
+                    Enter search terms or a module, class or function name.
+                </p>
+            </div>
+            <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
     </div>
+    <div class="clearer"></div>
+</div>
+<div class="footer">
+    &copy;2015, Michal Raška.
 
-    
+    |
+    Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.3</a>
+    &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
 
-    
-  </body>
+</div>
+
+
+</body>
 </html>

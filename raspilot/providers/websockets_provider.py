@@ -34,6 +34,7 @@ class WebsocketsProvider(BaseProvider):
 
     def stop(self):
         self.disconnect()
+        self.__logger.info('Stopping websocket provider')
         BaseProvider.stop(self)
 
     def connect(self):

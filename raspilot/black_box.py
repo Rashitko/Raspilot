@@ -39,7 +39,7 @@ class BlackBoxController(BaseProvider):
         while self.__record:
             self.__black_box.record(self.raspilot)
             time.sleep(self.__delay)
-        self.__logger.info('BlackBox recordings stopped.')
+        self.__logger.debug('BlackBox controller exiting.')
         self.__recording_thread = None
 
     def stop(self):

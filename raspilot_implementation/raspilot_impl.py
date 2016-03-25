@@ -35,17 +35,6 @@ class RaspilotImpl(Raspilot):
         if self.__mode != RaspilotImpl.MODE_BLACK_BOX:
             self.__discovery_service.disable_discovery()
 
-    def _start_flight_controller(self):
-        """
-        Starts the flight controller only if the RX provider is available. Otherwise false is returned.
-        :return: result of the controller's start, or False if the RX provider is not available
-        """
-        if self.rx_provider.started:
-            return super()._start_flight_controller()
-        else:
-            self.__logger.warn('RX provider not available, skipping start of the flight controller')
-            return False
-
 
 class RaspilotImplBuilder(RaspilotBuilder):
     def __init__(self, discovery_port, reply_port, mode=RaspilotImpl.MODE_BLACK_BOX):

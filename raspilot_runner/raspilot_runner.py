@@ -24,10 +24,10 @@ class RaspilotRunner:
         """
         while self.__run:
             self.__connection, self.__address = self.__socket.accept()
-            while True:
-                self.__connection.recv(1024)
-                print("Request from {}. Running Raspilot".format(self.__address))
-                raspilot_implementation.main.run_raspilot(self)
+            data = self.__connection.recv(1024)
+            print("Request from {}. Running Raspilot".format(self.__address))
+            raspilot_implementation.main.run_raspilot(self)
+            self.__connection.close()
             self.__connection = None
             self.__address = None
 
@@ -54,7 +54,7 @@ class RaspilotRunner:
             self.__socket.listen(1)
             self.__receive_loop()
 
-    def stop(self):
+    def exit(self):
         """
         Closes the socket and stops the receive loop
         :return:
@@ -71,4 +71,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
     finally:
-        runner.stop()
+        runner.exit()

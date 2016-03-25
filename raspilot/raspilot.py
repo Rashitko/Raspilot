@@ -6,7 +6,7 @@ from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 from raspilot.commands.commands_executor import CommandsExecutor, CommandExecutionError
 from raspilot.providers.orientation_provider import OrientationProvider
 from raspilot.providers.websockets_provider import WebsocketsProvider
-from raspilot_implementation.commands.speak_command import SpeakCommand
+from raspilot.starter import Starter
 
 
 def nop():
@@ -42,240 +42,111 @@ class Raspilot:
         self.__custom_providers = raspilot_builder.custom_providers
         self.__notifier = raspilot_builder.notifier
         self.__flight_controller = raspilot_builder.flight_controller
+        self.__starter = raspilot_builder.starter
+
+        self.__initialized_providers = []
+        self.__started_providers = []
+        self.__skipped_providers = []
+        self.__failed_providers = []
+
+        self.__providers = [(self.__alarmist, 'Alarmist not available'),
+                            (self.__black_box_controller, 'Black Box controller not available'),
+                            (self.__rx_provider, 'RX input not available'),
+                            (self.__websockets_provider, 'Websocket input not available'),
+                            (self.__orientation_provider, 'Orientation input not available'),
+                            (self.__gps_provider, 'GPS input not available'),
+                            (self.__servo_controller, 'Servo controller not available'),
+                            (self.__flight_controller, 'Flight controller not available'),
+                            (self.__notifier, 'Notifier not available')]
 
         self.__init_messages = []
+        self.__init_providers()
 
-        self.__alarmist.raspilot = self
-        self.__alarmist.initialize()
-        self.__black_box_controller.raspilot = self
-        self.__black_box_controller.initialize()
-        self.__init_rx_provider()
-        self.__init_websockets_provider()
-        self.__init_orientation_provider()
-        self.__init_gps_provider()
-        self.__init_servo_controller()
-        self.__init_notifier()
-        self.__init_flight_controller()
-
-        self.__init_custom_providers()
-
-    def __init_flight_controller(self):
+    def __init_providers(self):
         """
-        Initializes the FlightController if set
+        Initializes all providers
         :return: returns nothing
         """
-        if self.__flight_controller is not None:
-            self.__flight_controller.raspilot = self
-            self.__flight_controller.initialize()
-        else:
-            self.__logger.warning('Flight controller not available')
+        for (provider, message) in self.__providers:
+            self.__init_provider(provider, message, self.__initialized_providers)
+        self.__init_custom_providers(self.__initialized_providers)
+        self.__logger.info("Initialized providers: {}".format(self.__initialized_providers))
 
-    def __init_websockets_provider(self):
+    def __init_provider(self, provider, message, initialized_providers):
         """
-        Initializes the WebsocketsProvider if a provider is set
-        :return: returns nothing
+        Initialize the given provider. If the provider is None, provided message is logged as warning.
+        :param provider: provider to initialize
+        :param message: message to log if provider is None
+        :return:
         """
-        if self.__websockets_provider is not None:
-            self.__websockets_provider.raspilot = self
-            self.__websockets_provider.initialize()
+        if provider is not None:
+            initialized_providers.append(provider.__class__.__name__)
+            provider.raspilot = self
+            provider.initialize()
         else:
-            self.__logger.warning('Websockets not available')
+            self.__logger.warning(message)
 
-    def __init_rx_provider(self):
-        """
-        Initializes the RXProvider if a provider is set
-        :return: returns nothing
-        """
-        if self.__rx_provider is not None:
-            self.__rx_provider.raspilot = self
-            self.__rx_provider.initialize()
-        else:
-            self.__logger.warning('RX input not available')
-
-    def __init_orientation_provider(self):
-        """
-        Initializes the OrientationProvider if a provider is set
-        :return: returns nothing
-        """
-        if self.__orientation_provider is not None:
-            self.__orientation_provider.raspilot = self
-            self.__orientation_provider.initialize()
-        else:
-            self.__logger.warning('Orientation provider not available')
-
-    def __init_gps_provider(self):
-        """
-        Initializes the GPSProvider if a provider is set
-        :return: returns nothing
-        """
-        if self.__gps_provider is not None:
-            self.__gps_provider.raspilot = self
-            self.__gps_provider.initialize()
-        else:
-            self.__logger.warning('GPS provider not available')
-
-    def __init_servo_controller(self):
-        """
-        Initializes the ServoController if a controller is set
-        :return: returns nothing
-        """
-        if self.__servo_controller is not None:
-            self.__servo_controller.raspilot = self
-            self.__servo_controller.initialize()
-        else:
-            self.__logger.warning('Servo controller not available')
-
-    def __init_custom_providers(self):
+    def __init_custom_providers(self, initialized_providers):
         """
         Initializes the custom providers if any.
         :return: returns nothing
         """
         for provider in self.__custom_providers:
-            provider.raspilot = self
-            provider.initialize()
-
-    def __init_notifier(self):
-        """
-        Initializes the notifier if any.
-        :return: returns nothing
-        """
-        if self.__notifier:
-            self.__logger.info("Initializing notifier")
-            self.__notifier.raspilot = self
-            self.__notifier.initialize()
-
-    def _start_rx_provider(self):
-        """
-        starts the RXProvider if a provider is set
-        :return: returns True, if no provider is set, else return the result of provider start
-        """
-        if self.__rx_provider is not None:
-            return self.__rx_provider.on_start()
-        return True
-
-    def _start_websockets_provider(self):
-        """
-        starts the WebsocketsProvider if a provider is set
-        :return: returns True, if no provider is set, else return the result of provider start
-        """
-        if self.__websockets_provider is not None:
-            return self.__websockets_provider.on_start()
-        return True
-
-    def _start_orientation_provider(self):
-        """
-        starts the OrientationProvider if a provider is set
-        :return: returns True, if no provider is set, else return the result of provider start
-        """
-        if self.__orientation_provider is not None:
-            return self.__orientation_provider.on_start()
-        return True
-
-    def _start_gps_provider(self):
-        """
-        Starts the GPSProvider if a provider is set.
-        :return: returns True, if no provider is set, else return the result of provider start
-        """
-        if self.__gps_provider is not None:
-            return self.__gps_provider.on_start()
-        return True
+            self.__init_provider(provider, '', initialized_providers)
 
     def start(self):
         """
         Starts the Raspilot with available providers and blocks till the Raspilot is running.
         :return: return nothing
         """
-        init_messages = []
+
         self.__logger.info('Starting Raspilot...')
-        if self.__alarmist.on_start():
-            self.__logger.info('Alarmist started')
-        else:
-            self.__logger.error('Alarmist failed to start')
-            init_messages.append('Error! Alarmist failed to start')
-        if self.__black_box_controller.on_start():
-            self.__logger.info('BlackBox controller started')
-        else:
-            self.__logger.error('BlackBox controller failed to start')
-            init_messages.append('Error! Black box controller failed to start')
-        if self._start_rx_provider():
-            self.__logger.info('RX provider started')
-        else:
-            self.__logger.error('RX provider failed to start')
-            init_messages.append('Warning! Receiver provider failed to start.')
+        self.__start_providers()
 
-        if self._start_websockets_provider():
-            self.__logger.info('Websockets provider started')
-        else:
-            self.__logger.error('Websockets provider failed to start')
-            init_messages.append('Warning! Websocket provider failed to start.')
-
-        if self._start_orientation_provider():
-            self.__logger.info('Orientation provider started')
-        else:
-            self.__logger.error('Orientation provider failed to start')
-            init_messages.append('Warning! Orientation provider failed to start.')
-
-        if self._start_gps_provider():
-            self.__logger.info('GPS provider started')
-        else:
-            self.__logger.error('GPS provider failed to start')
-            init_messages.append('Warning! GPS provider failed to start')
-
-        self._start_custom_providers(init_messages)
-
-        # TODO: servo controller
-
-        self.__logger.info('Initialization complete, Raspilot is now running!')
-        init_messages.append('Initialization complete.')
-        self._start_notifier()
-        if self._start_flight_controller():
-            self.__logger.info('Flight controller started')
-        else:
-            self.__logger.warning('Flight controller failed to start')
-            init_messages.append('Warning! Flight controller failed to start')
+        self.__logger.info(
+            'Initialization complete.')
+        self.__logger.info('Started providers:{}\n\tSkipped providers:{}'
+                           '\n\tProviders which fail to start:{}'.format(self.__started_providers,
+                                                                         self.__skipped_providers,
+                                                                         self.__failed_providers))
         self.__init_complete_event.set()
-        if init_messages != [] and self.commands_executor:
-            self.commands_executor.send_command(SpeakCommand(init_messages))
         self._after_start()
         self.__stop_self_event.wait()
+
+    def __start_providers(self):
+        for (provider, _) in self.__providers:
+            self.__start_provider(provider)
+        self._start_custom_providers()
+
+    def __start_provider(self, provider):
+        if provider is not None:
+            provider_name = provider.__class__.__name__
+            if self.__starter.should_start(provider, self):
+                if not provider.on_start():
+                    self.__failed_providers.append(provider_name)
+                else:
+                    self.__started_providers.append(provider_name)
+            else:
+                self.__skipped_providers.append(provider_name)
 
     def _after_start(self):
         """
         Callback after start of the Raspilot.
         :return: returns nothing
         """
-        pass
+        if self.__failed_providers:
+            self.__logger.critical(
+                'Some providers failed to start. Not started providers are {}'.format(self.__failed_providers))
+        else:
+            self.__logger.info('All providers started successfully')
 
-    def _start_flight_controller(self):
-        """
-        Starts the flight controller if any.
-        :return: True if controller is set and started successfully, False otherwise
-        """
-        if self.__flight_controller:
-            return self.__flight_controller.on_start()
-        return True
-
-    def _start_notifier(self):
-        """
-        Starts the notifier if any.
-        :return: returns nothing
-        """
-        if self.__notifier:
-            self.__notifier.start()
-
-    def _start_custom_providers(self, init_messages):
+    def _start_custom_providers(self):
         """
         Starts custom providers, if any.
         :return: returns nothing
         """
         for provider in self.__custom_providers:
-            started = provider.on_start()
-            name = provider.__class__.__name__
-            if started:
-                self.__logger.info("Custom provider '{}' started".format(name))
-            else:
-                self.__logger.error("Custom provider '{}' failed to start".format(name))
-                init_messages.append('Warning! Custom provider {} failed to start'.format(name))
+            self.__start_provider(provider)
 
     def stop(self):
         """
@@ -283,25 +154,20 @@ class Raspilot:
         :return: return nothing
         """
         self.__logger.info('Stopping Raspilot')
+        stopped = []
+        for (provider, _) in self.__providers:
+            self.__stop_provider(provider, stopped)
         if self.__commands_executor:
             self.__commands_executor.stop()
-        if self.__notifier:
-            self.__notifier.stop()
-        if self.__rx_provider:
-            self.__rx_provider.on_stop()
-        if self.__websockets_provider:
-            self.__websockets_provider.on_stop()
-        if self.__orientation_provider:
-            self.__orientation_provider.on_stop()
-        if self.__gps_provider:
-            self.__gps_provider.on_stop()
-        if self.__flight_controller:
-            self.__flight_controller.stop()
-        self.__stop_custom_providers()
-        self.__black_box_controller.on_stop()
-        self.__alarmist.on_stop()
+        self.__stop_custom_providers(stopped)
+        self.__logger.info("Stopped providers: {}".format(stopped))
         self._after_stop()
         self.__stop_self_event.set()
+
+    def __stop_provider(self, provider, stopped):
+        if provider is not None and self.__starter.should_start(provider, self):
+            stopped.append(provider.__class__.__name__)
+            provider.on_stop()
 
     def _after_stop(self):
         """
@@ -310,13 +176,13 @@ class Raspilot:
         """
         pass
 
-    def __stop_custom_providers(self):
+    def __stop_custom_providers(self, stopped):
         """
         Stops custom providers, if any.
         :return: returns nothing
         """
         for provider in self.__custom_providers:
-            provider.on_stop()
+            self.__stop_provider(provider, stopped)
 
     def wait_for_init_complete(self):
         """
@@ -433,6 +299,7 @@ class RaspilotBuilder:
         self.__notifier = None
         self.__flight_controller = None
         self.__black_box_controller = None
+        self.__starter = Starter()
 
     def add_custom_provider(self, provider):
         """
@@ -525,6 +392,14 @@ class RaspilotBuilder:
     @alarmist.setter
     def alarmist(self, value):
         self.__alarmist = value
+
+    @property
+    def starter(self):
+        return self.__starter
+
+    @starter.setter
+    def starter(self, value):
+        self.__starter = value
 
     def build(self):
         """

@@ -8,7 +8,6 @@ from threading import Thread
 from colorlog import ColoredFormatter
 
 from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
-from raspilot_implementation.RaspilotFlightController import RaspilotFlightController
 from raspilot_implementation.black_box.black_box import RaspilotBlackBox
 from raspilot_implementation.commands.ahi_command_handler import SetNeutralAhiHandler
 from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
@@ -20,7 +19,9 @@ from raspilot_implementation.providers.orientation_provider import (RaspilotOrie
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
 from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
 from raspilot_implementation.raspilot_alarmist import RaspilotAlarmist, RaspilotAlarmistConfig
+from raspilot_implementation.raspilot_flight_controller import RaspilotFlightController
 from raspilot_implementation.raspilot_impl import RaspilotImplBuilder
+from raspilot_implementation.remote_raspilot_starter import RemoteRaspilotStarter
 
 LOGS_DIR_PATH = '../logs/'
 
@@ -248,11 +249,12 @@ def init_logger(level, logs_path):
     logger.propagate = False
 
 
-def run_raspilot(listener=None):
+def run_raspilot(runner=None):
     global raspilot
     config = RaspilotConfig()
     init_logger(config.logging_level, config.logs_path)
     builder = RaspilotImplBuilder(config.discovery_port, config.discovery_reply_port)
+    builder.starter = RemoteRaspilotStarter()
     # Websockets provider initialization
     websockets_config = RaspilotWebsocketsConfig(config)
     provider = RaspilotWebsocketsProvider(websockets_config)
@@ -298,11 +300,12 @@ def run_raspilot(listener=None):
     raspilot_thread.start()
     try:
         raspilot.wait_for_init_complete()
-        if listener:
-            listener.raspilot_ready()
+        if runner:
+            runner.raspilot_ready()
         raspilot_thread.join()
     except KeyboardInterrupt:
-        pass
+        if runner:
+            runner.exit()
     finally:
         raspilot.stop()
 

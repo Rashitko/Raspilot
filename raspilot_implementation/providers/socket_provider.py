@@ -74,6 +74,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
             except OSError:
                 pass
         self.__socket.close()
+        self.__logger.debug("Process loop of {} exiting".format(self.__class__.__name__))
 
     def __handle_data(self, data):
         """
@@ -105,7 +106,7 @@ class SocketProvider(raspilot.providers.base_provider.BaseProvider):
                                   'Sending data to Android device on {}:{}'.format(self.__client_address, self.__port))
                 self.__socket.sendto(data, (self.__client_address, self.__port))
             self.__queue.task_done()
-        self.__logger.debug('Exiting send loop')
+        self.__logger.debug('Send loop of {} exiting'.format(self.__class__.__name__))
 
     def send(self, message):
         """

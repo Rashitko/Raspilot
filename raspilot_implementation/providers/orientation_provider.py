@@ -71,6 +71,10 @@ class RaspilotOrientationProvider(SocketProvider, OrientationProvider):
     def current_orientation(self):
         return self.__orientation
 
+    def stop(self):
+        OrientationProvider.stop(self)
+        SocketProvider.stop(self)
+
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):
     def __init__(self, orientation_port):

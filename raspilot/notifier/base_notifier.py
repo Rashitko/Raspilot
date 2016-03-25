@@ -20,6 +20,7 @@ class BaseNotifier:
         :return: returns nothing
         """
         self.__logger = logging.getLogger('raspilot.log')
+        self.__started = False
         self.__update_freq = update_freq
         self.__dispatch_errors = 0
         self.__error_limit = error_limit
@@ -33,6 +34,14 @@ class BaseNotifier:
         """
         pass
 
+    def on_start(self):
+        """
+        Called by the Raspilot, starts the provider. Subclasses should override start method instead of this one.
+        :return: returns nothing
+        """
+        self.__started = self.start()
+        return self.__started
+
     def start(self):
         """
         Starts the notifications.
@@ -42,6 +51,16 @@ class BaseNotifier:
             raise ValueError("Raspilot must be set prior to start")
         self.__notify = True
         Thread(target=self.__notify_loop).start()
+        return True
+
+    def on_stop(self):
+        """
+        Called by the Raspilot, starts the provider. Subclasses should override start method instead of this one.
+        :return: returns nothing
+        """
+        self.stop()
+        self.__started = False
+        return self.__started
 
     def stop(self):
         """
@@ -49,6 +68,7 @@ class BaseNotifier:
         :return: returns nothing
         """
         self.__notify = False
+        return True
 
     def __notify_loop(self, on_preparation_error=None, on_serialization_error=None, on_transmission_error=None):
         """
@@ -94,6 +114,7 @@ class BaseNotifier:
                     time.sleep(self.__update_freq / 1000)
                 except InterruptedError:
                     pass
+        self.__logger.debug('Notifier exiting')
 
     def __obtain_message(self):
         """

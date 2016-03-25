@@ -47,6 +47,7 @@ class Alarmist(BaseProvider):
                 self._calm_down(self.__utilization)
             time.sleep(self.__delay)
         self.__control_thread = None
+        self.__logger.debug("Alarmist exiting")
 
     def stop(self):
         self.__control = False

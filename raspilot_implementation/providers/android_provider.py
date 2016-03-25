@@ -2,7 +2,7 @@ import json
 import logging
 
 import raspilot.providers.base_provider
-import raspilot_implementation.providers.datagram_socket_provider
+from raspilot_implementation.providers.stream_socket_provider import StreamSocketProvider
 
 DATA_KEY = 'data'
 RESPONSE_KEY = 'response'
@@ -13,7 +13,7 @@ ID_KEY = 'id'
 RECV_SIZE = 1024
 
 
-class AndroidProvider(raspilot_implementation.providers.datagram_socket_provider.DatagramSocketProvider):
+class AndroidProvider(StreamSocketProvider):
     """
     Provider of communication with the Android device
     """

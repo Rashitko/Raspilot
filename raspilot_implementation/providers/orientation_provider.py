@@ -4,7 +4,7 @@ from threading import RLock
 
 from raspilot.providers.orientation_provider import OrientationProvider, OrientationProviderConfig
 from raspilot_implementation.pid.pid_controller import PID
-from raspilot_implementation.providers.datagram_socket_provider import DatagramSocketProvider
+from raspilot_implementation.providers.stream_socket_provider import StreamSocketProvider
 
 SERIALIZATION_SCALE_FACTOR = 100
 
@@ -12,7 +12,7 @@ MAX_CONNECTIONS = 1
 HOST = ''
 
 
-class RaspilotOrientationProvider(DatagramSocketProvider, OrientationProvider):
+class RaspilotOrientationProvider(StreamSocketProvider, OrientationProvider):
     MESSAGE_COMPONENTS = 6
     FMT = '!' + 'h' * MESSAGE_COMPONENTS
     RECV_BYTES = struct.calcsize(FMT)
@@ -25,7 +25,7 @@ class RaspilotOrientationProvider(DatagramSocketProvider, OrientationProvider):
     Z_ANGULAR_INDEX = 5
 
     def __init__(self, config):
-        DatagramSocketProvider.__init__(self, port=config.orientation_port, recv_size=RaspilotOrientationProvider.RECV_BYTES)
+        StreamSocketProvider.__init__(self, port=config.orientation_port, recv_size=RaspilotOrientationProvider.RECV_BYTES)
         OrientationProvider.__init__(self, config)
         self.__logger = logging.getLogger('raspilot.log')
         self.__orientation = None
@@ -73,7 +73,7 @@ class RaspilotOrientationProvider(DatagramSocketProvider, OrientationProvider):
 
     def stop(self):
         OrientationProvider.stop(self)
-        DatagramSocketProvider.stop(self)
+        StreamSocketProvider.stop(self)
 
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):

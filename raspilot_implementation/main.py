@@ -248,52 +248,43 @@ def init_logger(level, logs_path):
     logger.propagate = False
 
 
-if __name__ == "__main__":
+def run_raspilot(listener=None):
+    global raspilot
     config = RaspilotConfig()
     init_logger(config.logging_level, config.logs_path)
     builder = RaspilotImplBuilder(config.discovery_port, config.discovery_reply_port)
-
     # Websockets provider initialization
     websockets_config = RaspilotWebsocketsConfig(config)
     provider = RaspilotWebsocketsProvider(websockets_config)
     builder.websockets_provider = provider
-
     # RX provider initialization
     rx_config = RaspilotRXConfig(config.baud_rate)
     rx_provider = RaspilotRXProvider(rx_config)
     builder.rx_provider = rx_provider
-
     # Orientation provider initialization
     orientation_config = RaspilotOrientationProviderConfig(config.orientation_port)
     orientation_provider = RaspilotOrientationProvider(orientation_config)
     builder.orientation_provider = orientation_provider
-
     # GPS provider initialization
     gps_config = RaspilotGPSProviderConfig()
     gps_provider = RaspilotGPSProvider(gps_config)
     builder.gps_provider = gps_provider
-
     # Android provider initialization
     android_provider = AndroidProvider(AndroidProviderConfig(config.general_port))
     builder.add_custom_provider(android_provider)
-
     # Commands executor
     commands_executor = RaspilotCommandsExecutor(android_provider)
     commands_executor.add_command_handler(SetNeutralAhiHandler(orientation_provider))
     builder.commands_executor = commands_executor
-
     # Notifier initialization
     builder.notifier = RaspilotNotifier(config.updates_namespace, config.updates_freq, config.updates_error_limit)
-
     # Flight controller initialization
     builder.flight_controller = RaspilotFlightController()
-
     # BlackBox controller initialization
     black_box_controller_config = BlackBoxControllerConfig()
     black_box_controller_config.delay = config.black_box_delay
     black_box_controller_config.black_box = RaspilotBlackBox()
     builder.black_box_controller = BlackBoxController(black_box_controller_config)
-
     # Alarmist initialization
     alarmist_config = RaspilotAlarmistConfig()
     alarmist_config.panic_threshold = config.panic_threshold
@@ -302,14 +293,19 @@ if __name__ == "__main__":
     alarmist_config.panic_delay = config.panic_delay
     alarmist_config.calm_down_delay = config.calm_down_delay
     builder.alarmist = RaspilotAlarmist(alarmist_config)
-
     raspilot = builder.build()
     raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")
     raspilot_thread.start()
     try:
         raspilot.wait_for_init_complete()
+        if listener:
+            listener.raspilot_ready()
         raspilot_thread.join()
     except KeyboardInterrupt:
         pass
     finally:
         raspilot.stop()
+
+
+if __name__ == "__main__":
+    run_raspilot()

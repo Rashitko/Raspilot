@@ -49,7 +49,7 @@ class RaspilotBlackBox(BlackBox):
         """
         self.__logger.debug('Transmitting BlackBox update. Size: {}'.format(len(data)))
         # TODO: Implement sending HTTP requests with relevant data
-        return False
+        return True
 
     @property
     def cached_data(self):

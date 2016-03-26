@@ -41,7 +41,9 @@ class AndroidProvider(StreamSocketProvider):
         :return: returns nothing
         """
         super()._on_data_received(data)
-        deserialized_data = json.loads(data.decode('utf-8'))
+        decoded_data = data.decode('utf-8')
+        self.__logger.debug('Received data: {}'.format(decoded_data))
+        deserialized_data = json.loads(decoded_data)
         valid_command = self._validate_command(deserialized_data)
         if valid_command:
             command_name = deserialized_data.get(COMMAND_KEY, None)

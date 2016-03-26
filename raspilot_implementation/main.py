@@ -11,6 +11,7 @@ from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 from raspilot_implementation.black_box.black_box import RaspilotBlackBox
 from raspilot_implementation.commands.ahi_command_handler import SetNeutralAhiHandler
 from raspilot_implementation.commands.commands_executor import RaspilotCommandsExecutor
+from raspilot_implementation.commands.exit_command_handler import ExitCommandHandler
 from raspilot_implementation.notifier.RaspilotNotifier import RaspilotNotifier
 from raspilot_implementation.providers.android_provider import AndroidProvider, AndroidProviderConfig
 from raspilot_implementation.providers.gps_provider import RaspilotGPSProvider, RaspilotGPSProviderConfig
@@ -301,6 +302,7 @@ def run_raspilot(runner=None):
     alarmist_config.calm_down_delay = config.calm_down_delay
     builder.alarmist = RaspilotAlarmist(alarmist_config)
     raspilot = builder.build()
+    raspilot.add_command_handler(ExitCommandHandler('system.exit'))
     raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")
     raspilot_thread.start()
     try:

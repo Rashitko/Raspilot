@@ -43,7 +43,10 @@ class RaspilotConfig:
         :return: returns nothing
         """
         cfg = configparser.ConfigParser()
-        cfg.read('config.cfg')
+        dir = os.path.dirname(__file__)
+        config_file = os.path.join(dir, './config.cfg')
+        print('Loading config from {}'.format(os.path.abspath(config_file)))
+        cfg.read(config_file)
 
         self.__username = cfg['AUTHENTICATION']['Username']
         self.__password = cfg['AUTHENTICATION']['Password']
@@ -236,7 +239,7 @@ def init_logger(level, logs_path):
     logger.setLevel(level)
     if not os.path.exists(logs_path):
         os.makedirs(logs_path)
-    fh = logging.FileHandler("{}raspilog-{}.log".format(LOGS_DIR_PATH, datetime.datetime.now().strftime("%Y-%m-%d")))
+    fh = logging.FileHandler("{}raspilog-{}.log".format(logs_path, datetime.datetime.now().strftime("%Y-%m-%d")))
     fh.setLevel(level)
     message_format = '%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\t''[FILE]%(pathname)s:%(lineno)s\n\t''[THREAD]%(threadName)s'
     formatter = ColoredFormatter(message_format, date_format)
@@ -252,7 +255,9 @@ def init_logger(level, logs_path):
 def run_raspilot(runner=None):
     global raspilot
     config = RaspilotConfig()
-    init_logger(config.logging_level, config.logs_path)
+    dir = os.path.dirname(__file__)
+    log_dir = os.path.join(dir, config.logs_path)
+    init_logger(config.logging_level, log_dir)
     builder = RaspilotImplBuilder(config.discovery_port, config.discovery_reply_port)
     builder.starter = RemoteRaspilotStarter()
     # Websockets provider initialization

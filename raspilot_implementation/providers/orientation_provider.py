@@ -6,7 +6,7 @@ from raspilot.providers.orientation_provider import OrientationProvider, Orienta
 from raspilot_implementation.pid.pid_controller import PID
 from raspilot_implementation.providers.stream_socket_provider import StreamSocketProvider
 
-SERIALIZATION_SCALE_FACTOR = 100
+SERIALIZATION_SCALE_FACTOR = 1
 
 MAX_CONNECTIONS = 1
 HOST = ''
@@ -14,7 +14,7 @@ HOST = ''
 
 class RaspilotOrientationProvider(StreamSocketProvider, OrientationProvider):
     MESSAGE_COMPONENTS = 6
-    FMT = '!' + 'h' * MESSAGE_COMPONENTS
+    FMT = '!' + 'f' * MESSAGE_COMPONENTS
     RECV_BYTES = struct.calcsize(FMT)
 
     ROLL_INDEX = 0

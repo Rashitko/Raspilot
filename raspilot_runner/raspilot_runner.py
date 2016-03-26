@@ -23,6 +23,7 @@ class RaspilotRunner:
         :return: returns nothing
         """
         while self.__run:
+            print("Awaiting connection...")
             self.__connection, self.__address = self.__socket.accept()
             data = self.__connection.recv(1024)
             print("Request from {}. Running Raspilot".format(self.__address))

@@ -9,10 +9,6 @@ from raspilot.providers.websockets_provider import WebsocketsProvider
 from raspilot.starter import Starter
 
 
-def nop():
-    pass
-
-
 class Raspilot:
     """
     The Raspilot itself.

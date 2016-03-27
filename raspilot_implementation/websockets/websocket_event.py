@@ -68,10 +68,10 @@ class WebsocketEvent:
         :return: returns nothing
         """
         if self.is_success() and self.__success_callback is not None:
-            logging.info("SUCCESS on event {}".format(self.id))
+            logging.info("SUCCESS on event {}".format(self))
             self.__success_callback(True)
         elif self.__failure_callback is not None:
-            logging.error("FAILURE on event {}".format(self.id))
+            logging.error("FAILURE on event {}".format(self))
             self.__failure_callback(False)
 
     def is_client_connected(self):

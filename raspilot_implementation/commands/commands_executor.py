@@ -3,7 +3,6 @@ import logging
 from raspilot.commands.commands_executor import CommandsExecutor
 from raspilot_implementation.commands.command import RaspilotCommand
 from raspilot_implementation.providers.android_provider import AndroidProvider
-from raspilot_implementation.websockets.websocket_event import WebsocketEvent
 
 
 class RaspilotCommandsExecutor(CommandsExecutor):
@@ -29,7 +28,7 @@ class RaspilotCommandsExecutor(CommandsExecutor):
             self.__transmit_to_android(command)
         elif command.data.get('target', None) == RaspilotCommand.TARGET_WEBSOCKET:
             if self.raspilot.websocket_provider:
-                self.raspilot.websocket_provider.send_message(WebsocketEvent(command))
+                raise NotImplementedError()
         else:
             self.__transmit_to_android(command)
 

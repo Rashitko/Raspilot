@@ -5,7 +5,7 @@ from raspilot.alarmist import AlarmistConfig, Alarmist
 from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 from raspilot.commands.commands_executor import CommandsExecutor, CommandExecutionError
 from raspilot.providers.orientation_provider import OrientationProvider
-from raspilot.providers.websockets_provider import WebsocketsProvider
+from raspilot.providers.flight_control_provider import FlightControlProvider
 from raspilot.starter import Starter
 
 
@@ -285,7 +285,7 @@ class RaspilotBuilder:
         :return: returns nothing
         """
         self.__alarmist = None
-        self.__websockets_provider = WebsocketsProvider
+        self.__websockets_provider = FlightControlProvider
         self.__rx_provider = None
         self.__orientation_provider = OrientationProvider
         self.__gps_provider = None

@@ -14,11 +14,12 @@ from raspilot_implementation.commands.commands_executor import RaspilotCommandsE
 from raspilot_implementation.commands.exit_command_handler import ExitCommandHandler
 from raspilot_implementation.notifier.RaspilotNotifier import RaspilotNotifier
 from raspilot_implementation.providers.android_provider import AndroidProvider, AndroidProviderConfig
+from raspilot_implementation.providers.flight_control_provider import RaspilotFlightControlProvider, \
+    RaspilotFlightControlConfig
 from raspilot_implementation.providers.gps_provider import RaspilotGPSProvider, RaspilotGPSProviderConfig
 from raspilot_implementation.providers.orientation_provider import (RaspilotOrientationProvider,
                                                                     RaspilotOrientationProviderConfig)
 from raspilot_implementation.providers.rx_provider import RaspilotRXProvider, RaspilotRXConfig
-from raspilot_implementation.providers.websocket_provider import RaspilotWebsocketsProvider, RaspilotWebsocketsConfig
 from raspilot_implementation.raspilot_alarmist import RaspilotAlarmist, RaspilotAlarmistConfig
 from raspilot_implementation.raspilot_flight_controller import RaspilotFlightController
 from raspilot_implementation.raspilot_impl import RaspilotImplBuilder
@@ -62,7 +63,7 @@ class RaspilotConfig:
         self.__discovery_port = cfg.getint('DEFAULT', 'Discovery port')
         self.__discovery_reply_port = cfg.getint('DEFAULT', 'Discovery reply port')
 
-        self.__websockets_port = cfg['WEBSOCKETS']['Port']
+        self.__websockets_port = cfg.getint('WEBSOCKETS', 'Port')
         self.__websockets_path = cfg['WEBSOCKETS']['Address']
         self.__websockets_protocol = cfg['WEBSOCKETS']['Protocol']
         self.__websockets_url = "{}://{}:{}/{}".format(self.__websockets_protocol, self.__server_address,
@@ -262,8 +263,8 @@ def run_raspilot(runner=None):
     builder = RaspilotImplBuilder(config.discovery_port, config.discovery_reply_port)
     builder.starter = RemoteRaspilotStarter()
     # Websockets provider initialization
-    websockets_config = RaspilotWebsocketsConfig(config)
-    provider = RaspilotWebsocketsProvider(websockets_config)
+    websockets_config = RaspilotFlightControlConfig(config.server_address, config.websockets_port)
+    provider = RaspilotFlightControlProvider(websockets_config)
     builder.websockets_provider = provider
     # RX provider initialization
     rx_config = RaspilotRXConfig(config.baud_rate)

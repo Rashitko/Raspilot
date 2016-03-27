@@ -1,8 +1,9 @@
+import json
 import logging
-from threading import Thread
 
 from twisted.internet import reactor
-from twisted.internet.protocol import Protocol, connectionDone, ReconnectingClientFactory
+from twisted.internet.protocol import connectionDone, ReconnectingClientFactory
+from twisted.protocols.basic import LineReceiver
 
 from raspilot.providers.base_provider import BaseProviderConfig
 from raspilot.providers.flight_control_provider import FlightControlProvider
@@ -22,10 +23,13 @@ class RaspilotFlightControlProvider(FlightControlProvider):
         :return: returns nothing
         """
         super().__init__(websockets_config)
+        self.__logger = logging.getLogger('raspilot.log')
         self.__server_address = websockets_config.server_address
         self.__port = websockets_config.port
+        self.__protocol = RaspilotFlightControlProtocol()
 
     def stop(self):
+        # noinspection PyUnresolvedReferences
         reactor.callFromThread(reactor.stop)
         return True
 
@@ -34,13 +38,9 @@ class RaspilotFlightControlProvider(FlightControlProvider):
         Connects and waits for the success of failure.
         :return: True, if connection is successful, False otherwise
         """
-        f = RaspilotFlightControlClientFactory()
-        reactor.connectTCP(self.__server_address, self.__port, f)
+        # noinspection PyUnresolvedReferences
+        reactor.connectTCP(self.__server_address, self.__port, RaspilotFlightControlClientFactory(self.__protocol))
         return True
-
-    @staticmethod
-    def __start_reactor():
-        reactor.run(installSignalHandlers=False)
 
     def send_telemetry_update_message(self, message, success=None, failure=None):
         """
@@ -52,14 +52,19 @@ class RaspilotFlightControlProvider(FlightControlProvider):
         :param failure: failure callback
         :return: True if transmission is successful, False otherwise.
         """
-        super().send_telemetry_update_message(message)
-        return True
+        return self.__protocol.send_message(self.__serialize_message(message))
 
     def send_message(self, message, success=None, failure=None):
-        super().send_message(message)
+        return self.__protocol.send_message(self.__serialize_message(message))
+
+    @staticmethod
+    def __serialize_message(message):
+        json_data = json.dumps(message)
+        json_data += '\n'
+        return bytes(json_data.encode('utf-8'))
 
 
-class RaspilotFlightControlProtocol(Protocol):
+class RaspilotFlightControlProtocol(LineReceiver):
     def __init__(self):
         super().__init__()
         self.__logger = logging.getLogger('raspilot.log')
@@ -72,15 +77,33 @@ class RaspilotFlightControlProtocol(Protocol):
         super().connectionLost(reason)
         self.__logger.debug('FlightControl connection lost')
 
+    def send_message(self, data):
+        if self.connected:
+            reactor.callFromThread(self.sendLine, data)
+            return True
+        else:
+            return False
+
 
 class RaspilotFlightControlClientFactory(ReconnectingClientFactory):
-    def __init__(self):
+    def __init__(self, protocol):
         super().__init__()
         self.__logger = logging.getLogger('raspilot.log')
+        self.__protocol = protocol
 
     def buildProtocol(self, addr):
         self.__logger.debug('Connected')
-        return RaspilotFlightControlProtocol()
+        self.resetDelay()
+        return self.__protocol
+
+    def clientConnectionLost(self, connector, reason):
+        self.__logger.error('Lost connection.  Reason:{}'.format(reason))
+        ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
+
+    def clientConnectionFailed(self, connector, reason):
+        self.__logger.error('Connection failed. Reason:{}'.format(reason))
+        ReconnectingClientFactory.clientConnectionFailed(self, connector,
+                                                         reason)
 
 
 class RaspilotFlightControlConfig(BaseProviderConfig):

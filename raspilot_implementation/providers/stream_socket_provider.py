@@ -81,7 +81,7 @@ class StreamSocketProvider(raspilot.providers.base_provider.BaseProvider):
         :param message: message to be serialized
         :return: serialized message as a bytes array
         """
-        return message
+        return bytes(message)
 
     def wait_for_client(self):
         """
@@ -153,8 +153,10 @@ class RaspilotBaseProtocol(Protocol):
         :return: True if message was sent, False otherwise
         """
         if self.connected:
+            self.logger.debug('Transmitting to Android {}'.format(message))
             reactor.callFromThread(self.transport.write, message)
             return True
+        self.logger.debug('Discarding data for Android because client is not connected')
         return False
 
     @property

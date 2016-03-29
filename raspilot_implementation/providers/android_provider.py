@@ -61,7 +61,8 @@ class AndroidProvider(StreamSocketProvider):
         :param command: command to be sent
         :return: returns nothing
         """
-        self.send(json.dumps(command.serialize()) + '\n')
+        json_data = json.dumps(command.serialize()) + '\n'
+        self.send(json_data.encode('utf-8'))
 
     @staticmethod
     def _validate_command(received_data):

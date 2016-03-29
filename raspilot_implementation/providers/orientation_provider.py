@@ -12,10 +12,11 @@ MAX_CONNECTIONS = 1
 HOST = ''
 
 
-class RaspilotOrientationProvider(StreamSocketProvider, OrientationProvider):
+class RaspilotOrientationProvider(OrientationProvider):
     MESSAGE_COMPONENTS = 6
     FMT = '!' + 'f' * MESSAGE_COMPONENTS
     RECV_BYTES = struct.calcsize(FMT)
+    NAME = 'RaspilotOrientationProvider'
 
     ROLL_INDEX = 0
     PITCH_INDEX = 1
@@ -25,25 +26,40 @@ class RaspilotOrientationProvider(StreamSocketProvider, OrientationProvider):
     Z_ANGULAR_INDEX = 5
 
     def __init__(self, config):
-        StreamSocketProvider.__init__(self, port=config.orientation_port, recv_size=RaspilotOrientationProvider.RECV_BYTES)
-        OrientationProvider.__init__(self, config)
+        super().__init__(config)
+        self.__socket_provider = OrientationStreamSocketProvider(port=config.orientation_port,
+                                                                 recv_size=RaspilotOrientationProvider.RECV_BYTES,
+                                                                 name=RaspilotOrientationProvider.NAME)
         self.__logger = logging.getLogger('raspilot.log')
         self.__orientation = None
         self.__prop_lock = RLock()
         self.__pitch_stabilise_pid = PID()
         self.__pitch_rate_pid = PID()
 
-    def _on_data_received(self, data):
-        """
-        Processes the received data. Should return fast, because it blocks receiving of other data from the socket.
-        The data should be three doubles in format: roll, pitch, yaw.
-        Unpacks data, and saves the received angles so it can be read by other classes for example
-        the Notifier.
-        :param data: received data
-        :return: returns nothing
-        """
-        with self.__prop_lock:
-            self.__orientation = self.__read_orientation(struct.unpack(RaspilotOrientationProvider.FMT, data))
+    def current_orientation(self):
+        return self.__socket_provider.current_orientation
+
+    def initialize(self):
+        super().initialize()
+        self.__socket_provider.raspilot = self.raspilot
+
+    def stop(self):
+        super().stop()
+        self.__socket_provider.stop()
+
+    def start(self):
+        super().start()
+        return self.__socket_provider.start()
+
+
+class OrientationStreamSocketProvider(StreamSocketProvider):
+    def __init__(self, port, recv_size, name):
+        super().__init__(port, recv_size, name)
+        self.__orientation = None
+
+    def _handle_data(self, data):
+        super()._handle_data(data)
+        self.__orientation = self.__read_orientation(struct.unpack(RaspilotOrientationProvider.FMT, data))
 
     @staticmethod
     def __read_orientation(orientation_tuple):
@@ -68,12 +84,9 @@ class RaspilotOrientationProvider(StreamSocketProvider, OrientationProvider):
         z_angular = orientation_tuple[RaspilotOrientationProvider.Z_ANGULAR_INDEX]
         return Orientation(roll, pitch, azimuth, x_angular, y_angular, z_angular)
 
+    @property
     def current_orientation(self):
         return self.__orientation
-
-    def stop(self):
-        OrientationProvider.stop(self)
-        StreamSocketProvider.stop(self)
 
 
 class RaspilotOrientationProviderConfig(OrientationProviderConfig):

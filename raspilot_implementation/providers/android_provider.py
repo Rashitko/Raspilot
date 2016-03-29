@@ -28,7 +28,7 @@ class AndroidProvider(StreamSocketProvider):
         super().__init__(config.port, RECV_SIZE, AndroidProvider.NAME)
         self.__logger = logging.getLogger('raspilot.log')
 
-    def _on_data_received(self, data):
+    def _handle_data(self, data):
         """
         Reads json from the received data and executes command present in this json. For json format see the docs.
         The json must contain
@@ -40,7 +40,7 @@ class AndroidProvider(StreamSocketProvider):
         :param data: received data
         :return: returns nothing
         """
-        super()._on_data_received(data)
+        super()._handle_data(data)
         decoded_data = data.decode('utf-8')
         self.__logger.debug('Received data: {}'.format(decoded_data))
         deserialized_data = json.loads(decoded_data)

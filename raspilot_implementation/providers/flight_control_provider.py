@@ -38,6 +38,7 @@ class RaspilotFlightControlProvider(FlightControlProvider):
         Connects and waits for the success of failure.
         :return: True, if connection is successful, False otherwise
         """
+        self.__protocol.await_failure = False
         # noinspection PyUnresolvedReferences
         reactor.connectTCP(self.__server_address, self.__port, RaspilotFlightControlClientFactory(self.__protocol))
         return True
@@ -68,6 +69,7 @@ class RaspilotFlightControlProtocol(LineReceiver):
     def __init__(self):
         super().__init__()
         self.__logger = logging.getLogger('raspilot.log')
+        self.__await_failure = False
 
     def connectionMade(self):
         super().connectionMade()
@@ -75,14 +77,30 @@ class RaspilotFlightControlProtocol(LineReceiver):
 
     def connectionLost(self, reason=connectionDone):
         super().connectionLost(reason)
-        self.__logger.debug('FlightControl connection lost')
+        if not self.__await_failure:
+            self.__logger.debug('FlightControl connection lost')
 
     def send_message(self, data):
         if self.connected:
+            # noinspection PyUnresolvedReferences
             reactor.callFromThread(self.sendLine, data)
             return True
         else:
             return False
+
+    def rawDataReceived(self, data):
+        pass
+
+    def lineReceived(self, line):
+        pass
+
+    @property
+    def await_failure(self):
+        return self.__await_failure
+
+    @await_failure.setter
+    def await_failure(self, value):
+        self.__await_failure = value
 
 
 class RaspilotFlightControlClientFactory(ReconnectingClientFactory):
@@ -114,7 +132,7 @@ class RaspilotFlightControlConfig(BaseProviderConfig):
 
     def __init__(self, server_address, port):
         """
-        Constructs a new 'RaspilotWebsocketsConfig' which is used to initialize the RaspilotWebsocketsProvider.
+        Constructs a new 'RaspilotFlightControlConfig' which is used to initialize the RaspilotFlightControlProvider.
         :param raspilot_config: configuration used to read data from
         :return: returns nothing
         """

@@ -4,8 +4,8 @@ from threading import Event
 from raspilot.alarmist import AlarmistConfig, Alarmist
 from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 from raspilot.commands.commands_executor import CommandsExecutor, CommandExecutionError
-from raspilot.providers.orientation_provider import OrientationProvider
 from raspilot.providers.flight_control_provider import FlightControlProvider
+from raspilot.providers.orientation_provider import OrientationProvider
 from raspilot.starter import Starter
 
 
@@ -151,17 +151,17 @@ class Raspilot:
         """
         self.__logger.info('Stopping Raspilot')
         stopped = []
-        for (provider, _) in self.__providers:
-            self.__stop_provider(provider, stopped)
         if self.__commands_executor:
             self.__commands_executor.stop()
+        for (provider, _) in self.__providers:
+            self.__stop_provider(provider, stopped)
         self.__stop_custom_providers(stopped)
         self.__logger.info("Stopped providers: {}".format(stopped))
         self._after_stop()
         self.__stop_self_event.set()
 
     def __stop_provider(self, provider, stopped):
-        if provider is not None and self.__starter.should_start(provider, self):
+        if provider is not None:
             stopped.append(provider.__class__.__name__)
             provider.on_stop()
 

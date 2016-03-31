@@ -1,10 +1,12 @@
 import logging
 import struct
-from threading import RLock
+from threading import RLock, Thread, Event
 
 from raspilot.providers.orientation_provider import OrientationProvider, OrientationProviderConfig
 from raspilot_implementation.pid.pid_controller import PID
 from raspilot_implementation.providers.stream_socket_provider import StreamSocketProvider
+
+CLIENT_CONNECTION_TIMEOUT = 10
 
 SERIALIZATION_SCALE_FACTOR = 1
 
@@ -57,6 +59,7 @@ class OrientationStreamSocketProvider(StreamSocketProvider):
         super().__init__(port, recv_size, name)
         self.__logger = logging.getLogger('raspilot.log')
         self.__orientation = None
+        self.__connection_event = None
 
     def _handle_data(self, data):
         super()._handle_data(data)
@@ -87,6 +90,28 @@ class OrientationStreamSocketProvider(StreamSocketProvider):
         y_angular = orientation_tuple[RaspilotOrientationProvider.Y_ANGULAR_INDEX]
         z_angular = orientation_tuple[RaspilotOrientationProvider.Z_ANGULAR_INDEX]
         return Orientation(roll, pitch, azimuth, x_angular, y_angular, z_angular)
+
+    def on_client_connected(self, address):
+        if self.__connection_event:
+            self.__connection_event.set()
+
+    def on_client_connection_lost(self, reason):
+        super().on_client_connection_lost(reason)
+        if not self.__connection_event:
+            Thread(target=self.__stop_if_no_connection).start()
+
+    def __stop_if_no_connection(self):
+        """
+        Waits for the client connection. If no connection is made in the specified time, stops the Raspilot
+        :return: returns nothing
+        """
+        self.__connection_event = Event()
+        self.__connection_event.wait(CLIENT_CONNECTION_TIMEOUT)
+        if not self.connected:
+            self.__logger.warning("Client not connected after 10 seconds. Stopping Raspilot")
+            self.raspilot.stop()
+        self.__connection_event = None
+
 
     @property
     def current_orientation(self):

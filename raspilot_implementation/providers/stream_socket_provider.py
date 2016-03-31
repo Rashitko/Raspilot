@@ -20,11 +20,12 @@ class StreamSocketProvider(raspilot.providers.base_provider.BaseProvider):
         self.__port = port
         self.__client_connected_event = Event()
         self.__address = None
+        self.__endpoint = None
 
     def start(self):
         super().start()
-        endpoint = TCP4ServerEndpoint(reactor, self.__port)
-        endpoint.listen(self.__factory)
+        self.__endpoint = TCP4ServerEndpoint(reactor, self.__port)
+        self.__endpoint.listen(self.__factory)
         return True
 
     def on_data_received(self, data):
@@ -95,6 +96,10 @@ class StreamSocketProvider(raspilot.providers.base_provider.BaseProvider):
         super().stop()
         return True
 
+    @property
+    def connected(self):
+        return self.__protocol.transport.connected
+
 
 class RaspilotBaseProtocol(Protocol):
     def __init__(self, callbacks, suppress_data_discard_logs=False):
@@ -132,7 +137,7 @@ class RaspilotBaseProtocol(Protocol):
         super().connectionMade()
         self.logger.debug("{} connection successful".format(self.__class__.__name__))
         if self.__callbacks:
-            self.__callbacks.on_connection_made(self.transport.connection[0])
+            self.__callbacks.on_client_connected(self.transport.client[0])
 
     def dataReceived(self, data):
         """

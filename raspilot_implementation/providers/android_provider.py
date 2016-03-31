@@ -71,7 +71,7 @@ class AndroidProvider(StreamSocketProvider):
         :param received_data: data which should be validated
         :return: returns True if command is valid, False otherwise
         """
-        return COMMAND_KEY in received_data and DATA_KEY in received_data and ID_KEY in received_data and REQUEST_KEY in received_data
+        return COMMAND_KEY in received_data and DATA_KEY in received_data and ID_KEY in received_data
 
 
 class AndroidProviderConfig(raspilot.providers.base_provider.BaseProviderConfig):

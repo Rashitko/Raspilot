@@ -10,6 +10,6 @@ class ExitCommandHandler(BaseCommandHandler):
         super().__init__(name)
         self.__logger = logging.getLogger('raspilot.log')
 
-    def _run_action(self, data, command_id, request, response):
+    def _run_action(self, data, command_id, request, response, raspilot):
         self.__logger.debug("Exiting Raspilot")
-        sys.exit()
+        raspilot.stop()

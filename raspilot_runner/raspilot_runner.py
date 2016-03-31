@@ -1,7 +1,11 @@
 import json
+import os
 import socket
+import sys
 
 import raspilot_implementation.main
+
+PIDS_PATH = "../tmp/"
 
 HOST = ''
 PORT = 3002
@@ -65,7 +69,39 @@ class RaspilotRunner:
         self.__run = False
 
 
+def __create_pid_file():
+    """
+    Creates PID file
+    @return: returns path to pid_file
+    """
+    pid = str(os.getpid())
+    dir = os.path.dirname(__file__)
+    pids_dir = os.path.join(dir, PIDS_PATH)
+    if not os.path.exists(pids_dir):
+        os.makedirs(pids_dir)
+    pid_file = os.path.join(pids_dir, 'raspilot_runner.pid')
+    if os.path.isfile(pid_file):
+        print("{} already exists, exiting".format(pid_file))
+        sys.exit()
+    f = open(pid_file, 'w')
+    f.write(pid)
+    f.close()
+
+    return pid_file
+
+
+def remove_pid_file(pid_file):
+    """
+    Removes PID file.
+    @param pid_file path to the pidfile
+    @type pid_file str
+    @return: return nothing
+    """
+    os.unlink(pid_file)
+
+
 if __name__ == "__main__":
+    pidfile = __create_pid_file()
     runner = RaspilotRunner()
     try:
         runner.start()
@@ -73,3 +109,4 @@ if __name__ == "__main__":
         pass
     finally:
         runner.exit()
+        remove_pid_file(pidfile)

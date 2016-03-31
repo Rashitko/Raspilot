@@ -217,8 +217,6 @@ class Raspilot:
         try:
             if command_name is None:
                 raise CommandExecutionError(ValueError("command_name not set"))
-            if data is None:
-                raise CommandExecutionError(ValueError("data not set"))
             if command_id is None:
                 raise CommandExecutionError(ValueError("command id not set"))
             self.__commands_executor.execute_command(command_name, data, command_id, request, response)

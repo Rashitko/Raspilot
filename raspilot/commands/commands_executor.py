@@ -70,7 +70,7 @@ class CommandsExecutor:
         handler = self.__commands.get(command_name, None)
         if handler:
             with self.__execute_lock:
-                execute_response = handler.execute_action(data, command_id, request, response)
+                execute_response = handler.execute_action(data, command_id, request, response, self.__raspilot)
                 if execute_response:
                     self.send_message(command_name, data, False, execute_response)
 

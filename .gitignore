@@ -1,4 +1,6 @@
 .idea/
 raspilot_implementation/config.cfg
+tmp/
+**/*.pid
 **/*.pyc
 **/*.log

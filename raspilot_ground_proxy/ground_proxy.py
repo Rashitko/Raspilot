@@ -2,14 +2,12 @@ import datetime
 import json
 import logging
 import os
-
 import sys
+
 from colorlog import ColoredFormatter
 from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.protocol import Protocol, connectionDone, ReconnectingClientFactory
-
-from raspilot_implementation.utils.pid_handler import PidHandler
 
 GROUND_PORT = 3004
 
@@ -117,29 +115,24 @@ def init_logger(level, logs_path):
 if __name__ == "__main__":
     dir = os.path.dirname(__file__)
     pids_dir = os.path.join(dir, '../tmp')
-    pid_handler = PidHandler(pids_dir, 'raspilot_proxy.pid')
-    pid_handler.create_pid_file()
-    try:
-        current_dir = os.path.dirname(__file__)
-        log_dir = os.path.join(current_dir, '../logs/')
-        init_logger('DEBUG', log_dir)
+    current_dir = os.path.dirname(__file__)
+    log_dir = os.path.join(current_dir, '../logs/')
+    init_logger('DEBUG', log_dir)
 
-        logger = logging.getLogger(LOGGER_NAME)
-        logger.info('Starting Raspilot Proxy. Listening on ports {} and {}'.format(FLIGHT_PORT, GROUND_PORT))
+    logger = logging.getLogger(LOGGER_NAME)
+    logger.info('Starting Raspilot Proxy. Listening on ports {} and {}'.format(FLIGHT_PORT, GROUND_PORT))
 
-        flight_protocol = ProxyProtocol()
-        ground_protocol = ProxyProtocol()
-        flight_protocol.output = ground_protocol
-        ground_protocol.output = flight_protocol
+    flight_protocol = ProxyProtocol()
+    ground_protocol = ProxyProtocol()
+    flight_protocol.output = ground_protocol
+    ground_protocol.output = flight_protocol
 
-        flight_point = TCP4ServerEndpoint(reactor, FLIGHT_PORT)
-        flight_factory = ProxyFactory(flight_protocol)
-        flight_point.listen(flight_factory)
-        ground_point = TCP4ServerEndpoint(reactor, GROUND_PORT)
-        ground_factory = ProxyFactory(ground_protocol)
-        ground_point.listen(ground_factory)
-        reactor.run()
+    flight_point = TCP4ServerEndpoint(reactor, FLIGHT_PORT)
+    flight_factory = ProxyFactory(flight_protocol)
+    flight_point.listen(flight_factory)
+    ground_point = TCP4ServerEndpoint(reactor, GROUND_PORT)
+    ground_factory = ProxyFactory(ground_protocol)
+    ground_point.listen(ground_factory)
+    reactor.run()
 
-        logger.info('Raspilot Proxy exiting')
-    finally:
-        pid_handler.remove_pid_file()
+    logger.info('Raspilot Proxy exiting')

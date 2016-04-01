@@ -3,7 +3,6 @@ import os
 import socket
 
 import raspilot_implementation.main
-from raspilot_implementation.utils.pid_handler import PidHandler
 
 PIDS_PATH = "../tmp/"
 
@@ -72,8 +71,6 @@ class RaspilotRunner:
 if __name__ == "__main__":
     dir = os.path.dirname(__file__)
     pids_dir = os.path.join(dir, PIDS_PATH)
-    pid_handler = PidHandler(pids_dir, 'raspilot_runner.pid')
-    pid_handler.create_pid_file()
     runner = RaspilotRunner()
     try:
         runner.start()
@@ -81,4 +78,3 @@ if __name__ == "__main__":
         pass
     finally:
         runner.exit()
-        pid_handler.remove_pid_file()

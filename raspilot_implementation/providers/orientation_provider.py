@@ -65,7 +65,6 @@ class OrientationStreamSocketProvider(StreamSocketProvider):
         super()._handle_data(data)
         orientation_size = struct.calcsize(RaspilotOrientationProvider.FMT)
         byte_array = [data[i:i+orientation_size] for i in range(0, len(data), orientation_size)]
-        self.__logger.debug('Received orientation updates size: {}'.format(len(data)))
         self.__orientation = self.__read_orientation(struct.unpack(RaspilotOrientationProvider.FMT, byte_array[-1]))
 
     @staticmethod

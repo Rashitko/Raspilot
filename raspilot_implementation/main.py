@@ -3,6 +3,7 @@ import datetime
 import logging
 import os
 import sys
+import subprocess
 from threading import Thread
 
 from colorlog import ColoredFormatter

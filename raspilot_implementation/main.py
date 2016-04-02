@@ -1,12 +1,10 @@
 import configparser
-import datetime
 import logging
 import os
-import sys
-import subprocess
+import socket
 from threading import Thread
 
-from colorlog import ColoredFormatter
+from twisted.internet import reactor
 
 from raspilot.black_box import BlackBoxController, BlackBoxControllerConfig
 from raspilot_implementation.black_box.black_box import RaspilotBlackBox
@@ -25,6 +23,7 @@ from raspilot_implementation.raspilot_alarmist import RaspilotAlarmist, Raspilot
 from raspilot_implementation.raspilot_flight_controller import RaspilotFlightController
 from raspilot_implementation.raspilot_impl import RaspilotImplBuilder
 from raspilot_implementation.remote_raspilot_starter import RemoteRaspilotStarter
+from raspilot_implementation.utils.raspilot_logger import RaspilotLoggerFactory
 
 LOGS_DIR_PATH = '../logs/'
 
@@ -237,25 +236,26 @@ def init_logger(level, logs_path):
     :param level: logging level of the created logger
     :return: returns nothing
     """
-    logging.addLevelName(TRANSMISSION_LEVEL_NUM, "TRANSMISSION")
-    logger = logging.getLogger('raspilot.log')
-    logger.setLevel(level)
-    if not os.path.exists(logs_path):
-        os.makedirs(logs_path)
-    fh = logging.FileHandler("{}raspilog-{}.log".format(logs_path, datetime.datetime.now().strftime("%Y-%m-%d")))
-    fh.setLevel(level)
-    message_format = '%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\t''[FILE]%(pathname)s:%(lineno)s\n\t''[THREAD]%(threadName)s'
-    formatter = ColoredFormatter(message_format, date_format)
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.DEBUG)
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-    logger.propagate = False
+    RaspilotLoggerFactory.create('raspilot.log', level, logs_path)
+    # logging.addLevelName(TRANSMISSION_LEVEL_NUM, "TRANSMISSION")
+    # logger = logging.getLogger('raspilot.log')
+    # logger.setLevel(level)
+    # if not os.path.exists(logs_path):
+    #     os.makedirs(logs_path)
+    # fh = logging.FileHandler("{}raspilog-{}.log".format(logs_path, datetime.datetime.now().strftime("%Y-%m-%d")))
+    # fh.setLevel(level)
+    # message_format = '%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\t''[FILE]%(pathname)s:%(lineno)s\n\t''[THREAD]%(threadName)s'
+    # formatter = ColoredFormatter(message_format, date_format)
+    # fh.setFormatter(formatter)
+    # logger.addHandler(fh)
+    # ch = logging.StreamHandler(sys.stdout)
+    # ch.setLevel(logging.DEBUG)
+    # ch.setFormatter(formatter)
+    # logger.addHandler(ch)
+    # logger.propagate = False
 
 
-def run_raspilot(runner=None):
+def create_raspilot():
     global raspilot
     config = RaspilotConfig()
     dir = os.path.dirname(__file__)
@@ -304,6 +304,25 @@ def run_raspilot(runner=None):
     alarmist_config.calm_down_delay = config.calm_down_delay
     builder.alarmist = RaspilotAlarmist(alarmist_config)
     raspilot = builder.build()
+    return raspilot
+
+
+def notify_runner():
+    my_dir = os.path.dirname(__file__)
+    socket_addr = os.path.join(my_dir, '../shared/raspilot_runner.sock')
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
+        s.connect(socket_addr)
+        s.send(bytes(1))
+    except FileNotFoundError:
+        pass
+    finally:
+        s.close()
+
+
+def run_raspilot(runner=None):
+    Thread(target=reactor.run, args=(False,)).start()
+    raspilot = create_raspilot()
     raspilot.add_command_handler(ExitCommandHandler('system.exit'))
     raspilot_thread = Thread(target=start_raspilot, args=(raspilot,), name="RASPILOT_THREAD")
     raspilot_thread.start()
@@ -317,6 +336,7 @@ def run_raspilot(runner=None):
             runner.exit()
     finally:
         raspilot.stop()
+        notify_runner()
 
 
 if __name__ == "__main__":

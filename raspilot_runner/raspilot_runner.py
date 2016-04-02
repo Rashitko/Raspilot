@@ -1,8 +1,15 @@
-import json
+import logging
 import os
-import socket
+import signal
+import subprocess
 
-import raspilot_implementation.main
+from twisted.internet import reactor
+from twisted.internet.endpoints import UNIXServerEndpoint, TCP4ServerEndpoint
+from twisted.internet.protocol import Factory, Protocol
+
+from raspilot_implementation.utils.raspilot_logger import RaspilotLoggerFactory
+
+LOGGER_NAME = 'raspilot_runner'
 
 PIDS_PATH = "../tmp/"
 
@@ -10,71 +17,88 @@ HOST = ''
 PORT = 3002
 
 
-class RaspilotRunner:
-    """
-    Helper class which spawns the Raspilot instance upon receiving the request to do so. Only one instance of Raspilot
-    can be spawned at any time.
-    """
-
+class NewRaspilotRunner:
     def __init__(self):
-        self.__run = True
-        self.__socket = None
+        self.__logger = logging.getLogger(LOGGER_NAME)
+        self.__logger.info("Starting Raspilot Runner")
+        my_dir = os.path.dirname(__file__)
+        unix_socket_addr = os.path.join(my_dir, "../shared/raspilot_runner.sock")
 
-    def __receive_loop(self):
-        """
-        Receives requests and spawns the Raspilot
-        :return: returns nothing
-        """
-        while self.__run:
-            print("Awaiting connection...")
-            self.__connection, self.__address = self.__socket.accept()
-            data = self.__connection.recv(1024)
-            print("Request from {}. Running Raspilot".format(self.__address))
-            raspilot_implementation.main.run_raspilot(self)
-            self.__connection.close()
-            self.__connection = None
-            self.__address = None
+        raspilot_endpoint = UNIXServerEndpoint(reactor, unix_socket_addr)
+        raspilot_endpoint.listen(RaspilotProtocolFactory(RaspilotProtocol(self)))
 
-    def raspilot_ready(self):
-        """
-        Callback method, called when Raspilot is ready, replies to the client
-        :return: returns nothing
-        """
-        if self.__connection:
-            data = {'message': 'Raspilot ready', 'spawned': True, 'error': None, 'myAddress': self.__address[0]}
-            serialized_data = json.dumps(data) + '\n'
-            raw_data = bytes(serialized_data.encode('utf-8'))
-            self.__connection.send(raw_data)
+        spawn_endpoint = TCP4ServerEndpoint(reactor, PORT)
+        spawn_endpoint.listen(RaspilotProtocolFactory(RaspilotSpawnProtocol(self)))
 
-    def start(self):
-        """
-        Creates the socket and starts the receive loop
-        :return:
-        """
-        if self.__socket is None:
-            self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.__socket.bind((HOST, PORT))
-            self.__socket.listen(1)
-            self.__receive_loop()
+        self.__raspilot_process = None
 
-    def exit(self):
-        """
-        Closes the socket and stops the receive loop
-        :return:
-        """
-        if self.__socket:
-            self.__socket.close()
-        self.__run = False
+    def on_raspilot_message(self):
+        try:
+            if self.__raspilot_process:
+                self.__logger.info('Waiting for Raspilot to exit...')
+                self.__raspilot_process.wait(5)
+        except subprocess.TimeoutExpired:
+            self.__logger.error('Killing Raspilot it because did not exit')
+            self.__raspilot_process.kill()
+        finally:
+            self.__raspilot_process = None
+
+    def on_spawn_request(self):
+        if not self.__raspilot_process:
+            self.__logger.info('Spawning new Raspilot')
+            my_dir = os.path.dirname(__file__)
+            raspilot_impl_dir = os.path.join(my_dir, '../raspilot_implementation/main.py')
+            path_to_script = os.path.abspath(raspilot_impl_dir)
+            self.__logger.debug("Running {}".format(path_to_script))
+            self.__raspilot_process = subprocess.Popen(['python3', path_to_script], stdout=subprocess.DEVNULL,
+                                                       stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+            self.__logger.info("Raspilot running with PID {}".format(self.__raspilot_process.pid))
+        else:
+            self.__logger.warning('Raspilot already running')
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.__raspilot_process:
+            try:
+                self.__logger.info("Asking Raspilot with PID {} to exit".format(self.__raspilot_process.pid))
+                os.kill(self.__raspilot_process.pid, signal.SIGINT)
+                self.__raspilot_process.wait(5)
+                self.__logger.info("Raspilot exited")
+            except subprocess.TimeoutExpired:
+                self.__logger.error("Raspilot is still running, killing it")
+                self.__raspilot_process.kill()
+
+
+class RaspilotProtocol(Protocol):
+    def __init__(self, callbacks):
+        self.__callbacks = callbacks
+
+    def dataReceived(self, data):
+        self.__callbacks.on_raspilot_message()
+
+
+class RaspilotSpawnProtocol(Protocol):
+    def __init__(self, callbacks):
+        self.__callbacks = callbacks
+
+    def dataReceived(self, data):
+        self.__callbacks.on_spawn_request()
+
+
+class RaspilotProtocolFactory(Factory):
+    def __init__(self, protocol):
+        self.__protocol = protocol
+
+    def buildProtocol(self, addr):
+        return self.__protocol
 
 
 if __name__ == "__main__":
-    dir = os.path.dirname(__file__)
-    pids_dir = os.path.join(dir, PIDS_PATH)
-    runner = RaspilotRunner()
-    try:
-        runner.start()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        runner.exit()
+    my_dir = os.path.dirname(__file__)
+    logs_path = os.path.join(my_dir, '../logs/')
+    RaspilotLoggerFactory.create(LOGGER_NAME, logging.DEBUG, os.path.abspath(logs_path))
+    runner = NewRaspilotRunner()
+    with runner:
+        reactor.run()

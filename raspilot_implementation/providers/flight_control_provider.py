@@ -2,8 +2,8 @@ import json
 import logging
 
 from twisted.internet import reactor
-from twisted.internet.protocol import connectionDone, ReconnectingClientFactory
-from twisted.protocols.basic import LineReceiver
+from twisted.internet.endpoints import TCP4ServerEndpoint
+from twisted.internet.protocol import connectionDone, ReconnectingClientFactory, Protocol
 
 from raspilot.providers.base_provider import BaseProviderConfig
 from raspilot.providers.flight_control_provider import FlightControlProvider
@@ -27,10 +27,10 @@ class RaspilotFlightControlProvider(FlightControlProvider):
         self.__server_address = websockets_config.server_address
         self.__port = websockets_config.port
         self.__protocol = RaspilotFlightControlProtocol()
+        reactor.connectTCP(self.__server_address, self.__port, RaspilotFlightControlClientFactory(self.__protocol))
 
     def stop(self):
         # noinspection PyUnresolvedReferences
-        reactor.callFromThread(reactor.stop)
         return True
 
     def start(self):
@@ -40,7 +40,6 @@ class RaspilotFlightControlProvider(FlightControlProvider):
         """
         self.__protocol.await_failure = False
         # noinspection PyUnresolvedReferences
-        reactor.connectTCP(self.__server_address, self.__port, RaspilotFlightControlClientFactory(self.__protocol))
         return True
 
     def send_telemetry_update_message(self, message, success=None, failure=None):
@@ -65,7 +64,7 @@ class RaspilotFlightControlProvider(FlightControlProvider):
         return bytes(json_data.encode('utf-8'))
 
 
-class RaspilotFlightControlProtocol(LineReceiver):
+class RaspilotFlightControlProtocol(Protocol):
     def __init__(self):
         super().__init__()
         self.__logger = logging.getLogger('raspilot.log')
@@ -81,9 +80,9 @@ class RaspilotFlightControlProtocol(LineReceiver):
             self.__logger.debug('FlightControl connection lost')
 
     def send_message(self, data):
-        if self.connected:
+        if self.transport:
             # noinspection PyUnresolvedReferences
-            reactor.callFromThread(self.sendLine, data)
+            reactor.callFromThread(self.transport.write, data)
             return True
         else:
             return False

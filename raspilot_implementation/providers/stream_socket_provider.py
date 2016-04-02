@@ -21,11 +21,14 @@ class StreamSocketProvider(raspilot.providers.base_provider.BaseProvider):
         self.__client_connected_event = Event()
         self.__address = None
         self.__endpoint = None
+        reactor.callFromThread(self.__setup_endpoint)
+
+    def __setup_endpoint(self):
+        self.__endpoint = TCP4ServerEndpoint(reactor, self.__port)
+        self.__endpoint.listen(self.__factory)
 
     def start(self):
         super().start()
-        self.__endpoint = TCP4ServerEndpoint(reactor, self.__port)
-        self.__endpoint.listen(self.__factory)
         return True
 
     def on_data_received(self, data):

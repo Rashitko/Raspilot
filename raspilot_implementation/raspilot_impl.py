@@ -1,8 +1,4 @@
 import logging
-from threading import Thread
-
-from twisted.internet import reactor
-from twisted.web import client
 
 from raspilot.raspilot import Raspilot, RaspilotBuilder
 from raspilot_implementation.disocvery.discovery_service import DiscoveryService
@@ -27,12 +23,10 @@ class RaspilotImpl(Raspilot):
         :return:
         """
         super()._after_start()
-        Thread(target=reactor.run, args=(False,)).start()
         if self.__mode != RaspilotImpl.MODE_BLACK_BOX:
             self.__discovery_service.enable_discovery()
 
     def stop(self):
-        reactor.callFromThread(reactor.stop)
         super().stop()
 
     def _after_stop(self):

@@ -54,6 +54,8 @@ class AndroidProvider(StreamSocketProvider):
             if RESPONSE_KEY in deserialized_data:
                 response = deserialized_data.get(RESPONSE_KEY, None)
             self.raspilot.execute_command(command_name, command_id, command_data, request, response)
+        else:
+            self.__logger.error("Invalid command received. {}".format(decoded_data))
 
     def send_command(self, command):
         """

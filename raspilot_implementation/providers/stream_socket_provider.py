@@ -138,7 +138,7 @@ class RaspilotBaseProtocol(Protocol):
         :return: returns nothing
         """
         super().connectionMade()
-        self.logger.debug("{} connection successful".format(self.__class__.__name__))
+        self.logger.debug("{} connection successful".format(self.__callbacks.__class__.__name__))
         if self.__callbacks:
             self.__callbacks.on_client_connected(self.transport.client[0])
 
@@ -152,7 +152,7 @@ class RaspilotBaseProtocol(Protocol):
         if self.__callbacks:
             self.__callbacks.on_data_received(data)
         elif not self.__suppress_data_discard_logs:
-            self.logger.warning("{} callbacks is None, discarding received data".format(self.__class__.__name__))
+            self.logger.warning("{} callbacks is None, discarding received data".format(self.__callbacks.__class__.__name__))
 
     def send_message(self, message):
         """

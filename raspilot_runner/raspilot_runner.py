@@ -77,7 +77,9 @@ class RaspilotRunner:
             self.__logger.warning('Raspilot already running')
 
     def __observe_raspilot(self):
+        self.__logger.debug("Waiting for Raspilot process to finish")
         self.__raspilot_process.wait()
+        self.__logger.debug("Raspilot process finished")
         self.__on_raspilot_process_finished()
 
     def __enter__(self):

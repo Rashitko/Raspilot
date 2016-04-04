@@ -1,4 +1,6 @@
 import logging
+import os
+import socket
 
 from raspilot.raspilot import Raspilot, RaspilotBuilder
 from raspilot_implementation.disocvery.discovery_service import DiscoveryService
@@ -26,8 +28,22 @@ class RaspilotImpl(Raspilot):
         if self.__mode != RaspilotImpl.MODE_BLACK_BOX:
             self.__discovery_service.enable_discovery()
 
+    @staticmethod
+    def __notify_runner():
+        my_dir = os.path.dirname(__file__)
+        socket_addr = os.path.join(my_dir, '../shared/raspilot_runner.sock')
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        try:
+            s.connect(socket_addr)
+            s.send(bytes(1))
+        except FileNotFoundError:
+            pass
+        finally:
+            s.close()
+
     def stop(self):
         super().stop()
+        self.__notify_runner()
 
     def _after_stop(self):
         """

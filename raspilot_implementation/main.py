@@ -307,17 +307,6 @@ def create_raspilot():
     return raspilot
 
 
-def notify_runner():
-    my_dir = os.path.dirname(__file__)
-    socket_addr = os.path.join(my_dir, '../shared/raspilot_runner.sock')
-    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    try:
-        s.connect(socket_addr)
-        s.send(bytes(1))
-    except FileNotFoundError:
-        pass
-    finally:
-        s.close()
 
 
 def run_raspilot(runner=None):

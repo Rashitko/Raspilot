@@ -4,6 +4,7 @@ from threading import Event
 from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.protocol import Protocol, Factory, connectionDone
+from twisted.protocols.basic import LineReceiver
 
 import raspilot.providers.base_provider
 
@@ -42,7 +43,6 @@ class StreamSocketProvider(raspilot.providers.base_provider.BaseProvider):
         except Exception as e:
             message = "Error during data processing. Error was {}".format(e)
             self.__logger.error(message)
-            raise DataProcessingError(message)
 
     def _handle_data(self, data):
         """
@@ -104,7 +104,7 @@ class StreamSocketProvider(raspilot.providers.base_provider.BaseProvider):
         return self.__protocol.transport.connected
 
 
-class RaspilotBaseProtocol(Protocol):
+class RaspilotBaseProtocol(LineReceiver):
     def __init__(self, callbacks, suppress_data_discard_logs=False):
         """
         Creates new 'RaspilotBaseProtocol'. The provided callbacks object must have following methods implemented:
@@ -142,15 +142,15 @@ class RaspilotBaseProtocol(Protocol):
         if self.__callbacks:
             self.__callbacks.on_client_connected(self.transport.client[0])
 
-    def dataReceived(self, data):
+    def lineReceived(self, line):
         """
         Called upon receiving the data. If callbacks are set, callbacks.on_data_received(data) is called.
-        :param data: data received
+        :param line: data received
         :return: returns nothing
         """
-        super().dataReceived(data)
+        super().dataReceived(line)
         if self.__callbacks:
-            self.__callbacks.on_data_received(data)
+            self.__callbacks.on_data_received(line)
         elif not self.__suppress_data_discard_logs:
             self.logger.warning("{} callbacks is None, discarding received data".format(self.__callbacks.__class__.__name__))
 

@@ -3,6 +3,7 @@ import logging
 import os
 import signal
 import subprocess
+from threading import Thread
 
 from twisted.internet import reactor
 from twisted.internet.endpoints import UNIXServerEndpoint, TCP4ServerEndpoint
@@ -49,8 +50,6 @@ class RaspilotRunner:
         except subprocess.TimeoutExpired:
             self.__logger.error('Killing Raspilot it because did not exit')
             self.__raspilot_process.kill()
-        finally:
-            self.__raspilot_process = None
 
     def on_spawn_request(self):
         """
@@ -66,6 +65,7 @@ class RaspilotRunner:
             self.__logger.debug("Running {}".format(path_to_script))
             self.__raspilot_process = subprocess.Popen(['python3', path_to_script], stdout=subprocess.DEVNULL,
                                                        stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+            Thread(target=self.__observe_raspilot).start()
             self.__logger.info("Raspilot running with PID {}".format(self.__raspilot_process.pid))
             if self.__protocol.transport:
                 message = self.__create_spawn_message('Raspilot ready')
@@ -75,6 +75,10 @@ class RaspilotRunner:
                 message = self.__create_spawn_message('Raspilot already running')
                 self.__protocol.transport.write(self.__encode_message(message))
             self.__logger.warning('Raspilot already running')
+
+    def __observe_raspilot(self):
+        self.__raspilot_process.wait()
+        self.__on_raspilot_process_finished()
 
     def __enter__(self):
         return self
@@ -121,6 +125,10 @@ class RaspilotRunner:
         """
         return {'message': message, 'spawned': spawned, 'error': error,
                 'myAddress': self.__protocol.transport.client[0]}
+
+    def __on_raspilot_process_finished(self):
+        self.__logger.info("Raspilot process with PID {} finished".format(self.__raspilot_process.pid))
+        self.__raspilot_process = None
 
 
 class RaspilotProtocol(Protocol):

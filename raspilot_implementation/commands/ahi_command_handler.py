@@ -17,7 +17,7 @@ class SetNeutralAhiHandler(BaseCommandHandler):
         super().__init__(AHI_SET_NEUTRAL_COMMAND_NAME)
         self.__orientation_provider = orientation_provider
 
-    def _run_action(self, data, command_id, request, response):
+    def _run_action(self, data, command_id, request, response, raspilot):
         """
         Sets the current orientation as the neutral position of the plane, when both roll and pitch will be equal to 0
         :param data: currently not processed

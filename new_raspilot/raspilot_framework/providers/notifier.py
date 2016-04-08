@@ -3,7 +3,7 @@ import time
 from new_raspilot.raspilot_framework.base_thread_module import BaseThreadModule
 
 
-class BlackBoxController(BaseThreadModule):
+class TelemetryController(BaseThreadModule):
     def __init__(self, state_recorder):
         super().__init__()
         self.__state_recorder = state_recorder
@@ -13,5 +13,5 @@ class BlackBoxController(BaseThreadModule):
             try:
                 self.__state_recorder.record_state()
             except Exception as e:
-                self.logger.critical("Error occurred during BlackBox data recording. Error was {}".format(e))
-            time.sleep(0.5)
+                self.logger.critical("Telemetry transmission failed. Error was {}".format(e))
+            time.sleep(0.1)

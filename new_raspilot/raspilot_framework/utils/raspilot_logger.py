@@ -11,7 +11,7 @@ class RaspilotLogger:
     TRANSMISSION_LEVEL_NUM = 9
     DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
     LEVEL = 'DEBUG'
-    PATH = '../../logs/'
+    PATH = '../../../logs/'
 
     initialized = False
 
@@ -22,7 +22,6 @@ class RaspilotLogger:
         logger.setLevel(RaspilotLogger.LEVEL)
         dir = os.path.dirname(__file__)
         path = os.path.join(dir, RaspilotLogger.PATH)
-        path = os.path.abspath(path)
         if not os.path.exists(path):
             os.makedirs(path)
         fh = logging.FileHandler("{}{}-{}.log".format(path, RaspilotLogger.LOGGER_NAME,

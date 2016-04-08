@@ -18,7 +18,7 @@ class AndroidProvider(BaseProvider):
         self.__protocol = AndroidProtocol(self.raspilot.command_receiver)
 
     def _execute_start(self):
-        endpoint = TCP4ServerEndpoint(reactor, 50000)
+        endpoint = TCP4ServerEndpoint(reactor, 50001)
         endpoint.listen(AndroidProtocolFactory(self.__protocol))
         return True
 

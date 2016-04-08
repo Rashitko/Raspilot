@@ -1,10 +1,10 @@
 from abc import abstractmethod
 
-from new_raspilot.raspilot_framework.base_component import BaseModule
+from new_raspilot.raspilot_framework.base_module import BaseModule
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
 
 
-class BaseProvider(BaseModule):
+class BaseStartedModule(BaseModule):
     def __init__(self, config=None, silent=False):
         super().__init__(silent)
         self.__config = config
@@ -38,7 +38,11 @@ class BaseProvider(BaseModule):
             self._log_debug("Starting {}".format(self.class_name))
             self.__started = self._execute_start()
             start_result = 'successfully' if self.__started else 'failed'
-            self._log_info("{} start {}".format(self.class_name, start_result))
+            message = "{} start {}".format(self.class_name, start_result)
+            if self.started:
+                self._log_info(message)
+            else:
+                self._log_error(message)
         except Exception as e:
             self.logger.error("Error during the start of {} occurred. Error was {}".format(self.class_name, e))
         return self.__started

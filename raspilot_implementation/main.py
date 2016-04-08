@@ -1,7 +1,6 @@
 import configparser
 import logging
 import os
-import socket
 from threading import Thread
 
 from twisted.internet import reactor
@@ -307,8 +306,6 @@ def create_raspilot():
     return raspilot
 
 
-
-
 def run_raspilot(runner=None):
     Thread(target=reactor.run, args=(False,)).start()
     raspilot = create_raspilot()
@@ -325,7 +322,6 @@ def run_raspilot(runner=None):
             runner.exit()
     finally:
         raspilot.stop()
-        notify_runner()
 
 
 if __name__ == "__main__":

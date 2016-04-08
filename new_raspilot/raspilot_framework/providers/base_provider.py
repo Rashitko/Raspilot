@@ -71,3 +71,7 @@ class BaseProvider(BaseModule):
     @property
     def config(self):
         return self.__config
+
+    @property
+    def started(self):
+        return self.__started

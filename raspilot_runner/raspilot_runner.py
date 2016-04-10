@@ -60,7 +60,7 @@ class RaspilotRunner:
         if not self.__raspilot_process:
             self.__logger.info('Spawning new Raspilot')
             my_dir = os.path.dirname(__file__)
-            raspilot_impl_dir = os.path.join(my_dir, '../raspilot_implementation/main.py')
+            raspilot_impl_dir = os.path.join(my_dir, '../new_raspilot/raspilot_implementation/main.py')
             path_to_script = os.path.abspath(raspilot_impl_dir)
             self.__logger.debug("Running {}".format(path_to_script))
             self.__raspilot_process = subprocess.Popen(['python3', path_to_script], stdout=subprocess.DEVNULL,

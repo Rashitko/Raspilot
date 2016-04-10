@@ -1,3 +1,5 @@
+from threading import Thread
+
 from twisted.internet import reactor
 
 from new_raspilot.raspilot_framework.base_system_state_recorder import BaseSystemStateRecorder
@@ -30,6 +32,9 @@ class Raspilot:
 
         self.__black_box_controller = BlackBoxController(builder.blackbox)
         self.__started_modules.append(self.__black_box_controller)
+
+        self.__flight_control_provider = builder.fligh_control
+        self.__started_modules.append(self.__flight_control_provider)
 
         for provider in builder.custom_providers:
             self.__started_modules.append(provider)
@@ -80,6 +85,10 @@ class Raspilot:
     def orientation_provider(self):
         return self.__orientation_provider
 
+    @property
+    def flight_control(self):
+        return self.__flight_control_provider
+
 
 class RaspilotBuilder:
     def __init__(self):
@@ -90,6 +99,7 @@ class RaspilotBuilder:
         self.__black_box = None
         self.__telemetry = None
         self.__telemetry_enabled = False
+        self.__flight_control_provider = None
 
     def add_custom_provider(self, provider):
         self.__custom_providers.append(provider)
@@ -116,6 +126,11 @@ class RaspilotBuilder:
         self.__telemetry_enabled = enabled
         if not enabled:
             self.__telemetry = None
+        return self
+
+    def with_flight_control_provider(self, flight_control):
+        self.__flight_control_provider = flight_control
+        return self
 
     def build(self):
         """
@@ -160,3 +175,7 @@ class RaspilotBuilder:
     @property
     def telemetry_enabled(self):
         return self.__telemetry_enabled
+
+    @property
+    def fligh_control(self):
+        return self.__flight_control_provider

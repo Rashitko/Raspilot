@@ -8,6 +8,10 @@ class BlackBoxController(BaseThreadModule):
         super().__init__()
         self.__state_recorder = state_recorder
 
+    def initialize(self, raspilot):
+        super().initialize(raspilot)
+        self.__state_recorder.initialize(raspilot)
+
     def _notify_loop(self):
         while self._run:
             try:

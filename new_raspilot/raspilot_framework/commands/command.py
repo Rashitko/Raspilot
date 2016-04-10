@@ -1,3 +1,4 @@
+import json
 from abc import abstractmethod
 
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
@@ -9,6 +10,10 @@ class Command:
         self.__name = None
         self.__data = None
         self.__id = None
+
+    def serialize(self):
+        serialized_json = {'name': self.name, 'data': self.data, 'id': self.id}
+        return bytes(json.dumps(serialized_json), 'utf-8')
 
     @property
     def name(self):

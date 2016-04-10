@@ -46,8 +46,4 @@ class BaseModule(metaclass=ABCMeta):
 
     @property
     def raspilot(self):
-        """
-
-        :rtype: Raspilot
-        """
         return self.__raspilot

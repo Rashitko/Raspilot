@@ -36,6 +36,7 @@ class RaspilotOrientationProvider(OrientationProvider):
         return self.__orientation
 
     def on_new_orientation(self, roll, pitch, azimuth, x_change, y_change, z_change):
+        self._log_debug("roll: {}, pitch: {}, azimuth: {}".format(roll, pitch, azimuth))
         self.__orientation = Orientation(roll, pitch, azimuth, x_change, y_change, z_change)
 
     def on_connection_opened(self, address):

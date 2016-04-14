@@ -8,7 +8,7 @@ class StopCommand(Command):
     NAME = "system.stop"
 
     def __init__(self):
-        super().__init__()
+        super().__init__(StopCommand.NAME)
         self.name = StopCommand.NAME
 
 

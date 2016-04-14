@@ -1,7 +1,7 @@
 import struct
+import time
 from threading import Thread
 
-import time
 from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.protocol import Factory, connectionDone
@@ -56,8 +56,8 @@ class RaspilotOrientationProvider(OrientationProvider):
             i -= 1
             time.sleep(1)
         if not self.__connected:
-            self.logger.error("Client connection not restored. Raspilot shutting down")
             self.raspilot.command_executor.execute_command(StopCommand())
+            self.logger.error("Client connection not restored. Raspilot shutting down")
 
 
 class Orientation:

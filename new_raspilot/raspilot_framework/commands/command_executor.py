@@ -15,9 +15,7 @@ class CommandExecutor(BaseModule):
     def execute_command(self, command):
         handler = self.__handlers.get(command.name, None)
         if handler:
+            self._log_debug("Executing command {}".format(command.name))
             handler.run_action(command)
         else:
             self._log_warning("Unknown command {} received".format(command.name))
-
-
-

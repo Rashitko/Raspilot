@@ -1,6 +1,6 @@
 import psutil
 
-from new_raspilot.raspilot_framework.providers.load_guard import BaseLoadGuard
+from new_raspilot.raspilot_framework.providers.load_guard_controller import BaseLoadGuard
 from new_raspilot.raspilot_implementation.commands.system_state_command import SystemStateCommand
 from new_raspilot.raspilot_implementation.providers.android_provider import AndroidProvider
 

@@ -4,7 +4,7 @@ from new_raspilot.raspilot_framework.base_system_state_recorder import BaseSyste
 from new_raspilot.raspilot_framework.commands.command_executor import CommandExecutor
 from new_raspilot.raspilot_framework.commands.command_receiver import CommandReceiver
 from new_raspilot.raspilot_framework.providers.black_box_controller import BlackBoxController
-from new_raspilot.raspilot_framework.providers.load_guard import LoadGuardController
+from new_raspilot.raspilot_framework.providers.load_guard_controller import LoadGuardController
 from new_raspilot.raspilot_framework.providers.notifier import TelemetryController
 from new_raspilot.raspilot_framework.providers.orientation_provider import OrientationProvider
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
@@ -46,7 +46,7 @@ class Raspilot:
             self.__logger.warning("Telemetry is disabled")
 
         if builder.load_guard:
-            self.__load_guard = LoadGuardController(builder.load_guard)
+            self.__load_guard = LoadGuardController(builder.load_guard, delay=0.5)
             self.__started_modules.append(self.__load_guard)
         else:
             self.__load_guard = None

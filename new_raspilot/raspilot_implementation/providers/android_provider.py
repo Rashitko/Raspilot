@@ -29,7 +29,7 @@ class AndroidProvider(BaseStartedModule):
 class AndroidProtocol(LineReceiver):
     def __init__(self, callbacks):
         super().__init__()
-        self.delimiter = bytes('\n', 'utf-8')
+        self.delimiter = bytes([0, 10])
         self.__logger = RaspilotLogger.get_logger()
         self.__callbacks = callbacks
 

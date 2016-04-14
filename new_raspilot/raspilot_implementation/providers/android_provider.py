@@ -27,6 +27,7 @@ class AndroidProvider(BaseStartedModule):
 
     def send_data(self, data):
         if self.__protocol.transport:
+            self._log_debug("Sending data to Android. {}".format(data))
             reactor.callFromThread(self.__protocol.sendLine, data)
 
 

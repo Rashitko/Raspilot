@@ -98,7 +98,7 @@ class Orientation:
 class OrientationProtocol(LineReceiver):
     def __init__(self, callbacks):
         self.__logger = RaspilotLogger.get_logger()
-        self.delimiter = bytes('\n', 'utf-8')
+        self.delimiter = bytes([0, 10])
         self.__callbacks = callbacks
 
     def rawDataReceived(self, data):

@@ -27,11 +27,11 @@ class RaspilotLoadGuard(BaseLoadGuard):
     def check_state(self):
         utilization = psutil.cpu_percent()
         if utilization > self.__panic_limit and self.__state is not RaspilotLoadGuard.STATE_WAS_PANIC:
-            self.__logger.warn('PANIC MODE, UTILIZATION {}'.format(utilization))
+            self.__logger.warn('PANIC mode entered, UTILIZATION {}'.format(utilization))
             self.__state = RaspilotLoadGuard.STATE_WAS_PANIC
             # self._panic(utilization)
         elif utilization < self.__calm_down_limit and self.__state is not RaspilotLoadGuard.STATE_WAS_OK:
-            self.__logger.warn('CALMED DOWN, UTILIZATION {}'.format(utilization))
+            self.__logger.info('CALMED DOWN mode entered, UTILIZATION {}'.format(utilization))
             self.__state = RaspilotLoadGuard.STATE_WAS_OK
             # self._calm_down(utilization)
 

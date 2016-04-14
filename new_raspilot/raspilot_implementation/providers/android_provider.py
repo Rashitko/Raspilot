@@ -25,6 +25,10 @@ class AndroidProvider(BaseStartedModule):
     def _execute_stop(self):
         pass
 
+    def send_data(self, data):
+        if self.__protocol.transport:
+            reactor.callFromThread(self.__protocol.sendLine, data)
+
 
 class AndroidProtocol(LineReceiver):
     def __init__(self, callbacks):

@@ -7,9 +7,7 @@ class TelemetryUpdateCommand(Command):
     NAME = 'telemetry.update'
 
     def __init__(self, data):
-        super().__init__()
-        self.name = TelemetryUpdateCommand.NAME
-        self.data = data
+        super().__init__(TelemetryUpdateCommand.NAME, data)
         self.id = str(uuid.uuid1())
 
     @classmethod

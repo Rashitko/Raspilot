@@ -1,15 +1,16 @@
 import json
+import uuid
 from abc import abstractmethod
 
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
 
 
 class Command:
-    def __init__(self):
+    def __init__(self, name, data=None, id=str(uuid.uuid1())):
         super().__init__()
-        self.__name = None
-        self.__data = None
-        self.__id = None
+        self.__name = name
+        self.__data = data
+        self.__id = id
 
     def serialize(self):
         serialized_json = {'name': self.name, 'data': self.data, 'id': self.id}
@@ -41,10 +42,10 @@ class Command:
 
     @classmethod
     def from_json(cls, parsed_data):
-        c = Command()
-        c.name = parsed_data.get('name', None)
-        if not c.name:
+        name = parsed_data.get('name', None)
+        if not name:
             raise InvalidCommandJson('Command name must be set')
+        c = Command(name)
         c.data = parsed_data.get('data', None)
         c.id = parsed_data.get('id', None)
         return c

@@ -52,7 +52,8 @@ class RaspilotOrientationProvider(OrientationProvider):
         i = RaspilotOrientationProvider.COUNT_DOWN_LIMIT_IN_SEC
         while not self.__connected and i >= 1:
             seconds_text = 'second' if i == 1 else 'seconds'
-            self.logger.warning("Client has {} {} to reconnect, otherwise Raspilot will be shut down".format(i, seconds_text))
+            self.logger.warning(
+                "Client has {} {} to reconnect, otherwise Raspilot will be shut down".format(i, seconds_text))
             i -= 1
             time.sleep(1)
         if not self.__connected:
@@ -68,6 +69,9 @@ class Orientation:
         self.__x_change = x_change
         self.__y_change = y_change
         self.__z_change = z_change
+
+    def as_json(self):
+        return {'roll': self.roll, 'pitch': self.pitch, 'azimuth': self.__azimuth}
 
     @property
     def roll(self):

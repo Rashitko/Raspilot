@@ -28,11 +28,11 @@ class RaspilotLoadGuard(BaseLoadGuard):
     def check_state(self):
         utilization = psutil.cpu_percent()
         if utilization > self.__panic_limit and self.__state is not RaspilotLoadGuard.STATE_WAS_PANIC:
-            self.__logger.warn('PANIC mode entered, UTILIZATION {}'.format(utilization))
+            self.logger.warn('PANIC mode entered, UTILIZATION {}'.format(utilization))
             self.__state = RaspilotLoadGuard.STATE_WAS_PANIC
             self._panic(utilization)
         elif utilization < self.__calm_down_limit and self.__state is not RaspilotLoadGuard.STATE_WAS_OK:
-            self.__logger.info('CALMED DOWN mode entered, UTILIZATION {}'.format(utilization))
+            self.logger.info('CALMED DOWN mode entered, UTILIZATION {}'.format(utilization))
             self.__state = RaspilotLoadGuard.STATE_WAS_OK
             self._calm_down(utilization)
 
@@ -43,13 +43,13 @@ class RaspilotLoadGuard(BaseLoadGuard):
     def _panic(self, utilization):
         if self.android_provider:
             command = PanicCommand(True, self.__panic_delay, utilization)
-            self.android_provider.send_command(command.serialize())
+            self.android_provider.send_data(command.serialize())
             # TODO: Send message to Arduino
 
     def _calm_down(self, utilization):
         if self.android_provider:
             command = PanicCommand(False, self.__calm_down_delay, utilization)
-            self.android_provider.send_command(command.serialize)
+            self.android_provider.send_data(command.serialize)
             # TODO: Send message to Arduino
 
     @property

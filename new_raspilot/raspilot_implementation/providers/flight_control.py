@@ -24,7 +24,7 @@ class RaspilotFlightControlProvider(BaseFlightControlProvider):
 
     def send_message(self, data):
         if self.__protocol.transport:
-            self.__protocol.sendLine(data)
+            reactor.callFromThread(self.__protocol.sendLine, data)
 
     def execute_command(self, command):
         self.raspilot.command_receiver.execute_command(command)

@@ -17,5 +17,5 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
         self.raspilot.flight_control.send_message(TelemetryUpdateCommand.create_from_system_state(state).serialize())
 
     def __capture_state(self):
-        orientation = self.__orientation_provider.current_orientation if self.__orientation_provider else None
+        orientation = self.__orientation_provider.current_orientation() if self.__orientation_provider else None
         return {'orientation': orientation}

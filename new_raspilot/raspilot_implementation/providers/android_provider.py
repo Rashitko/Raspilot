@@ -40,6 +40,9 @@ class AndroidProtocol(LineReceiver):
         self.__callbacks = callbacks
         self.__queue = []
 
+    def enqueue(self, data):
+        self.__queue.append(data)
+
     def rawDataReceived(self, data):
         self.__logger.debug("Raw data received {}".format(data))
 

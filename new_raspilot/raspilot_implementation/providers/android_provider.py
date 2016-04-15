@@ -28,6 +28,8 @@ class AndroidProvider(BaseStartedModule):
     def send_data(self, data):
         if self.__protocol.transport:
             reactor.callFromThread(self.__protocol.sendLine, data)
+        else:
+            self.__protocol.enqueue(data)
 
 
 class AndroidProtocol(LineReceiver):
@@ -36,11 +38,19 @@ class AndroidProtocol(LineReceiver):
         self.delimiter = bytes([0, 10])
         self.__logger = RaspilotLogger.get_logger()
         self.__callbacks = callbacks
+        self.__queue = []
 
     def rawDataReceived(self, data):
         self.__logger.debug("Raw data received {}".format(data))
 
     def lineReceived(self, line):
+        """
+        Parses the received line into a JSON object. Then creates a Command from this data and notifies callbacks about
+        receiving the command. json.JSONDecodeError is logged if risen as well as general Exception which might occur
+        during callbacks invocation.
+        :param line: received line
+        :return: None
+        """
         self.__logger.debug("Data received {}".format(line))
         try:
             parsed_data = json.loads(line.decode('utf-8'))
@@ -52,7 +62,14 @@ class AndroidProtocol(LineReceiver):
                 "Exception occurred during data processing.\n\tData were {}.\n\tException risen is {}".format(line, e))
 
     def connectionMade(self):
+        """
+        If enqueued data for the Android exists, sends this data and clears the queue
+        :return: None
+        """
         self.__logger.info("Connection from {} opened".format(self.transport.client[0]))
+        for data in self.__queue:
+            self.sendLine(data)
+        self.__queue.clear()
 
     def connectionLost(self, reason=connectionDone):
         self.__logger.info("Connection lost")

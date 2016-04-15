@@ -2,6 +2,5 @@
 raspilot_implementation/config.cfg
 tmp/
 shared/
-**/*.pid
-**/*.pyc
+**/*.err
 **/*.log

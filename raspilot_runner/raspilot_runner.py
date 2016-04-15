@@ -23,6 +23,7 @@ class RaspilotRunner:
     When the Raspilot stops, it should notify the RaspilotRunner, which kills the Raspilot instance if does not exit
     within given time.
     """
+
     def __init__(self):
         self.__logger = logging.getLogger(LOGGER_NAME)
         self.__logger.info("Starting Raspilot Runner")
@@ -61,15 +62,24 @@ class RaspilotRunner:
             self.__logger.info('Spawning new Raspilot')
             my_dir = os.path.dirname(__file__)
             raspilot_impl_dir = os.path.join(my_dir, '../new_raspilot/raspilot_implementation/main.py')
-            path_to_script = os.path.abspath(raspilot_impl_dir)
-            self.__logger.debug("Running {}".format(path_to_script))
-            self.__raspilot_process = subprocess.Popen(['python3', path_to_script], stdout=subprocess.DEVNULL,
-                                                       stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
-            Thread(target=self.__observe_raspilot).start()
-            self.__logger.info("Raspilot running with PID {}".format(self.__raspilot_process.pid))
-            if self.__protocol.transport:
-                message = self.__create_spawn_message('Raspilot ready')
-                self.__protocol.transport.write(self.__encode_message(message))
+            error_log_dir = os.path.join(my_dir, '../logs/')
+            if not os.path.exists(error_log_dir):
+                os.makedirs(error_log_dir)
+            error_log = os.path.join(error_log_dir, 'raspilot.err')
+            file = open(error_log, 'a')
+            try:
+                path_to_script = os.path.abspath(raspilot_impl_dir)
+                self.__logger.debug("Running {}".format(path_to_script))
+                self.__raspilot_process = subprocess.Popen(['python3', path_to_script], stdout=subprocess.DEVNULL,
+                                                           stderr=file, stdin=subprocess.DEVNULL)
+                Thread(target=self.__observe_raspilot).start()
+                self.__logger.info("Raspilot running with PID {}".format(self.__raspilot_process.pid))
+                if self.__protocol.transport:
+                    message = self.__create_spawn_message('Raspilot ready')
+                    self.__protocol.transport.write(self.__encode_message(message))
+            finally:
+                if file and not file.closed:
+                    file.close()
         else:
             if self.__protocol.transport:
                 message = self.__create_spawn_message('Raspilot already running')
@@ -79,7 +89,12 @@ class RaspilotRunner:
     def __observe_raspilot(self):
         self.__logger.debug("Waiting for Raspilot process to finish")
         self.__raspilot_process.wait()
-        self.__logger.debug("Raspilot process finished")
+        returncode = self.__raspilot_process.returncode
+        if returncode is not 0:
+            self.__logger.error("Raspilot process finishes with errors.\n\tSee the error log in 'logs/raspilot.err'."
+                                "\n\tExit code {}".format(returncode))
+        else:
+            self.__logger.info("Raspilot process finished normally.")
         self.__on_raspilot_process_finished()
 
     def __enter__(self):
@@ -138,6 +153,7 @@ class RaspilotProtocol(Protocol):
     Simple protocol, which calls the callback method on_raspilot_message upon receiving data. Used when checking
     whether the Raspilot exits or not.
     """
+
     def __init__(self, callbacks):
         self.__callbacks = callbacks
 
@@ -149,6 +165,7 @@ class RaspilotSpawnProtocol(Protocol):
     """
     Simple protocol, which calls the callback method on_spawn_request upon receiving data. Used when spawning Raspilot.
     """
+
     def __init__(self, callbacks):
         self.__callbacks = callbacks
 

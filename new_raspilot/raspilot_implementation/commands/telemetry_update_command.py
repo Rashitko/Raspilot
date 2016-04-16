@@ -1,9 +1,9 @@
 import uuid
 
-from new_raspilot.raspilot_framework.commands.command import Command
+from new_raspilot.raspilot_framework.commands.command import BaseCommand
 
 
-class TelemetryUpdateCommand(Command):
+class TelemetryUpdateCommand(BaseCommand):
     NAME = 'telemetry.update'
 
     def __init__(self, data):

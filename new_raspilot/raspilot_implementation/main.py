@@ -4,6 +4,7 @@ from new_raspilot.raspilot_implementation.commands.stop_command import StopComma
 from new_raspilot.raspilot_implementation.load_guard import RaspilotLoadGuard
 from new_raspilot.raspilot_implementation.providers.android_provider import AndroidProvider
 from new_raspilot.raspilot_implementation.providers.flight_control import RaspilotFlightControlProvider
+from new_raspilot.raspilot_implementation.providers.location_provider import RaspilotLocationProvider
 from new_raspilot.raspilot_implementation.providers.orientation_provider import RaspilotOrientationProvider
 from new_raspilot.raspilot_implementation.system_state_recorder import RaspilotSystemStateRecorder
 
@@ -12,7 +13,10 @@ if __name__ == "__main__":
     try:
         logger.info("Starting Raspilot")
         builder = RaspilotBuilder()
+
         builder.with_orientation_provider(RaspilotOrientationProvider())
+        builder.with_location_provider(RaspilotLocationProvider())
+
         builder.add_custom_provider(AndroidProvider())
         builder.with_command(StopCommand.NAME, StopCommandHandler())
         builder.with_blackbox(RaspilotSystemStateRecorder())

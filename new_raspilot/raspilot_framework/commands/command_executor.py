@@ -8,6 +8,11 @@ class CommandExecutor(BaseModule):
 
     def register_command(self, name, handler):
         self.__handlers[name] = handler
+        self._log_debug("Handler for {} registered".format(name))
+
+    def unregister_command(self, name):
+        self.__handlers[name] = None
+        self._log_debug("Handler for {} unregistered".format(name))
 
     def remote_handler(self, command_name):
         self.__handlers[command_name] = None

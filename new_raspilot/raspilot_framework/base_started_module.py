@@ -21,13 +21,12 @@ class BaseStartedModule(BaseModule):
         self._log_debug("Initializing {}".format(self.class_name))
         self._execute_initialization()
 
-    @abstractmethod
     def _execute_initialization(self):
         """
         Subclasses must override this method. Initialize the provider here.
         :return: None
         """
-        return None
+        pass
 
     def start(self):
         """
@@ -64,7 +63,6 @@ class BaseStartedModule(BaseModule):
         self.__started = False
         self._execute_stop()
 
-    @abstractmethod
     def _execute_stop(self):
         """
         Subclasses must override this method. Stop the provider here.

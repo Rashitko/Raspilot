@@ -1,7 +1,7 @@
-from new_raspilot.raspilot_framework.commands.command import Command
+from new_raspilot.raspilot_framework.commands.command import BaseCommand
 
 
-class SystemStateCommand(Command):
+class SystemStateCommand(BaseCommand):
     NAME = 'system_state'
 
     def __init__(self, utilization):
@@ -9,5 +9,4 @@ class SystemStateCommand(Command):
 
     @staticmethod
     def __create_data(utilization):
-        data = {'utilization': utilization}
-        return data
+        return {'utilization': utilization}

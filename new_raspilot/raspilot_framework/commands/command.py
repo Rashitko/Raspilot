@@ -5,7 +5,7 @@ from abc import abstractmethod
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
 
 
-class Command:
+class BaseCommand:
     def __init__(self, name, data=None, id=str(uuid.uuid1())):
         super().__init__()
         self.__name = name
@@ -47,7 +47,7 @@ class Command:
         name = parsed_data.get('name', None)
         if not name:
             raise InvalidCommandJson('Command name must be set')
-        c = Command(name)
+        c = BaseCommand(name)
         c.data = parsed_data.get('data', None)
         c.id = parsed_data.get('id', None)
         return c
@@ -57,7 +57,7 @@ class InvalidCommandJson(ValueError):
     pass
 
 
-class CommandHandler:
+class BaseCommandHandler:
     def __init__(self):
         self.__logger = RaspilotLogger.get_logger()
 

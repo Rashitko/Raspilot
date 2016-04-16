@@ -1,7 +1,7 @@
-from new_raspilot.raspilot_framework.commands.command import Command
+from new_raspilot.raspilot_framework.commands.command import BaseCommand
 
 
-class PanicCommand(Command):
+class PanicCommand(BaseCommand):
     NAME = 'panic'
 
     def __init__(self, in_panic, delay, utilization):

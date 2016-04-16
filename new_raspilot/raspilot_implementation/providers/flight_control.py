@@ -5,7 +5,7 @@ from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.internet.protocol import connectionDone, ReconnectingClientFactory
 from twisted.protocols.basic import LineReceiver
 
-from new_raspilot.raspilot_framework.commands.command import Command
+from new_raspilot.raspilot_framework.commands.command import BaseCommand
 from new_raspilot.raspilot_framework.providers.flight_control_provider import BaseFlightControlProvider
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
 
@@ -45,7 +45,7 @@ class FlightProtocol(LineReceiver):
     def lineReceived(self, line):
         try:
             parsed_data = json.loads(line.decode('utf-8'))
-            self.__callbacks.execute_command(Command.from_json(parsed_data))
+            self.__callbacks.execute_command(BaseCommand.from_json(parsed_data))
         except json.JSONDecodeError as e:
             self.__logger.error("Invalid data received.\n\tData were {}.\n\tException risen is {}".format(line, e))
         except Exception as e:

@@ -4,7 +4,8 @@ from new_raspilot.raspilot_framework.base_system_state_recorder import BaseSyste
 from new_raspilot.raspilot_framework.commands.command_executor import CommandExecutor
 from new_raspilot.raspilot_framework.commands.command_receiver import CommandReceiver
 from new_raspilot.raspilot_framework.providers.black_box_controller import BlackBoxController
-from new_raspilot.raspilot_framework.providers.load_guard_controller import LoadGuardController
+from new_raspilot.raspilot_framework.providers.flight_control_provider import BaseFlightControlProvider
+from new_raspilot.raspilot_framework.providers.load_guard_controller import LoadGuardController, BaseLoadGuard
 from new_raspilot.raspilot_framework.providers.notifier import TelemetryController
 from new_raspilot.raspilot_framework.providers.orientation_provider import OrientationProvider
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
@@ -24,10 +25,13 @@ class Raspilot:
         self.__modules.append(self.__command_executor)
 
         self.__command_receiver = builder.command_receiver
-        self.__modules.append(self.__command_executor)
+        self.__modules.append(self.__command_receiver)
 
         self.__orientation_provider = builder.orientation_provider
         self.__started_modules.append(self.__orientation_provider)
+
+        self.__location_provider = builder.location_provider
+        self.__started_modules.append(self.__location_provider)
 
         self.__black_box_controller = BlackBoxController(builder.blackbox)
         self.__started_modules.append(self.__black_box_controller)
@@ -90,23 +94,23 @@ class Raspilot:
         return None
 
     @property
-    def command_receiver(self):
+    def command_receiver(self) -> CommandReceiver:
         return self.__command_receiver
 
     @property
-    def command_executor(self):
+    def command_executor(self) -> CommandExecutor:
         return self.__command_executor
 
     @property
-    def orientation_provider(self):
+    def orientation_provider(self) -> OrientationProvider:
         return self.__orientation_provider
 
     @property
-    def flight_control(self):
+    def flight_control(self) -> BaseFlightControlProvider:
         return self.__flight_control_provider
 
     @property
-    def load_guard(self):
+    def load_guard(self) -> LoadGuardController:
         return self.__load_guard
 
 
@@ -116,6 +120,7 @@ class RaspilotBuilder:
         self.__command_receiver = CommandReceiver()
         self.__command_executor = CommandExecutor()
         self.__orientation_provider = None
+        self.__location_provider = None
         self.__black_box = None
         self.__telemetry = None
         self.__telemetry_enabled = False
@@ -132,6 +137,10 @@ class RaspilotBuilder:
 
     def with_orientation_provider(self, provider):
         self.__orientation_provider = provider
+        return self
+
+    def with_location_provider(self, provider):
+        self.__location_provider = provider
         return self
 
     def with_blackbox(self, blackbox):
@@ -161,6 +170,8 @@ class RaspilotBuilder:
     def __validate(self):
         if not self.orientation_provider:
             raise ValueError("Orientation Provider must be set")
+        if not self.__location_provider:
+            raise ValueError("Location Provider must be set")
         if not self.blackbox:
             raise ValueError("BlackBox must be set")
 
@@ -181,6 +192,10 @@ class RaspilotBuilder:
         return self.__orientation_provider
 
     @property
+    def location_provider(self):
+        return self.__location_provider
+
+    @property
     def blackbox(self) -> BaseSystemStateRecorder:
         return self.__black_box
 
@@ -189,13 +204,9 @@ class RaspilotBuilder:
         return self.__telemetry
 
     @property
-    def telemetry_enabled(self):
-        return self.__telemetry_enabled
-
-    @property
-    def flight_control(self):
+    def flight_control(self) -> BaseFlightControlProvider:
         return self.__flight_control_provider
 
     @property
-    def load_guard(self):
+    def load_guard(self) -> BaseLoadGuard:
         return self.__load_guard

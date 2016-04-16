@@ -67,8 +67,10 @@ class Location:
         l = Location()
         if command is None:
             l.__logger.error("Cannot create from None")
+            return None
         if not command.name == LocationUpdateCommand.NAME:
             l.__logger.error("Can create location from {} command".format(command.name))
+            return None
         try:
             l.accuracy = command.data.get('accuracy', None)
             l.latitude = command.data.get('latitude', None)

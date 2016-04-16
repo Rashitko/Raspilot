@@ -2,6 +2,7 @@ from new_raspilot.raspilot_framework.raspilot import RaspilotBuilder
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
 from new_raspilot.raspilot_implementation.commands.stop_command import StopCommand, StopCommandHandler
 from new_raspilot.raspilot_implementation.load_guard import RaspilotLoadGuard
+from new_raspilot.raspilot_implementation.providers.android_battery_provider import AndroidBatteryProvider
 from new_raspilot.raspilot_implementation.providers.android_provider import AndroidProvider
 from new_raspilot.raspilot_implementation.providers.flight_control import RaspilotFlightControlProvider
 from new_raspilot.raspilot_implementation.providers.location_provider import RaspilotLocationProvider
@@ -18,6 +19,8 @@ if __name__ == "__main__":
         builder.with_location_provider(RaspilotLocationProvider())
 
         builder.add_custom_provider(AndroidProvider())
+        builder.add_custom_provider(AndroidBatteryProvider())
+
         builder.with_command(StopCommand.NAME, StopCommandHandler())
         builder.with_blackbox(RaspilotSystemStateRecorder())
         builder.with_telemetry(RaspilotSystemStateRecorder())

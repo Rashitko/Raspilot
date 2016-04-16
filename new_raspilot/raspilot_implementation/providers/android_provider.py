@@ -1,4 +1,5 @@
 import json
+import json.decoder
 
 from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint
@@ -58,7 +59,7 @@ class AndroidProtocol(LineReceiver):
         try:
             parsed_data = json.loads(line.decode('utf-8'))
             self.__callbacks.execute_command(BaseCommand.from_json(parsed_data))
-        except json.JSONDecodeError as e:
+        except json.decoder.JSONDecodeError as e:
             self.__logger.error("Invalid data received.\n\tData were {}.\n\tException risen is {}".format(line, e))
         except Exception as e:
             self.__logger.critical(

@@ -1,5 +1,7 @@
 from new_raspilot.raspilot_framework.base_system_state_recorder import BaseSystemStateRecorder
 from new_raspilot.raspilot_implementation.commands.telemetry_update_command import TelemetryUpdateCommand
+from new_raspilot.raspilot_implementation.providers.android_battery_provider import AndroidBatteryProvider
+from new_raspilot.raspilot_implementation.providers.location_provider import RaspilotLocationProvider
 from new_raspilot.raspilot_implementation.providers.orientation_provider import RaspilotOrientationProvider
 
 
@@ -7,10 +9,14 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
     def __init__(self, silent=False):
         super().__init__(silent)
         self.__orientation_provider = None
+        self.__location_provider = None
+        self.__android_battery_provider = None
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
         self.__orientation_provider = self.raspilot.get_module(RaspilotOrientationProvider)
+        self.__location_provider = self.raspilot.get_module(RaspilotLocationProvider)
+        self.__android_battery_provider = self.raspilot.get_module(AndroidBatteryProvider)
 
     def record_state(self):
         state = self.__capture_state()
@@ -19,7 +25,14 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
     def __capture_state(self):
         if self.__orientation_provider and self.__orientation_provider.current_orientation():
             orientation = self.__orientation_provider.current_orientation().as_json()
-            self._log_debug(orientation)
         else:
             orientation = None
-        return {'orientation': orientation}
+        if self.__location_provider and self.__location_provider.get_location():
+            location = self.__location_provider.get_location()
+        else:
+            location = None
+        if self.__android_battery_provider and self.__android_battery_provider.get_battery_level():
+            level = self.__android_battery_provider.get_battery_level()
+        else:
+            level = None
+        return {'orientation': orientation, 'location': location, 'batteryLevel': level}

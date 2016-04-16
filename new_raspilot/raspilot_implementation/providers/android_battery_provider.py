@@ -12,6 +12,9 @@ class AndroidBatteryProvider(BaseStartedModule):
         self.raspilot.command_executor.register_command(AndroidBatteryCommand.NAME, AndroidBatteryCommandHandler(self))
         return True
 
+    def get_battery_level(self):
+        return self.battery_level
+
     @property
     def battery_level(self):
         return self.__battery_level

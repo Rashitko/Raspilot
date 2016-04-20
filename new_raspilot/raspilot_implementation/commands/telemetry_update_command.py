@@ -12,6 +12,7 @@ class TelemetryUpdateCommand(BaseCommand):
 
     @classmethod
     def create_from_system_state(cls, system_state):
-        data = {'orientation': system_state.get('orientation', None)}
+        data = {'orientation': system_state.get('orientation', None), 'location': system_state.get('location', None),
+                'batteryLevel': system_state.get('batteryLevel', None)}
         c = TelemetryUpdateCommand(data)
         return c

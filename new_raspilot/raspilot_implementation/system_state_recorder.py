@@ -28,7 +28,7 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
         else:
             orientation = None
         if self.__location_provider and self.__location_provider.get_location():
-            location = self.__location_provider.get_location()
+            location = self.__location_provider.get_location().as_json()
         else:
             location = None
         if self.__android_battery_provider and self.__android_battery_provider.get_battery_level():

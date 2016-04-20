@@ -59,8 +59,11 @@ class Location:
     def accuracy(self, value):
         self.__accuracy = value
 
+    def as_json(self):
+        return {'latitude': self.latitude, 'longitude': self.longitude, 'accuracy': self.accuracy}
+
     def __str__(self, *args, **kwargs):
-        return str({'latitude': self.latitude, 'longitude': self.longitude, 'accuracy': self.accuracy})
+        return str(self.as_json())
 
     @classmethod
     def create_from_command(cls, command):

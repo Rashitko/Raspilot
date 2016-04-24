@@ -10,3 +10,6 @@ class BaseFlightControlProvider(BaseStartedModule):
     @abstractmethod
     def send_message(self, data):
         pass
+
+    def load(self):
+        return True

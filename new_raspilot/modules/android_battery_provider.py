@@ -15,6 +15,9 @@ class AndroidBatteryProvider(BaseStartedModule):
     def get_battery_level(self):
         return self.battery_level
 
+    def load(self):
+        return True
+
     @property
     def battery_level(self):
         return self.__battery_level

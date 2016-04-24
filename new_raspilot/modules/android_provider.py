@@ -32,6 +32,9 @@ class AndroidProvider(BaseStartedModule):
         else:
             self.__protocol.enqueue(data)
 
+    def load(self):
+        return True
+
 
 class AndroidProtocol(LineReceiver):
     def __init__(self, callbacks):

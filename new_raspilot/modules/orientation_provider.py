@@ -7,12 +7,12 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.protocol import Factory, connectionDone
 from twisted.protocols.basic import LineReceiver
 
-from new_raspilot.raspilot_framework.providers.orientation_provider import OrientationProvider
+from new_raspilot.raspilot_framework.providers.orientation_provider import BaseOrientationProvider
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
 from new_raspilot.raspilot_implementation.commands.stop_command import StopCommand
 
 
-class RaspilotOrientationProvider(OrientationProvider):
+class RaspilotOrientationProvider(BaseOrientationProvider):
     COUNT_DOWN_LIMIT_IN_SEC = 5
 
     def __init__(self):

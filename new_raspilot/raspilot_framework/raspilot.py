@@ -7,7 +7,7 @@ from new_raspilot.raspilot_framework.providers.black_box_controller import Black
 from new_raspilot.raspilot_framework.providers.flight_control_provider import BaseFlightControlProvider
 from new_raspilot.raspilot_framework.providers.load_guard_controller import LoadGuardController, BaseLoadGuard
 from new_raspilot.raspilot_framework.providers.notifier import TelemetryController
-from new_raspilot.raspilot_framework.providers.orientation_provider import OrientationProvider
+from new_raspilot.raspilot_framework.providers.orientation_provider import BaseOrientationProvider
 from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
 
 
@@ -102,7 +102,7 @@ class Raspilot:
         return self.__command_executor
 
     @property
-    def orientation_provider(self) -> OrientationProvider:
+    def orientation_provider(self) -> BaseOrientationProvider:
         return self.__orientation_provider
 
     @property
@@ -188,7 +188,7 @@ class RaspilotBuilder:
         return self.__command_executor
 
     @property
-    def orientation_provider(self) -> OrientationProvider:
+    def orientation_provider(self) -> BaseOrientationProvider:
         return self.__orientation_provider
 
     @property

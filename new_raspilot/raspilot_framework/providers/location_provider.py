@@ -7,3 +7,6 @@ class BaseLocationProvider(BaseStartedModule):
     @abstractmethod
     def get_location(self):
         pass
+
+    def load(self):
+        return True

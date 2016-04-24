@@ -32,6 +32,9 @@ class BaseModule(metaclass=ABCMeta):
         if not self.__silent:
             self.logger.critical(message)
 
+    def load(self):
+        return False
+
     @property
     def logger(self):
         return self.__logger

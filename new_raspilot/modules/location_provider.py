@@ -1,5 +1,5 @@
-from new_raspilot.raspilot_framework.providers.location_provider import BaseLocationProvider
-from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
+from new_raspilot.core.providers.location_provider import BaseLocationProvider
+from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
 from new_raspilot.raspilot_implementation.commands.location_update_command import LocationUpdateCommand, \
     LocationUpdateCommandHandler
 

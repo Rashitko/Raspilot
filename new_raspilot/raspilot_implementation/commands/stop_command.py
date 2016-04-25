@@ -1,7 +1,7 @@
 import os
 import signal
 
-from new_raspilot.raspilot_framework.commands.command import BaseCommand, BaseCommandHandler
+from new_raspilot.core.commands.command import BaseCommand, BaseCommandHandler
 
 
 class StopCommand(BaseCommand):

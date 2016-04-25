@@ -1,4 +1,4 @@
-from new_raspilot.raspilot_framework.base_module import BaseModule
+from new_raspilot.core.base_module import BaseModule
 
 
 class Dummy(BaseModule):

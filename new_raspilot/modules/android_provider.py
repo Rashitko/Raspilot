@@ -6,9 +6,9 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.protocol import Factory, connectionDone
 from twisted.protocols.basic import LineReceiver
 
-from new_raspilot.raspilot_framework.base_started_module import BaseStartedModule
-from new_raspilot.raspilot_framework.commands.command import BaseCommand
-from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
+from new_raspilot.core.base_started_module import BaseStartedModule
+from new_raspilot.core.commands.command import BaseCommand
+from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
 
 
 class AndroidProvider(BaseStartedModule):

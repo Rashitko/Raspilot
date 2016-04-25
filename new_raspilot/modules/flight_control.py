@@ -5,9 +5,9 @@ from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.internet.protocol import connectionDone, ReconnectingClientFactory
 from twisted.protocols.basic import LineReceiver
 
-from new_raspilot.raspilot_framework.commands.command import BaseCommand
-from new_raspilot.raspilot_framework.providers.flight_control_provider import BaseFlightControlProvider
-from new_raspilot.raspilot_framework.utils.raspilot_logger import RaspilotLogger
+from new_raspilot.core.commands.command import BaseCommand
+from new_raspilot.core.providers.flight_control_provider import BaseFlightControlProvider
+from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
 
 
 class RaspilotFlightControlProvider(BaseFlightControlProvider):

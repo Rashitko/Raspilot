@@ -1,4 +1,4 @@
-from new_raspilot.raspilot_framework.base_started_module import BaseStartedModule
+from new_raspilot.core.base_started_module import BaseStartedModule
 from new_raspilot.raspilot_implementation.commands.android_battery_command import AndroidBatteryCommand, \
     AndroidBatteryCommandHandler
 

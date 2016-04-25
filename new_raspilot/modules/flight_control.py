@@ -81,5 +81,4 @@ class FlightProtocolFactory(ReconnectingClientFactory):
         super().startedConnecting(connector)
 
     def buildProtocol(self, addr):
-        self.__logger.debug("buildProtocol")
         return self.__protocol

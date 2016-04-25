@@ -1,7 +1,6 @@
 from twisted.internet import reactor
 
 from new_raspilot.core.base_started_module import BaseStartedModule
-from new_raspilot.core.base_system_state_recorder import BaseSystemStateRecorder
 from new_raspilot.core.commands.command_executor import CommandExecutor
 from new_raspilot.core.commands.command_receiver import CommandReceiver
 from new_raspilot.core.providers.black_box_controller import BlackBoxController
@@ -18,7 +17,9 @@ class Raspilot:
         self.__modules = modules
         self.__started_modules = []
         self.__command_receiver = CommandReceiver()
+        self.__modules.append(self.__command_receiver)
         self.__command_executor = CommandExecutor()
+        self.__modules.append(self.__command_executor)
         self.__orientation_provider = None
         self.__flight_control_provider = None
         self.__load_guard = None
@@ -106,102 +107,4 @@ class Raspilot:
 
     @property
     def load_guard(self) -> LoadGuardController:
-        return self.__load_guard
-
-
-class RaspilotBuilder:
-    def __init__(self):
-        self.__custom_providers = []
-        self.__command_receiver = CommandReceiver()
-        self.__command_executor = CommandExecutor()
-        self.__orientation_provider = None
-        self.__location_provider = None
-        self.__black_box = None
-        self.__telemetry = None
-        self.__telemetry_enabled = False
-        self.__flight_control_provider = None
-        self.__load_guard = None
-
-    def add_custom_provider(self, provider):
-        self.__custom_providers.append(provider)
-        return self
-
-    def with_command(self, name, handler):
-        self.__command_executor.register_command(name, handler)
-        return self
-
-    def with_orientation_provider(self, provider):
-        self.__orientation_provider = provider
-        return self
-
-    def with_location_provider(self, provider):
-        self.__location_provider = provider
-        return self
-
-    def with_blackbox(self, blackbox):
-        self.__black_box = blackbox
-        return self
-
-    def with_telemetry(self, telemetry):
-        self.__telemetry = telemetry
-        return self
-
-    def with_flight_control_provider(self, flight_control):
-        self.__flight_control_provider = flight_control
-        return self
-
-    def with_load_guard(self, load_guard):
-        self.__load_guard = load_guard
-        return self
-
-    def build(self):
-        """
-        Build Raspilot instance with specified configuration
-        :rtype Raspilot
-        """
-        self.__validate()
-        return Raspilot(self)
-
-    def __validate(self):
-        if not self.orientation_provider:
-            raise ValueError("Orientation Provider must be set")
-        if not self.__location_provider:
-            raise ValueError("Location Provider must be set")
-        if not self.blackbox:
-            raise ValueError("BlackBox must be set")
-
-    @property
-    def custom_providers(self) -> list:
-        return self.__custom_providers
-
-    @property
-    def command_receiver(self) -> CommandReceiver:
-        return self.__command_receiver
-
-    @property
-    def command_executor(self) -> CommandExecutor:
-        return self.__command_executor
-
-    @property
-    def orientation_provider(self) -> BaseOrientationProvider:
-        return self.__orientation_provider
-
-    @property
-    def location_provider(self):
-        return self.__location_provider
-
-    @property
-    def blackbox(self) -> BaseSystemStateRecorder:
-        return self.__black_box
-
-    @property
-    def telemetry(self) -> BaseSystemStateRecorder:
-        return self.__telemetry
-
-    @property
-    def flight_control(self) -> BaseFlightControlProvider:
-        return self.__flight_control_provider
-
-    @property
-    def load_guard(self) -> BaseLoadGuardStateRecorder:
         return self.__load_guard

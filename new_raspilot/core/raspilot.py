@@ -77,7 +77,6 @@ class Raspilot:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-
         self.stop()
 
     def get_module(self, module_class):

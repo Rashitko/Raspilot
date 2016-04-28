@@ -1,8 +1,8 @@
 import datetime
 import logging
 import os
-
 import sys
+
 from colorlog import ColoredFormatter
 
 
@@ -10,7 +10,7 @@ class RaspilotLogger:
     LOGGER_NAME = 'raspilot.log'
     TRANSMISSION_LEVEL_NUM = 9
     DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
-    LEVEL = 'DEBUG'
+    LEVEL = 'INFO'
     PATH = '../../../logs/'
 
     initialized = False

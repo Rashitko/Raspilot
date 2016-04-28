@@ -4,6 +4,7 @@ import os
 
 from new_raspilot.core.base_module import BaseModule
 from new_raspilot.core.base_system_state_recorder import BaseSystemStateRecorder
+from new_raspilot.core.flight_controller.base_flight_controller import BaseFlightController
 from new_raspilot.core.raspilot import Raspilot
 from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
 
@@ -15,6 +16,9 @@ class RaspilotLoader:
     RECORDERS_PATH = '../../recorders/'
     RECORDERS_MODULE_PREFIX = 'new_raspilot.recorders.'
 
+    FLIGHT_CONTROLLER_PATH = '../../flight_controller/'
+    FLIGHT_CONTROLLER_MODULE_PREFIX = 'new_raspilot.flight_controller.'
+
     def __init__(self):
         self.__logger = RaspilotLogger.get_logger()
 
@@ -25,6 +29,10 @@ class RaspilotLoader:
     @staticmethod
     def __recorders_filter(name, klass):
         return not name.startswith('__') and issubclass(klass, BaseSystemStateRecorder)
+
+    @staticmethod
+    def __flight_controller_filter(name, klass):
+        return not name.startswith('__') and issubclass(klass, BaseFlightController)
 
     def create(self, raspilot_class=Raspilot):
         """
@@ -47,9 +55,21 @@ class RaspilotLoader:
         raspilot_recorders = []
         self.__load_modules(RaspilotLoader.RECORDERS_MODULE_PREFIX, recorders_folder, raspilot_recorders,
                             self.__recorders_filter)
-        return raspilot_class(raspilot_modules, raspilot_recorders)
+        flight_controller_folder = self.__get_flight_controller_folder()
+        flight_controllers = []
+        self.__load_modules(RaspilotLoader.FLIGHT_CONTROLLER_MODULE_PREFIX, flight_controller_folder,
+                            flight_controllers, self.__flight_controller_filter)
+        if flight_controllers:
+            if len(flight_controllers) > 1:
+                self.__logger.warning(
+                    "More than one FlightController specified. Using the {}".format(flight_controllers[0].class_name))
+            return raspilot_class(raspilot_modules, raspilot_recorders, flight_controllers[0])
+        else:
+            self.__logger.warning("FlightController not found")
+            return raspilot_class(raspilot_modules, raspilot_recorders)
 
-    def __load_modules(self, module_prefix, folder, modules_list, module_filter):
+    @staticmethod
+    def __load_modules(module_prefix, folder, modules_list, module_filter):
         for module_file in os.listdir(folder):
             if not module_file.startswith('__') and module_file.endswith('.py'):
                 file_name_limit = module_file.index('.')
@@ -115,10 +135,26 @@ class RaspilotLoader:
         """
         modules_path = os.path.join(os.path.dirname(__file__), RaspilotLoader.RECORDERS_PATH)
         modules_path = os.path.abspath(modules_path)
-        self.__logger.debug('Looking for modules in {}'.format(modules_path))
+        self.__logger.debug('Looking for recorders in {}'.format(modules_path))
         if not os.path.exists(modules_path):
             self.__logger.error(
-                "Modules dir not found. Dir was created, please place your modules there and start Raspilot again")
+                "Recorders dir not found. Dir was created, please place your modules there and start Raspilot again")
+            os.makedirs(modules_path)
+            return None
+        return modules_path
+
+    def __get_flight_controller_folder(self):
+        """
+        :return: string path to the modules folder, or None if the folder was newly created
+        :rtype: str
+        """
+        modules_path = os.path.join(os.path.dirname(__file__), RaspilotLoader.FLIGHT_CONTROLLER_PATH)
+        modules_path = os.path.abspath(modules_path)
+        self.__logger.debug('Looking for flight controller in {}'.format(modules_path))
+        if not os.path.exists(modules_path):
+            self.__logger.error(
+                "Flight Controller dir not found. Dir was created, please place your modules there and start Raspilot "
+                "again")
             os.makedirs(modules_path)
             return None
         return modules_path

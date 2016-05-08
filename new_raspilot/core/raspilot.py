@@ -22,6 +22,7 @@ class Raspilot:
         self.__command_executor = CommandExecutor()
         self.__modules.append(self.__command_executor)
         self.__flight_controller = flight_controller
+        self.__modules.append(self.__flight_controller)
         self.__orientation_provider = None
         self.__flight_control_provider = None
         self.__load_guard = None
@@ -48,24 +49,25 @@ class Raspilot:
                 self.__logger.debug("RX Provider loaded")
         for recorder in recorders:
             if issubclass(type(recorder), BaseTelemetryStateRecorder):
-                self.__started_modules.append(TelemetryController(recorder))
+                telemetry_controller = TelemetryController(recorder)
+                self.__modules.append(telemetry_controller)
+                self.__started_modules.append(telemetry_controller)
                 self.__logger.debug("Telemetry Controller loaded")
             if issubclass(type(recorder), BaseTelemetryStateRecorder):
-                self.__started_modules.append(BlackBoxController(recorder))
+                black_box_controller = BlackBoxController(recorder)
+                self.__modules.append(black_box_controller)
+                self.__started_modules.append(black_box_controller)
                 self.__logger.debug("Black Box Controller loaded")
             if issubclass(type(recorder), BaseLoadGuardStateRecorder):
-                self.__started_modules.append(LoadGuardController(recorder))
+                load_guard_controller = LoadGuardController(recorder)
+                self.__modules.append(load_guard_controller)
+                self.__started_modules.append(load_guard_controller)
                 self.__logger.debug("Load Guard Controller loaded")
-        if self.__flight_controller:
-            self.__started_modules.append(self.__flight_controller)
-        else:
+        if self.__flight_controller is None:
             self.__logger.info("Flight Controller unavailable")
 
     def initialize(self):
         for module in self.__modules:
-            if module:
-                module.initialize(self)
-        for module in self.__started_modules:
             if module:
                 module.initialize(self)
 
@@ -73,7 +75,6 @@ class Raspilot:
         for module in self.__started_modules:
             if module:
                 module.start()
-        self.__logger.debug("Running Twisted reactor")
         reactor.run()
 
     def stop(self):

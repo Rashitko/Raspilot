@@ -60,6 +60,30 @@ class RaspilotOrientationProvider(BaseOrientationProvider):
             self.raspilot.command_executor.execute_command(StopCommand())
             self.logger.error("Client connection not restored. Raspilot shutting down")
 
+    @property
+    def roll(self):
+        if self.__orientation:
+            return self.__orientation.roll
+        return 0
+
+    @property
+    def gyro_roll(self):
+        if self.__orientation:
+            return self.__orientation.x_change
+        return 0
+
+    @property
+    def pitch(self):
+        if self.__orientation:
+            return self.__orientation.pitch
+        return 0
+
+    @property
+    def gyro_pitch(self):
+        if self.__orientation:
+            return self.__orientation.y_change
+        return 0
+
 
 class Orientation:
     def __init__(self, roll, pitch, azimuth, x_change, y_change, z_change):

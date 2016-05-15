@@ -17,9 +17,9 @@ class Pid:
         now = time.time() * 1000
         if self.__last_time:
             dt = now - self.__last_time
+        else:
+            dt = 10000
         output = 0
-        delta_time = None
-        # FIXME dt migh be referenced before assignment
         if self.__last_time is None or dt > 1000:
             # if this PID hasn't been used for a full second then zero
             # the intergator term. This prevents I buildup from a
@@ -33,8 +33,6 @@ class Pid:
 
         # Compute derivative component if time has elapsed
         if abs(self.__kd) > 0 and dt > 0:
-            derivative = 0
-
             if self.__last_derivative is None:
                 # we've just done a reset, suppress the first derivative
                 # term as we don't want a sudden change in input to cause

@@ -71,9 +71,10 @@ class ArduinoProvider(BaseStartedModule):
                                   self.FLIGHT_MODE_RX)
 
     def send_arduino_command(self, cmd_type_bytes, data=None):
-        self.__serial.write(cmd_type_bytes)
-        if data:
-            self.__serial.write(data)
+        if self.__serial and self.__serial.is_open:
+            self.__serial.write(cmd_type_bytes)
+            if data:
+                self.__serial.write(data)
 
     @staticmethod
     def __command_type_to_bytes(cmd_type):

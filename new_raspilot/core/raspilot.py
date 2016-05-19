@@ -3,6 +3,7 @@ from twisted.internet import reactor
 from new_raspilot.core.base_started_module import BaseStartedModule
 from new_raspilot.core.commands.command_executor import CommandExecutor
 from new_raspilot.core.commands.command_receiver import CommandReceiver
+from new_raspilot.core.commands.stop_command import BaseStopCommandHandler, BaseStopCommand
 from new_raspilot.core.providers.base_rx_provider import BaseRXProvider
 from new_raspilot.core.providers.black_box_controller import BlackBoxController
 from new_raspilot.core.providers.flight_control_provider import BaseFlightControlProvider
@@ -65,6 +66,10 @@ class Raspilot:
                 self.__logger.debug("Load Guard Controller loaded")
         if self.__flight_controller is None:
             self.__logger.info("Flight Controller unavailable")
+        self.__register_commands()
+
+    def __register_commands(self):
+        self.command_executor.register_command(BaseStopCommand.NAME, BaseStopCommandHandler())
 
     def initialize(self):
         for module in self.__modules:

@@ -7,9 +7,9 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.protocol import Factory, connectionDone
 from twisted.protocols.basic import LineReceiver
 
+from new_raspilot.core.commands.stop_command import BaseStopCommand
 from new_raspilot.core.providers.orientation_provider import BaseOrientationProvider
 from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
-from new_raspilot.raspilot_implementation.commands.stop_command import StopCommand
 
 
 class RaspilotOrientationProvider(BaseOrientationProvider):
@@ -57,7 +57,7 @@ class RaspilotOrientationProvider(BaseOrientationProvider):
             i -= 1
             time.sleep(1)
         if not self.__connected:
-            self.raspilot.command_executor.execute_command(StopCommand())
+            self.raspilot.command_executor.execute_command(BaseStopCommand())
             self.logger.error("Client connection not restored. Raspilot shutting down")
 
     @property

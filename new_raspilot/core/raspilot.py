@@ -26,7 +26,6 @@ class Raspilot:
         self.__modules.append(self.__flight_controller)
         self.__orientation_provider = None
         self.__flight_control_provider = None
-        self.__load_guard = None
         for module in self.__modules:
             if issubclass(type(module), BaseStartedModule):
                 self.__started_modules.append(module)
@@ -43,7 +42,6 @@ class Raspilot:
                 self.__flight_control_provider = module
                 self.__logger.debug("Flight Control Provider loaded")
             if issubclass(type(module), LoadGuardController):
-                self.__load_guard = module
                 self.__logger.debug("Load Guard loaded")
             if issubclass(type(module), BaseRXProvider):
                 self._rx_provider = module
@@ -60,9 +58,9 @@ class Raspilot:
                 self.__started_modules.append(black_box_controller)
                 self.__logger.debug("Black Box Controller loaded")
             if issubclass(type(recorder), BaseLoadGuardStateRecorder):
-                load_guard_controller = LoadGuardController(recorder)
-                self.__modules.append(load_guard_controller)
-                self.__started_modules.append(load_guard_controller)
+                self.__load_guard_controller = LoadGuardController(recorder)
+                self.__modules.append(self.__load_guard_controller)
+                self.__started_modules.append(self.__load_guard_controller)
                 self.__logger.debug("Load Guard Controller loaded")
         if self.__flight_controller is None:
             self.__logger.info("Flight Controller unavailable")
@@ -120,8 +118,8 @@ class Raspilot:
         return self.__flight_control_provider
 
     @property
-    def load_guard(self) -> LoadGuardController:
-        return self.__load_guard
+    def load_guard_controller(self) -> LoadGuardController:
+        return self.__load_guard_controller
 
     @property
     def rx_provider(self) -> BaseRXProvider:

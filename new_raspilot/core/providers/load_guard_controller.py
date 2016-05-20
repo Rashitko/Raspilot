@@ -1,7 +1,5 @@
 import time
-from abc import abstractmethod
 
-from new_raspilot.core.base_module import BaseModule
 from new_raspilot.core.base_system_state_recorder import BaseSystemStateRecorder
 from new_raspilot.core.base_thread_module import BaseThreadModule
 
@@ -23,6 +21,10 @@ class LoadGuardController(BaseThreadModule):
             except Exception as e:
                 self.logger.critical("Error occurred checking system load. Error was {}".format(e))
             time.sleep(self.__delay)
+
+    @property
+    def load_guard(self):
+        return self.__load_guard
 
 
 class BaseLoadGuardStateRecorder(BaseSystemStateRecorder):

@@ -39,12 +39,14 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
         self.__orientation_provider = None
         self.__location_provider = None
         self.__android_battery_provider = None
+        self.__load_guard = None
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
         self.__orientation_provider = self.raspilot.get_module(RaspilotOrientationProvider)
         self.__location_provider = self.raspilot.get_module(RaspilotLocationProvider)
         self.__android_battery_provider = self.raspilot.get_module(AndroidBatteryProvider)
+        self.__load_guard = self.raspilot.load_guard_controller.load_guard
 
     def record_state(self):
         state = self.__capture_state()
@@ -59,11 +61,18 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
             location = self.__location_provider.get_location().as_json()
         else:
             location = None
+        flight_controller_status = {'cpu': None, 'batteryLevel': None}
         if self.__android_battery_provider and self.__android_battery_provider.get_battery_level():
-            level = self.__android_battery_provider.get_battery_level()
+            flight_controller_status['batteryLevel'] = self.__android_battery_provider.get_battery_level()
         else:
-            level = None
-        return {'orientation': orientation, 'location': location, 'batteryLevel': level}
+            flight_controller_status['batteryLevel'] = None
+        if self.__load_guard:
+            utilization = self.__load_guard.utilization
+            flight_controller_status['cpu'] = utilization
+        else:
+            flight_controller_status['cpu'] = None
+
+        return {'orientation': orientation, 'location': location, 'flightControllerStatus': flight_controller_status}
 
     def load(self):
         return False

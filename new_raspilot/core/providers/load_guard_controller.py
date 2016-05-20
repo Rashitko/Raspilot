@@ -5,7 +5,7 @@ from new_raspilot.core.base_thread_module import BaseThreadModule
 
 
 class LoadGuardController(BaseThreadModule):
-    def __init__(self, load_guard, delay=0.1):
+    def __init__(self, load_guard, delay=0.5):
         super().__init__()
         self.__delay = delay
         self.__load_guard = load_guard

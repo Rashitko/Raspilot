@@ -2,8 +2,8 @@ import psutil
 
 from new_raspilot.core.providers.load_guard_controller import BaseLoadGuardStateRecorder
 from new_raspilot.modules.android_provider import AndroidProvider
+from new_raspilot.raspilot_implementation.commands.panic_command import PanicCommand
 from new_raspilot.raspilot_implementation.commands.system_state_command import SystemStateCommand
-from new_raspilot.raspilot_implementation.panic_command import PanicCommand
 
 
 class RaspilotLoadGuardStateRecorder(BaseLoadGuardStateRecorder):
@@ -50,7 +50,7 @@ class RaspilotLoadGuardStateRecorder(BaseLoadGuardStateRecorder):
     def _calm_down(self):
         if self.android_provider:
             command = PanicCommand(False, self.__calm_down_delay, self.__utilization)
-            self.android_provider.send_data(command.serialize)
+            self.android_provider.send_data(command.serialize())
             # TODO: Send message to Arduino
 
     @property

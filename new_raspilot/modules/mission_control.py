@@ -6,11 +6,11 @@ from twisted.internet.protocol import connectionDone, ReconnectingClientFactory
 from twisted.protocols.basic import LineReceiver
 
 from new_raspilot.core.commands.command import BaseCommand
-from new_raspilot.core.providers.flight_control_provider import BaseFlightControlProvider
+from new_raspilot.core.providers.mission_control_provider import BaseMissionControlProvider
 from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
 
 
-class RaspilotFlightControlProvider(BaseFlightControlProvider):
+class RaspilotMissionControlProvider(BaseMissionControlProvider):
     def _execute_initialization(self):
         self.__protocol = FlightProtocol(self)
 

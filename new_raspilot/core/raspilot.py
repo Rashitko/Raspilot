@@ -6,8 +6,8 @@ from new_raspilot.core.commands.command_receiver import CommandReceiver
 from new_raspilot.core.commands.stop_command import BaseStopCommandHandler, BaseStopCommand
 from new_raspilot.core.providers.base_rx_provider import BaseRXProvider
 from new_raspilot.core.providers.black_box_controller import BlackBoxController
-from new_raspilot.core.providers.flight_control_provider import BaseFlightControlProvider
 from new_raspilot.core.providers.load_guard_controller import LoadGuardController, BaseLoadGuardStateRecorder
+from new_raspilot.core.providers.mission_control_provider import BaseMissionControlProvider
 from new_raspilot.core.providers.orientation_provider import BaseOrientationProvider
 from new_raspilot.core.providers.telemetry_controller import BaseTelemetryStateRecorder, TelemetryController
 from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
@@ -38,7 +38,7 @@ class Raspilot:
             if issubclass(type(module), BaseOrientationProvider):
                 self.__orientation_provider = module
                 self.__logger.debug("Orientation Provider loaded")
-            if issubclass(type(module), BaseFlightControlProvider):
+            if issubclass(type(module), BaseMissionControlProvider):
                 self.__flight_control_provider = module
                 self.__logger.debug("Flight Control Provider loaded")
             if issubclass(type(module), LoadGuardController):
@@ -114,7 +114,7 @@ class Raspilot:
         return self.__orientation_provider
 
     @property
-    def flight_control(self) -> BaseFlightControlProvider:
+    def flight_control(self) -> BaseMissionControlProvider:
         return self.__flight_control_provider
 
     @property

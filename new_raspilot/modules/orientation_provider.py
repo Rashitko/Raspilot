@@ -4,8 +4,7 @@ from threading import Thread
 
 from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint
-from twisted.internet.protocol import Factory, connectionDone
-from twisted.protocols.basic import LineReceiver
+from twisted.internet.protocol import Factory, connectionDone, Protocol
 
 from new_raspilot.core.commands.stop_command import BaseStopCommand
 from new_raspilot.core.providers.orientation_provider import BaseOrientationProvider
@@ -122,23 +121,33 @@ class Orientation:
         return self.__z_change
 
 
-class OrientationProtocol(LineReceiver):
+class OrientationProtocol(Protocol):
+    FMT = '!ffffff'
+
     def __init__(self, callbacks):
         self.__logger = RaspilotLogger.get_logger()
-        self.delimiter = bytes([0, 10])
         self.__callbacks = callbacks
+        self.__buffer = b''
 
-    def rawDataReceived(self, data):
-        self.__logger.debug("Raw data received {}".format(data))
+    def dataReceived(self, data):
+        self.__buffer += data
+        orientation_data = None
+        orientation_data_size = struct.calcsize(self.FMT)
+        while len(self.__buffer) >= orientation_data_size:
+            orientation_data = self.__buffer[0:orientation_data_size]
+            self.__buffer = self.__buffer[orientation_data_size:]
+        if orientation_data:
+            self.__process_orientation_data(orientation_data)
 
-    def lineReceived(self, line):
+    def __process_orientation_data(self, orientation_data):
         try:
-            (roll, pitch, azimuth, x_change, y_change, z_change) = struct.unpack("!ffffff", line)
+            (roll, pitch, azimuth, x_change, y_change, z_change) = struct.unpack(self.FMT, orientation_data)
             self.__callbacks.on_new_orientation(roll, pitch, azimuth, x_change, y_change, z_change)
         except struct.error as e:
-            self.__logger.error("Invalid data received.\n\tData were {}.\n\tError was {}".format(line, e))
+            self.__logger.error("Invalid data received.\n\tData were {}.\n\tError was {}".format(orientation_data, e))
         except Exception as e:
-            self.__logger.critical("Error during data processing.\n\tData were {}.\n\tError was {}".format(line, e))
+            self.__logger.critical(
+                "Error during data processing.\n\tData were {}.\n\tError was {}".format(orientation_data, e))
 
     def connectionMade(self):
         self.__callbacks.on_connection_opened(self.transport.client[0])

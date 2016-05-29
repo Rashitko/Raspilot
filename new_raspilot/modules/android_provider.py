@@ -70,7 +70,7 @@ class AndroidProtocol(LineReceiver):
 
     def connectionMade(self):
         """
-        If enqueued data for the Android exists, sends this data and clears the queue
+        If enqueued data for the Android exists, sends the data and clears the queue
         :return: None
         """
         self.__logger.info("Connection from {} opened".format(self.transport.client[0]))

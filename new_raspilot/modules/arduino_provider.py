@@ -72,9 +72,12 @@ class ArduinoProvider(BaseStartedModule):
 
     def send_arduino_command(self, cmd_type_bytes, data=None):
         if self.__serial and self.__serial.is_open:
-            self.__serial.write(cmd_type_bytes)
-            if data:
-                self.__serial.write(data)
+            try:
+                self.__serial.write(cmd_type_bytes)
+                if data:
+                    self.__serial.write(data)
+            except serial.SerialException as e:
+                self._log_error("An error occurred during transmission to Arduino. Error was {}".format(e))
 
     @staticmethod
     def __command_type_to_bytes(cmd_type):

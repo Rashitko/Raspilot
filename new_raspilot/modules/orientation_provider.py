@@ -122,7 +122,7 @@ class Orientation:
 
 
 class OrientationProtocol(Protocol):
-    FMT = '!ffffff'
+    FMT = '!bbbbbb'
 
     def __init__(self, callbacks):
         self.__logger = RaspilotLogger.get_logger()

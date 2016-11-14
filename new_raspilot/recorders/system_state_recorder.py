@@ -4,6 +4,7 @@ from new_raspilot.core.providers.telemetry_controller import BaseTelemetryStateR
 from new_raspilot.modules.android_battery_provider import AndroidBatteryProvider
 from new_raspilot.modules.location_provider import RaspilotLocationProvider
 from new_raspilot.modules.orientation_provider import RaspilotOrientationProvider
+from new_raspilot.modules.rx_provider import RaspilotRXProvider
 from new_raspilot.raspilot_implementation.commands.telemetry_update_command import TelemetryUpdateCommand
 
 
@@ -40,12 +41,14 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
         self.__location_provider = None
         self.__android_battery_provider = None
         self.__load_guard = None
+        self.__rx_provider = None
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
         self.__orientation_provider = self.raspilot.get_module(RaspilotOrientationProvider)
         self.__location_provider = self.raspilot.get_module(RaspilotLocationProvider)
         self.__android_battery_provider = self.raspilot.get_module(AndroidBatteryProvider)
+        self.__rx_provider = self.raspilot.get_module(RaspilotRXProvider)
         self.__load_guard = self.raspilot.load_guard_controller.load_guard
 
     def record_state(self):
@@ -61,7 +64,11 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
             location = self.__location_provider.get_location().as_json()
         else:
             location = None
-        flight_controller_status = {'cpu': None, 'batteryLevel': None}
+        if self.__rx_provider and self.__rx_provider.get_channels():
+            channels = self.__rx_provider.get_channels()
+        else:
+            channels = None
+        flight_controller_status = {'cpu': None, 'batteryLevel': None, 'rx': channels}
         if self.__android_battery_provider and self.__android_battery_provider.get_battery_level():
             flight_controller_status['batteryLevel'] = self.__android_battery_provider.get_battery_level()
         else:
@@ -72,7 +79,8 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
         else:
             flight_controller_status['cpu'] = None
 
-        return {'orientation': orientation, 'location': location, 'flightControllerStatus': flight_controller_status}
+        return {'orientation': orientation, 'location': location,
+                'flightControllerStatus': flight_controller_status}
 
     def load(self):
         return False

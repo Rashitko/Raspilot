@@ -5,21 +5,21 @@ import serial
 import serial.tools.list_ports
 
 from new_raspilot.core.base_started_module import BaseStartedModule
-from new_raspilot.modules.rx_provider import RaspilotRXProvider, RXValues
-from new_raspilot.utils.value_mapper import ValueMapper
+from new_raspilot.raspilot_implementation.commands.orientation_command import OrientationCommand
+from new_raspilot.raspilot_implementation.commands.rx_update_command import RXUpdateCommand
 
 
 class ArduinoProvider(BaseStartedModule):
-    CONTROL_MODE_CHANGE_COMMAND_TYPE = 'm'
-    START_COMMAND_TYPE = 's'
-    DISARM_COMMAND_TYPE = 'd'
-    RX_FORWARD_COMMAND_TYPE = 'f'
-    RX_FORWARD_FMT = "bbbb"
+    BAUD_RATE = 115200
+    FC_OUTPUT_COMMAND_TYPE = 'o'
+    FC_OUTPUT_COMMAND_FMT = 'hhhh'
 
-    FLIGHT_MODE_RX = bytes('r', 'ascii')
-    FLIGHT_MODES = {FLIGHT_MODE_RX: 'RX Control'}
+    RX_INPUT_COMMAND_TYPE = 'i'
+    RX_INPUT_COMMAND_FMT = 'hhhhhhb'
 
-    BAUD_RATE = 9600
+    ORIENTATION_COMMAND_TYPE = 'O'
+    ORIENTATION_COMMAND_FMT = 'hhh'
+    ORIENTATION_MODIFIER = 100
 
     def __init__(self, config=None, silent=False):
         super().__init__(config, silent)
@@ -27,17 +27,14 @@ class ArduinoProvider(BaseStartedModule):
         self.__arduino_port = None
         self.__serial = serial.Serial()
         self.__serial.baudrate = self.BAUD_RATE
-        self.__rx_provider = None
 
     def _execute_initialization(self):
         super()._execute_initialization()
-        self.__rx_provider = self.raspilot.get_module(RaspilotRXProvider)
-        if self.__rx_provider is None:
-            raise ValueError("RX provider must be set")
         self.__arduino_port = self.__discover_arduino()
-        self.__handler.add_handler(self.__command_type_to_bytes(self.START_COMMAND_TYPE), self.__handle_arduino_start)
-        self.__handler.add_handler(self.__command_type_to_bytes(self.DISARM_COMMAND_TYPE), self.__handle_disarmed)
-        self.__handler.add_handler(self.__command_type_to_bytes(self.RX_FORWARD_COMMAND_TYPE), self.__handle_rx_forward)
+        self.__handler.add_handler(self.__command_type_to_bytes(self.RX_INPUT_COMMAND_TYPE), self.__handle_rx_input)
+        self.__handler.add_handler(self.__command_type_to_bytes(self.FC_OUTPUT_COMMAND_TYPE), self.__handle_fc_output)
+        self.__handler.add_handler(self.__command_type_to_bytes(self.ORIENTATION_COMMAND_TYPE),
+                                   self.__handle_orientation)
 
     def __discover_arduino(self):
         ports = list(serial.tools.list_ports.comports())
@@ -52,23 +49,10 @@ class ArduinoProvider(BaseStartedModule):
             self.__serial.port = self.__arduino_port
             self.__serial.open()
             Thread(target=self.__receive_loop).start()
-            self.__start_arduino()
-            self.__disarm()
-            self.__set_rx_control_mode()
             return self.__serial.is_open
         else:
             self._log_warning("Arduino not found")
             return True
-
-    def __start_arduino(self):
-        self.send_arduino_command(self.__command_type_to_bytes(self.START_COMMAND_TYPE))
-
-    def __disarm(self):
-        self.send_arduino_command(self.__command_type_to_bytes(self.DISARM_COMMAND_TYPE))
-
-    def __set_rx_control_mode(self):
-        self.send_arduino_command(self.__command_type_to_bytes(self.CONTROL_MODE_CHANGE_COMMAND_TYPE),
-                                  self.FLIGHT_MODE_RX)
 
     def send_arduino_command(self, cmd_type_bytes, data=None):
         if self.__serial and self.__serial.is_open:
@@ -102,24 +86,22 @@ class ArduinoProvider(BaseStartedModule):
     def __handle_command_type(self, cmd_type):
         self.__handler.execute_action(cmd_type)
 
-    def __handle_arduino_start(self):
-        self._log_info('Arduino Started')
+    def __handle_rx_input(self):
+        data = self.__serial.read(struct.calcsize(self.RX_INPUT_COMMAND_FMT))
+        (ail, ele, thr, rud, aux1, aux2, mode) = struct.unpack(self.RX_INPUT_COMMAND_FMT, data)
+        cmd = RXUpdateCommand(ail, ele, thr, rud)
+        self.raspilot.command_executor.execute_command(cmd)
 
-    def __handle_armed(self):
-        self._log_info('Motors ARMED')
+    def __handle_fc_output(self):
+        data = self.__serial.read(struct.calcsize(self.FC_OUTPUT_COMMAND_FMT))
+        (ail, ele, thr, rud) = struct.unpack(self.FC_OUTPUT_COMMAND_FMT, data)
 
-    def __handle_disarmed(self):
-        self._log_info('Motors DISARMED')
-
-    def __handle_rx_forward(self):
-        data = self.__serial.read(4)
-        if self.__rx_provider:
-            (ail, ele, thr, rud) = struct.unpack(self.RX_FORWARD_FMT, data)
-            ail = ValueMapper.map(ail, 0, 180, 1000, 2000)
-            ele = ValueMapper.map(ele, 0, 180, 1000, 2000)
-            thr = ValueMapper.map(thr, 0, 180, 1000, 2000)
-            rud = ValueMapper.map(rud, 0, 180, 1000, 2000)
-            self.__rx_provider.set_channels(RXValues(ail, ele, thr, rud))
+    def __handle_orientation(self):
+        data = self.__serial.read(struct.calcsize(self.ORIENTATION_COMMAND_FMT))
+        (roll, pitch, yaw) = struct.unpack(self.ORIENTATION_COMMAND_FMT, data)
+        orientation = tuple(x / self.ORIENTATION_MODIFIER for x in (roll, pitch, yaw))
+        cmd = OrientationCommand(orientation[0], orientation[1], orientation[2])
+        self.raspilot.command_executor.execute_command(cmd)
 
 
 def __handler_rx_control_mode(self, *args):

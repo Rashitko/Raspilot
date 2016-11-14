@@ -1,40 +1,40 @@
+from new_raspilot.core.commands.command import BaseCommandHandler
 from new_raspilot.core.providers.base_rx_provider import BaseRXProvider
+from new_raspilot.raspilot_implementation.commands.rx_update_command import RXUpdateCommand
 
 
 class RaspilotRXProvider(BaseRXProvider):
+    def get_channels(self):
+        return [self.__ailerons, self.__elevator, self.__throttle, self.__rudder]
+
     def __init__(self, config=None, silent=False):
         super().__init__(config, silent)
-        self.__rx = RXValues(1500, 1500, 1000, 1500)
+        self.__ailerons = None
+        self.__elevator = None
+        self.__throttle = None
+        self.__rudder = None
 
-    def get_channels(self):
-        return self.__rx
+    def _execute_initialization(self):
+        self.raspilot.command_executor.register_command(RXUpdateCommand.NAME, RXUpdateCommandHandler(self))
 
     def _execute_start(self):
         return True
 
-    def set_channels(self, channels):
-        self.__rx = channels
+    def set_rx(self, ailerons, elevator, throttle, rudder):
+        self.__ailerons = ailerons
+        self.__elevator = elevator
+        self.__throttle = throttle
+        self.__rudder = rudder
+
+
+class RXUpdateCommandHandler(BaseCommandHandler):
+    def __init__(self, provider):
+        super().__init__()
+        self.__provider = provider
+
+    def run_action(self, command):
+        self.rx_provider.set_rx(command.ailerons, command.elevator, command.throttle, command.rudder)
 
     @property
-    def ailerons(self):
-        return self.__rx[0]
-
-    @property
-    def elevator(self):
-        return self.__rx[1]
-
-
-class RXValues:
-    """
-    Will be used as a wrapper around RX PWM values read by Arduino. Currently returns mocked data.
-    """
-
-    def __init__(self, ailerons, elevator, throttle, rudder):
-        self.__channels = (ailerons, elevator, throttle, rudder)
-
-    def __str__(self):
-        return str({'AIL': self.__channels[0], 'ELE': self.__channels[1], 'THR': self.__channels[2],
-                    'RUD': self.__channels[3]})
-
-    def __getitem__(self, item):
-        return self.__channels[item]
+    def rx_provider(self):
+        return self.__provider

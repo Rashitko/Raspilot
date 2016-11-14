@@ -27,7 +27,7 @@ class RaspilotLogger:
         fh = logging.FileHandler("{}{}-{}.log".format(path, RaspilotLogger.LOGGER_NAME,
                                                       datetime.datetime.now().strftime("%Y-%m-%d")))
         fh.setLevel(RaspilotLogger.LEVEL)
-        message_format = '==============================\n%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\t''[FILE]%(pathname)s:%(lineno)s\n\t''[THREAD]%(threadName)s\n==============================\n\n'
+        message_format = '==============================\n%(log_color)s[%(levelname)s] %(asctime)s%(reset)s\n\t''%(message)s\n\n\t''[FILE] %(pathname)s:%(lineno)s\n\t''[THREAD] %(threadName)s\n==============================\n\n'
         formatter = ColoredFormatter(message_format, RaspilotLogger.DATE_FORMAT)
         fh.setFormatter(formatter)
         logger.addHandler(fh)

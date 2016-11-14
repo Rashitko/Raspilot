@@ -6,6 +6,7 @@ from new_raspilot.core.base_module import BaseModule
 from new_raspilot.core.base_system_state_recorder import BaseSystemStateRecorder
 from new_raspilot.core.flight_controller.base_flight_controller import BaseFlightController
 from new_raspilot.core.raspilot import Raspilot
+from new_raspilot.core.utils.base_module_load_strategy import BaseModuleLoadStrategy
 from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
 
 
@@ -21,6 +22,7 @@ class RaspilotLoader:
 
     def __init__(self):
         self.__logger = RaspilotLogger.get_logger()
+        self.__load_strategy = BaseModuleLoadStrategy()
 
     @staticmethod
     def __module_module_filter(name, klass):
@@ -34,31 +36,34 @@ class RaspilotLoader:
     def __flight_controller_filter(name, klass):
         return not name.startswith('__') and issubclass(klass, BaseFlightController)
 
-    def create(self, raspilot_class=Raspilot):
+    def create(self, load_condition_class=BaseModuleLoadStrategy, raspilot_class=Raspilot):
         """
         Loads all Raspilot modules which are specified in the '{raspilot}/modules/' folder. The Raspilot module is
         loaded if it subclasses the BaseModule and has the load flag set.
         :param raspilot_class: Raspilot class, if custom Raspilot implementation is used. The class is instantiated via
         constructor with one parameter, the Raspilot modules array
+        :param load_condition_class: Class of the strategy used to determine whether the module should be loaded. Should
+         be subclassed from the BaseModuleLoadStrategy class.
         :return: newly created Raspilot instance
         :rtype: Raspilot
         """
+        self.__load_strategy = load_condition_class()
         modules_folder = self.__get_modules_folder()
         if not modules_folder:
             return None
         raspilot_modules = []
         self.__load_modules(RaspilotLoader.MODULES_MODULE_PREFIX, modules_folder, raspilot_modules,
-                            self.__module_module_filter)
+                            self.__module_module_filter, self.__load_strategy)
         recorders_folder = self.__get_recorders_folder()
         if not recorders_folder:
             return None
         raspilot_recorders = []
         self.__load_modules(RaspilotLoader.RECORDERS_MODULE_PREFIX, recorders_folder, raspilot_recorders,
-                            self.__recorders_filter)
+                            self.__recorders_filter, self.__load_strategy)
         flight_controller_folder = self.__get_flight_controller_folder()
         flight_controllers = []
         self.__load_modules(RaspilotLoader.FLIGHT_CONTROLLER_MODULE_PREFIX, flight_controller_folder,
-                            flight_controllers, self.__flight_controller_filter)
+                            flight_controllers, self.__flight_controller_filter, self.__load_strategy)
         if flight_controllers:
             if len(flight_controllers) > 1:
                 self.__logger.warning(
@@ -69,16 +74,16 @@ class RaspilotLoader:
             return raspilot_class(raspilot_modules, raspilot_recorders)
 
     @staticmethod
-    def __load_modules(module_prefix, folder, modules_list, module_filter):
+    def __load_modules(module_prefix, folder, modules_list, module_filter, load_strategy):
         for module_file in os.listdir(folder):
             if not module_file.startswith('__') and module_file.endswith('.py'):
                 file_name_limit = module_file.index('.')
                 module_name = module_file[0:file_name_limit]
                 modules_module = importlib.import_module(module_prefix + module_name)
-                RaspilotLoader.__process_module(modules_module, modules_list, module_filter)
+                RaspilotLoader.__process_module(modules_module, modules_list, module_filter, load_strategy)
 
     @staticmethod
-    def __process_module(modules_module, raspilot_modules, module_filter):
+    def __process_module(modules_module, raspilot_modules, module_filter, load_strategy):
         """
         Processes the classes specified in the module. Only subclasses of the BaseModule are added to the
         raspilot_modules list
@@ -90,11 +95,11 @@ class RaspilotLoader:
         # noinspection SpellCheckingInspection
         for name, klass in inspect.getmembers(modules_module):
             if module_filter(name, klass):
-                RaspilotLoader.__process_raspilot_module(klass, name, raspilot_modules)
+                RaspilotLoader.__process_raspilot_module(klass, name, raspilot_modules, load_strategy)
 
     # noinspection SpellCheckingInspection
     @staticmethod
-    def __process_raspilot_module(klass, name, raspilot_modules):
+    def __process_raspilot_module(klass, name, raspilot_modules, load_strategy):
         """
         Adds the klass to the globals() under the 'name' key. Instantiates the Raspilot module and adds the instance to
         the 'raspilot_modules' list if the load flag is set. Flag is checked via invocating the load() on the module
@@ -107,9 +112,10 @@ class RaspilotLoader:
         """
         globals()[name] = klass
         try:
-            module = klass()
-            if module.load():
-                raspilot_modules.append(module)
+            if klass not in tuple(x.__class__ for x in raspilot_modules):
+                module = klass()
+                if load_strategy.load(module):
+                    raspilot_modules.append(module)
         except TypeError:
             pass
 

@@ -10,7 +10,6 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.protocol import Protocol, connectionDone, ReconnectingClientFactory
 
 GROUND_PORT = 3004
-
 FLIGHT_PORT = 3003
 
 LOGGER_NAME = 'raspilot_proxy.log'
@@ -36,6 +35,7 @@ class ProxyProtocol(Protocol):
         super().dataReceived(data)
         if self.__output.transport:
             self.__output.transport.write(data)
+            self.__output.transport.write(b'\n')
 
     def connectionLost(self, reason=connectionDone):
         """

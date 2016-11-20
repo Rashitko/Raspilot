@@ -5,6 +5,8 @@ from new_raspilot.modules.android_battery_provider import AndroidBatteryProvider
 from new_raspilot.modules.location_provider import RaspilotLocationProvider
 from new_raspilot.modules.orientation_provider import RaspilotOrientationProvider
 from new_raspilot.modules.rx_provider import RaspilotRXProvider
+from new_raspilot.raspilot_implementation.commands.telemetry_frequency_command import TelemetryFrequencyCommand, \
+    TelemetryFrequencyCommandHandler
 from new_raspilot.raspilot_implementation.commands.telemetry_update_command import TelemetryUpdateCommand
 
 
@@ -18,30 +20,36 @@ class RaspilotBlackBoxRecorder(BaseBlackBoxStateRecorder):
         self.__recorder.initialize(raspilot)
 
     def record_state(self):
-        self.__recorder.record_state()
+        # self.__recorder.record_state()
+        pass
 
 
 class RaspilotTelemetryRecorder(BaseTelemetryStateRecorder):
     def __init__(self, silent=False):
         super().__init__(silent)
-        self.__recorder = RaspilotSystemStateRecorder(silent)
+        self.__recorder = RaspilotSystemStateRecorder(silent, True)
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
         self.__recorder.initialize(raspilot)
+        self.raspilot.command_executor.register_command(
+            TelemetryFrequencyCommand.NAME,
+            TelemetryFrequencyCommandHandler(raspilot.telemetry_controller, raspilot.flight_control)
+        )
 
     def record_state(self):
         self.__recorder.record_state()
 
 
 class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
-    def __init__(self, silent=False):
+    def __init__(self, silent=False, transmit=False):
         super().__init__(silent)
         self.__orientation_provider = None
         self.__location_provider = None
         self.__android_battery_provider = None
         self.__load_guard = None
         self.__rx_provider = None
+        self.__transmit = transmit
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
@@ -53,7 +61,9 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
 
     def record_state(self):
         state = self.__capture_state()
-        self.raspilot.flight_control.send_message(TelemetryUpdateCommand.create_from_system_state(state).serialize())
+        if self.__transmit:
+            self.raspilot.flight_control.send_message(
+                TelemetryUpdateCommand.create_from_system_state(state).serialize())
 
     def __capture_state(self):
         if self.__orientation_provider and self.__orientation_provider.current_orientation():

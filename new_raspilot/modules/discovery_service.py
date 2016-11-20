@@ -15,6 +15,7 @@ class DiscoveryService(BaseStartedModule):
 
     def _execute_start(self):
         reactor.listenUDP(DiscoveryService.DISCOVERY_PORT, DiscoveryProtocol())
+        RaspilotLogger.get_logger().debug("Listening for Discovery Requests")
         return True
 
     def load(self):

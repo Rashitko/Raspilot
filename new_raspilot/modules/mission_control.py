@@ -30,10 +30,10 @@ class RaspilotMissionControlProvider(BaseMissionControlProvider):
         self.raspilot.command_receiver.execute_command(command)
 
     def on_connection_opened(self, address):
-        self.logger.debug("Connected to Flight Control on address {}".format(address))
+        self.logger.debug("Connected to Mission Control on address {}".format(address))
 
     def on_connection_lost(self):
-        self.logger.error("Connection with Flight Control lost")
+        self.logger.error("Connection with Mission Control lost")
 
 
 class FlightProtocol(LineReceiver):
@@ -41,11 +41,13 @@ class FlightProtocol(LineReceiver):
         super().__init__()
         self.delimiter = bytes('\n', 'utf-8')
         self.__callbacks = callbacks
+        self.__logger = RaspilotLogger.get_logger()
 
     def lineReceived(self, line):
         try:
-            parsed_data = json.loads(line.decode('utf-8'))
-            self.__callbacks.execute_command(BaseCommand.from_json(parsed_data))
+            parts = self.__parse_line(line)
+            for part in parts:
+                self.__callbacks.execute_command(BaseCommand.from_json(part))
         except json.JSONDecodeError as e:
             self.__logger.error("Invalid data received.\n\tData were {}.\n\tException risen is {}".format(line, e))
         except Exception as e:
@@ -60,6 +62,22 @@ class FlightProtocol(LineReceiver):
 
     def connectionLost(self, reason=connectionDone):
         self.__callbacks.on_connection_lost()
+
+    @staticmethod
+    def __parse_line(line):
+        result = []
+        opening = 0
+        line_part = ''
+        for ch in line.decode('utf-8'):
+            if ch == '{':
+                opening += 1
+            if ch == '}':
+                opening -= 1
+            line_part += ch
+            if opening == 0 and line_part != '':
+                result.append(json.loads(line_part))
+                line_part = ''
+        return result
 
 
 class FlightProtocolFactory(ReconnectingClientFactory):

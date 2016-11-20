@@ -5,7 +5,7 @@ from new_raspilot.core.commands.command_executor import CommandExecutor
 from new_raspilot.core.commands.command_receiver import CommandReceiver
 from new_raspilot.core.commands.stop_command import BaseStopCommandHandler, BaseStopCommand
 from new_raspilot.core.providers.base_rx_provider import BaseRXProvider
-from new_raspilot.core.providers.black_box_controller import BlackBoxController
+from new_raspilot.core.providers.black_box_controller import BlackBoxController, BaseBlackBoxStateRecorder
 from new_raspilot.core.providers.load_guard_controller import LoadGuardController, BaseLoadGuardStateRecorder
 from new_raspilot.core.providers.mission_control_provider import BaseMissionControlProvider
 from new_raspilot.core.providers.orientation_provider import BaseOrientationProvider
@@ -49,10 +49,11 @@ class Raspilot:
         for recorder in recorders:
             if issubclass(type(recorder), BaseTelemetryStateRecorder):
                 telemetry_controller = TelemetryController(recorder)
+                self.__telemetry_controller = telemetry_controller
                 self.__modules.append(telemetry_controller)
                 self.__started_modules.append(telemetry_controller)
                 self.__logger.debug("Telemetry Controller loaded")
-            if issubclass(type(recorder), BaseTelemetryStateRecorder):
+            if issubclass(type(recorder), BaseBlackBoxStateRecorder):
                 black_box_controller = BlackBoxController(recorder)
                 self.__modules.append(black_box_controller)
                 self.__started_modules.append(black_box_controller)
@@ -120,6 +121,10 @@ class Raspilot:
     @property
     def load_guard_controller(self) -> LoadGuardController:
         return self.__load_guard_controller
+
+    @property
+    def telemetry_controller(self) -> TelemetryController:
+        return self.__telemetry_controller
 
     @property
     def rx_provider(self) -> BaseRXProvider:

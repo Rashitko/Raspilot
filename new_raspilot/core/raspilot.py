@@ -26,6 +26,7 @@ class Raspilot:
         self.__modules.append(self.__flight_controller)
         self.__orientation_provider = None
         self.__flight_control_provider = None
+        self._rx_provider = None
         for module in self.__modules:
             if issubclass(type(module), BaseStartedModule):
                 self.__started_modules.append(module)

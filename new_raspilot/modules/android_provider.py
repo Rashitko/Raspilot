@@ -9,6 +9,7 @@ from twisted.protocols.basic import LineReceiver
 from new_raspilot.core.base_started_module import BaseStartedModule
 from new_raspilot.core.commands.command import BaseCommand
 from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
+from new_raspilot.raspilot_implementation.commands.altitude_change_command import AltitudeChangeCommand
 
 
 class AndroidProvider(BaseStartedModule):
@@ -58,7 +59,8 @@ class AndroidProtocol(LineReceiver):
         :param line: received line
         :return: None
         """
-        self.__logger.debug("Data received {}".format(line))
+        if not bytes(AltitudeChangeCommand.NAME, 'utf-8') in line:
+            self.__logger.debug("Data received {}".format(line))
         try:
             parsed_data = json.loads(line.decode('utf-8'))
             self.__callbacks.execute_command(BaseCommand.from_json(parsed_data))

@@ -12,7 +12,9 @@ class TelemetryUpdateCommand(BaseCommand):
 
     @classmethod
     def create_from_system_state(cls, system_state):
-        data = {'orientation': system_state.get('orientation', None), 'location': system_state.get('location', None),
-                'flightControllerStatus': system_state.get('flightControllerStatus', None)}
+        data = {'orientation': system_state.get('orientation', None),
+                'location': system_state.get('location', None),
+                'flightControllerStatus': system_state.get('flightControllerStatus', None),
+                'altitude': system_state.get('altitude', None)}
         c = TelemetryUpdateCommand(data)
         return c

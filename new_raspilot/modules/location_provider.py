@@ -1,5 +1,6 @@
 from new_raspilot.core.providers.location_provider import BaseLocationProvider
 from new_raspilot.core.utils.raspilot_logger import RaspilotLogger
+from new_raspilot.modules.arduino_provider import ArduinoProvider
 from new_raspilot.raspilot_implementation.commands.location_update_command import LocationUpdateCommand, \
     LocationUpdateCommandHandler
 
@@ -8,12 +9,14 @@ class RaspilotLocationProvider(BaseLocationProvider):
     def __init__(self, config=None, silent=False):
         super().__init__(config, silent)
         self.__location = None
+        self.__arduino_provider = None
 
     def get_location(self):
         return self.location
 
     def _execute_start(self):
         self.raspilot.command_executor.register_command(LocationUpdateCommand.NAME, LocationUpdateCommandHandler(self))
+        self.__arduino_provider = self.raspilot.get_module(ArduinoProvider)
         return True
 
     def _execute_stop(self):
@@ -26,6 +29,11 @@ class RaspilotLocationProvider(BaseLocationProvider):
     @location.setter
     def location(self, value):
         self.__location = value
+        self.arduino_provider.set_location(value.latitude, value.longitude)
+
+    @property
+    def arduino_provider(self):
+        return self.__arduino_provider
 
 
 class Location:

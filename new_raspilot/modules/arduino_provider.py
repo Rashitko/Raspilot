@@ -37,6 +37,10 @@ class ArduinoProvider(BaseStartedModule):
         self.__handler.add_handler(ArduinoCommandHandler.DISARM_COMMAND_TYPE, self.__handle_armed_change, 0, False)
         self.__handler.add_handler(ArduinoCommandHandler.ALTITUDE_COMMAND_TYPE, self.__handle_altitude_confirmation, 2)
         self.__handler.add_handler(ArduinoCommandHandler.LOCATION_COMMAND_TYPE, self.__handle_location_confirmation, 8)
+        self.__handler.add_handler(ArduinoCommandHandler.ACTUAL_HEADING_COMMAND_TYPE,
+                                   self.__handle_actual_heading_confirmation, 2)
+        self.__handler.add_handler(ArduinoCommandHandler.REQUIRED_HEADING_COMMAND_TYPE,
+                                   self.__handle_required_heading_confirmation, 2)
 
     def _execute_start(self):
         if self.__arduino_port:
@@ -80,6 +84,14 @@ class ArduinoProvider(BaseStartedModule):
         data = struct.pack("!ff", latitude, longitude)
         self.send_arduino_command(ArduinoCommandHandler.LOCATION_COMMAND_TYPE, data)
 
+    def set_required_heading(self, heading):
+        data = struct.pack("!h", round(heading))
+        self.send_arduino_command(ArduinoCommandHandler.REQUIRED_HEADING_COMMAND_TYPE, data)
+
+    def set_actual_heading(self, heading):
+        data = struct.pack("!h", round(heading))
+        self.send_arduino_command(ArduinoCommandHandler.ACTUAL_HEADING_COMMAND_TYPE, data)
+
     @staticmethod
     def __command_type_to_bytes(cmd_type):
         return bytes([ord(cmd_type)])
@@ -122,6 +134,16 @@ class ArduinoProvider(BaseStartedModule):
         (latitude, longitude) = struct.unpack("!ff", payload)
         self.logger.debug("Arduino confirmed location LAT: %s, LON: %s" % (latitude, longitude))
 
+    def __handle_actual_heading_confirmation(self, payload):
+        self.logger.debug(" %s" % payload)
+        (heading,) = struct.unpack("!h", payload)
+        self.logger.debug("Arduino has confirmed actual heading %s˚" % heading)
+
+    def __handle_required_heading_confirmation(self, payload):
+        self.logger.debug(" %s" % payload)
+        (heading,) = struct.unpack("!h", payload)
+        self.logger.debug("Arduino has confirmed required heading %s˚" % heading)
+
 
 class ArduinoCommandHandler:
     START_COMMAND_TYPE = 's'
@@ -131,6 +153,8 @@ class ArduinoCommandHandler:
     FLIGHT_MODE_SET_COMMAND_TYPE = 'M'
     FLIGHT_MODE_GET_COMMAND_TYPE = 'm'
     LOCATION_COMMAND_TYPE = 'l'
+    ACTUAL_HEADING_COMMAND_TYPE = 'b'
+    REQUIRED_HEADING_COMMAND_TYPE = 'B'
 
     def __init__(self):
         self.__handlers = {}

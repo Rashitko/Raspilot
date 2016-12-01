@@ -15,6 +15,7 @@ class RaspilotBlackBoxRecorder(BaseBlackBoxStateRecorder):
     def __init__(self, silent=False):
         super().__init__(silent)
         self.__recorder = RaspilotSystemStateRecorder(silent)
+        self.__telemetry_freq_handle = None
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
@@ -33,7 +34,7 @@ class RaspilotTelemetryRecorder(BaseTelemetryStateRecorder):
     def initialize(self, raspilot):
         super().initialize(raspilot)
         self.__recorder.initialize(raspilot)
-        self.raspilot.command_executor.register_command(
+        self.__telemetry_freq_handle = self.raspilot.command_executor.register_command(
             TelemetryFrequencyCommand.NAME,
             TelemetryFrequencyCommandHandler(raspilot.telemetry_controller, raspilot.flight_control)
         )

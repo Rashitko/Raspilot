@@ -19,6 +19,7 @@ class RaspilotFlightController(BaseFlightController):
     def __init__(self):
         super().__init__()
         self.__arduino_provider = None
+        self.__mode_change_handle = None
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
@@ -28,9 +29,10 @@ class RaspilotFlightController(BaseFlightController):
 
     def stop(self):
         super().stop()
+        self.raspilot.command_executor.unregister_command(FlightModeCommand.NAME, self.__mode_change_handle)
 
     def start(self):
-        self.raspilot.command_executor.register_command(
+        self.__mode_change_handle = self.raspilot.command_executor.register_command(
             FlightModeCommand.NAME,
             FlightModeCommandHandler(self.raspilot.flight_control)
         )

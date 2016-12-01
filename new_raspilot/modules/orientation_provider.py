@@ -9,11 +9,12 @@ class RaspilotOrientationProvider(BaseOrientationProvider):
     def __init__(self):
         super().__init__()
         self.__orientation = None
+        self.__command_handle = None
 
     def _execute_initialization(self):
         super()._execute_initialization()
-        self.raspilot.command_executor.register_command(OrientationCommand.NAME,
-                                                        OrientationUpdateCommandHandler(self))
+        self.__command_handle = self.raspilot.command_executor.register_command(OrientationCommand.NAME,
+                                                                                OrientationUpdateCommandHandler(self))
 
     def _execute_start(self):
         return True

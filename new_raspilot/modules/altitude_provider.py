@@ -9,16 +9,19 @@ class AltitudeProvider(BaseStartedModule):
         super().__init__()
         self.__altitude = None
         self.__arduino_provider = None
+        self.__altitude_change_handle = None
 
     def _execute_start(self):
-        self.raspilot.command_executor.register_command(AltitudeChangeCommand.NAME, AltitudeChangeCommandHandler(self))
+        self.__altitude_change_handle = self.raspilot.command_executor.register_command(AltitudeChangeCommand.NAME,
+                                                                                        AltitudeChangeCommandHandler(
+                                                                                            self))
         self.__arduino_provider = self.raspilot.get_module(ArduinoProvider)
         if self.arduino_provider is None:
             raise ValueError("Arduino Provider not found")
         return True
 
     def _execute_stop(self):
-        self.raspilot.command_executor.unregister_command(AltitudeChangeCommand.NAME)
+        self.raspilot.command_executor.unregister_command(AltitudeChangeCommand.NAME, self.__altitude_change_handle)
 
     def load(self):
         return True

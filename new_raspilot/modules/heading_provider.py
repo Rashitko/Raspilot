@@ -9,16 +9,18 @@ class HeadingProvider(BaseStartedModule):
         self.__actual_heading = None
         self.__required_heading = None
         self.__arduino_provider = None
+        self.__command_handle = None
 
     def _execute_start(self):
-        self.raspilot.command_executor.register_command(HeadingCommand.NAME, HeadingCommandHandler(self))
+        self.__command_handle = self.raspilot.command_executor.register_command(HeadingCommand.NAME,
+                                                                                HeadingCommandHandler(self))
         self.__arduino_provider = self.raspilot.get_module(ArduinoProvider)
         if self.arduino_provider is None:
             raise ValueError("Arduino Provider not found")
         return True
 
     def _execute_stop(self):
-        self.raspilot.command_executor.unregister_command(HeadingCommand.NAME)
+        self.raspilot.command_executor.unregister_command(HeadingCommand.NAME, self.__command_handle)
         pass
 
     def load(self):

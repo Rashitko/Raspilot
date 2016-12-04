@@ -2,17 +2,11 @@
 
 set -e
 
-BRANCH=raspilot-production
+UPDATE_SCRIPT_PATH=scripts/update.sh
 CONFIG_PATH=new_raspilot/config/config.cfg
 
 if grep -iq "autoupdate\s*=\s*enabled" ${RASPILOT_PATH}/${CONFIG_PATH}; then
-CURRENT_DIR=$(pwd)
-echo "Loading new version"
-    cd ${RASPILOT_PATH}
-    git fetch --all > /dev/null
-    git checkout ${BRANCH} > /dev/null
-    git reset --hard origin/${BRANCH} > /dev/null
-    cd ${CURRENT_DIR}
+    ${RASPILOT_PATH}/${UPDATE_SCRIPT_PATH}
 else
     echo "Autoupdate Disabled"
 fi

@@ -14,7 +14,7 @@ class CommandExecutor(BaseModule):
         if self.__handlers.get(name, None) is None:
             self.__handlers[name] = {}
         self.__handlers[name][handle] = handler
-        self._log_debug("Handler {handle} for {} registered".format(handle, name))
+        self._log_debug("Handler {} for {} registered".format(handle, name))
 
     def unregister_command(self, name, handle):
         if self.__handlers.get(name, None) is not None:

@@ -2,7 +2,7 @@
 
 set -e
 
-UPDATE_SCRIPT_PATH=scripts/update.sh
+UPDATE_SCRIPT_PATH=scripts/update
 CONFIG_PATH=new_raspilot/config/config.cfg
 
 if grep -iq "autoupdate\s*=\s*enabled" ${RASPILOT_PATH}/${CONFIG_PATH}; then

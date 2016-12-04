@@ -8,3 +8,6 @@ else
     echo "export RASPILOT_PATH=$(pwd)" >> ~/.bashrc
     echo "RASPILOT_PATH is set to $(pwd)"
 fi
+
+sudo cp scripts/run /usr/bin/raspilot-run
+sudo cp scripts/update /usr/bin/raspilot-update

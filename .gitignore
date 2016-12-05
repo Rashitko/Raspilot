@@ -5,4 +5,4 @@ shared/
 **/*.err
 **/*.log
 **/*.pyc
-new_raspilot/config
+config

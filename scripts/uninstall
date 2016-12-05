@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-sudo rm ${RASPILOT_PATH}/scripts/run /usr/bin/raspilot-run
-sudo rm ${RASPILOT_PATH}/scripts/update /usr/bin/raspilot-update
-echo "Scripts raspilot-start, raspilot-update deleted from /usr/bin"

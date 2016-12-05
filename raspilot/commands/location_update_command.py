@@ -18,7 +18,7 @@ class LocationUpdateCommandHandler(BaseCommandHandler):
         self.__location_provider = provider
 
     def run_action(self, command):
-        from raspilot.modules import Location
+        from raspilot.modules.location_provider import Location
         self.__location_provider.location = Location.create_from_command(command)
         self.logger.debug("New location set. {}".format(self.__location_provider.location))
         pass

@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 
+BRANCH=master
+
 set -e
 if [[ ${RASPILOT_PATH} != '' ]]; then
     CURRENT_DIR=$(pwd)
     echo "Loading new version"
     cd ${RASPILOT_PATH}
-    git fetch --all
-    git checkout ${BRANCH} > /dev/null
+    git fetch --all > /dev/null
+    if [[ $(git rev-parse --abbrev-ref HEAD) != ${BRANCH} ]]; then
+        git checkout ${BRANCH} > /dev/null
+    fi
     git reset --hard origin/${BRANCH} > /dev/null
     cd ${CURRENT_DIR}
+    echo 'Update complete'
 else
     echo 'RASPILOT_PATH not set'
 fi

@@ -11,4 +11,4 @@ if ! grep -Fq "export RASPILOT_PATH=" ~/.bashrc  ; then
 fi
 
 mkdir -p ~/.local/bin
-cp bin/raspilot/* ~/.local/bin
+cp bin/raspilot-* ~/.local/bin

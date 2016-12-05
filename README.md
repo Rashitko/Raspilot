@@ -1,2 +1,0 @@
-# Introduction #
-Raspilot is an framework for creating highly customizable autopilot systems for RC model. Its default implementation will be suited for the airplanes. Raspilot needs additional components which are the [Android application](https://bitbucket.org/michal_raska/raspilot) and the [server](https://bitbucket.org/michal_raska/raspilot) (coded in the Ruby on Rails framework). All three components are currently in active development, so more information will be written here in short time.

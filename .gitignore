@@ -1,8 +1,5 @@
 .idea/
-raspilot_implementation/config.cfg
 tmp/
-shared/
-**/*.err
-**/*.log
-**/*.pyc
-config
+build/
+raspilot/**/*.pyc
+*.pyc

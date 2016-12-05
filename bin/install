@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+if ! grep -Fq "export RASPILOT_PATH=" ~/.bashrc  ; then
+    echo "export RASPILOT_PATH=$(pwd)" >> ~/.bashrc
+fi
+echo "RASPILOT_PATH is set to ${RASPILOT_PATH}"
+if ! grep -Fq "export RASPILOT_PATH=" ~/.bashrc  ; then
+    echo "export RASPILOT_PATH=$(pwd)" >> ~/.bashrc
+fi
+
+mkdir -p ~/.local/bin
+cp bin/raspilot/* ~/.local/bin

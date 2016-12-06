@@ -6,3 +6,6 @@ raspilot.egg-info
 tmp/
 
 raspilot/config
+
+**/*.pyc
+**/*.DS_Store

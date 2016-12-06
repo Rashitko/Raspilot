@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 if [[ ${RASPILOT_PATH} != '' ]] ; then
+    if grep -Fqi "AUTO UPDATE\s*=\s*enabled" ~/up/config/config.cfg; then
+        echo "Autoupdates enabled"
+        ${RASPILOT_PATH}/bin/raspilot_update
+    fi
     PYTHONPATH=${RASPILOT_PATH} python3.5 ${RASPILOT_PATH}/raspilot/main.py
 else
     echo "RASPILOT_PATH not set!"

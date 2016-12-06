@@ -8,13 +8,17 @@ if [[ ${RASPILOT_PATH} != '' ]]; then
     echo "Loading new version"
     cd ${RASPILOT_PATH}
     git fetch --all > /dev/null
-    if [[ $(git rev-parse --abbrev-ref HEAD) != ${BRANCH} ]]; then
-        git checkout ${BRANCH} > /dev/null
+    if [[ $(git log HEAD..origin/master --oneline) != '' ]]; then
+        if [[ $(git rev-parse --abbrev-ref HEAD) != ${BRANCH} ]]; then
+            git checkout ${BRANCH} > /dev/null
+        fi
+        git reset --hard origin/${BRANCH} > /dev/null
+        ${RASPILOT_PATH}/bin/install
+        echo 'Update complete'
+    else
+        echo 'Latest version installed'
     fi
-    git reset --hard origin/${BRANCH} > /dev/null
-    ${RASPILOT_PATH}/bin/install
     cd ${CURRENT_DIR}
-    echo 'Update complete'
 else
     echo 'RASPILOT_PATH not set'
 fi

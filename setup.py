@@ -1,3 +1,5 @@
+import os
+
 from setuptools import setup
 
 setup(
@@ -12,5 +14,7 @@ setup(
     author_email='michal.raska@gmail.com',
     description='',
     install_requires=['up', 'twisted', 'pyserial', 'psutil'],
-    scripts=['bin/raspilot-run', 'bin/raspilot-update']
+    scripts=['bin/raspilot-run', 'bin/raspilot-update'],
+    data_files=[(os.path.expanduser('~') + '/up/config/', ['raspilot/config/config.cfg', 'raspilot/config/modules.cfg'])]
+
 )

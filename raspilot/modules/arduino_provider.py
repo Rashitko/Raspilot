@@ -6,10 +6,13 @@ import serial
 import serial.tools.list_ports
 from up.base_started_module import BaseStartedModule
 from up.utils.up_logger import UpLogger
+from up.utils.config_reader import ConfigReader
 
 
 class ArduinoProvider(BaseStartedModule):
     BAUD_RATE = 9600
+
+    DISCOVERY_RETRY_INTERVAL = 1
 
     FC_OUTPUT_COMMAND_TYPE = 'o'
     FC_OUTPUT_COMMAND_FMT = 'hhhh'
@@ -116,11 +119,16 @@ class ArduinoProvider(BaseStartedModule):
             self.logger.warn("Arduino DISARMED")
 
     def __discover_arduino(self):
-        ports = list(serial.tools.list_ports.comports())
-        for port in ports:
-            if "Arduino" in port[1]:
-                self._log_info("Arduino found on port {}".format(port))
-                return port[0]
+        config = ConfigReader.instance().global_config
+        arduino_required = config.get('DEFAULT', 'WAIT FOR ARDUINO', fallback='false')
+        while arduino_required.lower() == 'true':
+            ports = list(serial.tools.list_ports.comports())
+            for port in ports:
+                if "Arduino" in port[1]:
+                    self._log_info("Arduino found on port {}".format(port))
+                    return port[0]
+            self.logger.warning('Arduino required but not found yet. Will try again in 1s')
+            sleep(self.DISCOVERY_RETRY_INTERVAL)
         return None
 
     def __handle_altitude_confirmation(self, payload):

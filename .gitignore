@@ -1,6 +1,8 @@
 .idea/
-tmp/
-logs/
 build/
-raspilot/**/*.pyc
-*.pyc
+dist
+raspilot.egg-info
+
+tmp/
+
+raspilot/config

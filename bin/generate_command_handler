@@ -3,7 +3,15 @@
 set -e
 
 NAME=${NAME}
-SOURCE_FILE=new_raspilot/raspilot_implementation/commands/`echo ${NAME} | perl -ne 'print lc(join("_", split(/(?=[A-Z])/)))'`_command.py
+if [[ ${NAME} == '' ]]; then
+    echo "Please set name. Call something like COMMAND_IDENTIFIER=command.identifier NAME=NewHandlerName bin/generate_command_handler"
+    exit
+fi
+if [[ ${COMMAND_IDENTIFIER} == '' ]]; then
+    echo "Please set name. Call something like COMMAND_IDENTIFIER=command.identifier NAME=NewHandlerName bin/generate_started_module"
+    exit
+fi
+SOURCE_FILE=raspilot/commands/`echo ${NAME} | perl -ne 'print lc(join("_", split(/(?=[A-Z])/)))'`_command.py
 
 
 if [[ -a ${SOURCE_FILE} ]]; then

@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
 NAME=${NAME}
-SOURCE_FILE=new_raspilot/modules/`echo ${NAME} | perl -ne 'print lc(join("_", split(/(?=[A-Z])/)))'`.py
+if [[ ${NAME} == '' ]]; then
+    echo "Please set name. Call something like NAME=NewModuleName bin/generate_started_module"
+    exit
+fi
+SOURCE_FILE=raspilot/modules/`echo ${NAME} | perl -ne 'print lc(join("_", split(/(?=[A-Z])/)))'`.py
 
 
 if [[ -a ${SOURCE_FILE} ]]; then

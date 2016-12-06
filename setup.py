@@ -11,6 +11,6 @@ setup(
     author='Michal Raška',
     author_email='michal.raska@gmail.com',
     description='',
-    requires=['up', 'twisted', 'pyserial'],
+    install_requires=['up', 'twisted', 'pyserial'],
     scripts=['bin/raspilot-run', 'bin/raspilot-update']
 )

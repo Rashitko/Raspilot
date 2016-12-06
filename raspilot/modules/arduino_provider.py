@@ -68,7 +68,7 @@ class ArduinoProvider(BaseStartedModule):
             else:
                 type_bytes = cmd_type_bytes
             try:
-                self.logger.info("Sending command %s" % type_bytes.decode("utf-8"))
+                self.logger.debug("Sending command %s" % type_bytes.decode("utf-8"))
                 self.__serial.write(type_bytes)
                 if data:
                     self.__serial.write(data)

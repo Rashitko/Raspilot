@@ -8,7 +8,9 @@ fi
 echo "RASPILOT_PATH is set to ${RASPILOT_PATH}"
 if ! grep -Fq "export RASPILOT_PATH=" ~/.bashrc  ; then
     echo "export RASPILOT_PATH=$(pwd)" >> ~/.bashrc
+    source ~/.bashrc
 fi
+echo "RASPILOT_PATH set to ${RASPILOT_PATH}"
 
-mkdir -p ~/.local/bin
-cp bin/raspilot-* ~/.local/bin
+echo "Please enter root password in order to copy the binaries to /usr/bin"
+sudo cp ${RASPILOT_PATH}/bin/raspilot-* /usr/bin/

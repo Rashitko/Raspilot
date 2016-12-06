@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='raspilot',
@@ -11,6 +11,6 @@ setup(
     author='Michal Raška',
     author_email='michal.raska@gmail.com',
     description='',
-    install_requires=['up', 'twisted', 'pyserial'],
+    install_requires=['up', 'twisted', 'pyserial', 'psutil'],
     scripts=['bin/raspilot-run', 'bin/raspilot-update']
 )

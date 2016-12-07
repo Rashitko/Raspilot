@@ -1,8 +1,27 @@
 #!/usr/bin/env bash
 
 BRANCH=master
+UPDATED=false
+SPIN=false
 
 set -e
+
+print_help() {
+    echo "Raspilot update script. Usage: "
+    echo -e "\t -f, --force-install \t- forces install, even when no new version is available"
+    echo -e "\t --help \t\t- prints this help"
+
+}
+for arg in "$@" ; do
+    if [[ ${arg} == '--force-install' || ${arg} == '-f' ]]; then
+        UPDATED=true
+    fi
+    if [[ ${arg} == '--help' ]]; then
+        print_help
+        exit
+    fi
+done
+
 if [[ ${RASPILOT_PATH} != '' ]]; then
     CURRENT_DIR=$(pwd)
     echo "Loading new version"
@@ -13,10 +32,14 @@ if [[ ${RASPILOT_PATH} != '' ]]; then
             git checkout ${BRANCH} > /dev/null
         fi
         git reset --hard origin/${BRANCH} > /dev/null
-        python setup.py install
-        echo 'Update complete'
+        UPDATED=true
+        echo "New version loaded"
     else
         echo 'Latest version installed'
+    fi
+    if [[ ${UPDATED} ]]; then
+        echo 'Installing update'
+        python setup.py install
     fi
     cd ${CURRENT_DIR}
 else

@@ -4,8 +4,6 @@ dist
 raspilot.egg-info
 
 tmp/
-
-raspilot/config
+logs/
 
 **/*.pyc
-**/*.DS_Store

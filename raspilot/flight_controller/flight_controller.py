@@ -1,10 +1,10 @@
 import time
 
 from up.flight_controller.base_flight_controller import BaseFlightController
-from raspilot.modules.arduino_provider import ArduinoProvider
 
 from raspilot.commands.flight_mode_command import FlightModeCommand, \
     FlightModeCommandHandler
+import raspilot.modules.arduino_provider
 
 
 class RaspilotFlightController(BaseFlightController):
@@ -17,18 +17,23 @@ class RaspilotFlightController(BaseFlightController):
     STAB_CONSTRAINT = 250
     RATE_CONSTRAINT = 500
 
+    FLIGHT_MODE_RATE = 'Rate'
+    FLIGHT_MODE_FBW = 'FBW'
+    FLIGHT_MODE_RTH = 'RTH'
+
     def __init__(self):
         super().__init__()
         self.__arduino_provider = None
         self.__mode_change_handle = None
 
-    def initialize(self, raspilot):
-        super().initialize(raspilot)
-        self.__arduino_provider = self.raspilot.get_module(ArduinoProvider)
+    def initialize(self, raspil):
+        super().initialize(raspil)
+        self.__arduino_provider = self.raspilot.get_module(raspilot.modules.arduino_provider.ArduinoProvider)
         if not self.__arduino_provider:
             raise ValueError("Arduino Provider must be loaded")
 
     def stop(self):
+        self.set_flight_mode(self.FLIGHT_MODE_RATE)
         super().stop()
         self.raspilot.command_executor.unregister_command(FlightModeCommand.NAME, self.__mode_change_handle)
 
@@ -38,6 +43,9 @@ class RaspilotFlightController(BaseFlightController):
             FlightModeCommandHandler(self.raspilot.flight_control)
         )
         return True
+
+    def set_flight_mode(self, mode):
+        self.__arduino_provider.set_flight_mode(mode)
 
     def _notify_loop(self):
         while self._run:

@@ -32,7 +32,10 @@ class RaspilotMissionControlProvider(BaseMissionControlProvider):
         self.logger.debug("Connected to Mission Control on address {}".format(address))
 
     def on_connection_lost(self):
-        self.logger.error("Connection with Mission Control lost")
+        if reactor.running:
+            self.logger.error("Connection with Mission Control lost")
+        else:
+            self.logger.debug("Disconnected from Mission Control")
 
 
 class FlightProtocol(LineReceiver):

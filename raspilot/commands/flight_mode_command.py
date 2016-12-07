@@ -4,9 +4,6 @@ from up.commands.command import BaseCommand, BaseCommandHandler
 class FlightModeCommand(BaseCommand):
     NAME = 'flight_controller.flight_mode'
 
-    MODE_RATE = 'Rate'
-    MODE_FBW = 'FBW'
-    MODE_RTH = 'RTH'
     MODE_NOT_AVAILABLE = 'Not Available'
 
     def __init__(self, mode):

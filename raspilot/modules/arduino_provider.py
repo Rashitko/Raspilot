@@ -1,18 +1,24 @@
 import struct
-from threading import Thread
+from threading import Thread, Event
 from time import sleep
 
 import serial
 import serial.tools.list_ports
 from up.base_started_module import BaseStartedModule
-from up.utils.up_logger import UpLogger
 from up.utils.config_reader import ConfigReader
+from up.utils.up_logger import UpLogger
+
+import raspilot.flight_controller.flight_controller
 
 
 class ArduinoProvider(BaseStartedModule):
     BAUD_RATE = 9600
 
     DISCOVERY_RETRY_INTERVAL = 1
+
+    FLIGHT_MODE_RATE = b'r'
+    FLIGHT_MODE_FBW = b'f'
+    FLIGHT_MODE_RTH = b'h'
 
     FC_OUTPUT_COMMAND_TYPE = 'o'
     FC_OUTPUT_COMMAND_FMT = 'hhhh'
@@ -30,6 +36,7 @@ class ArduinoProvider(BaseStartedModule):
         self.__arduino_port = None
         self.__serial = serial.Serial()
         self.__serial.baudrate = self.BAUD_RATE
+        self.__receive_loop_lock = None
 
     def _execute_initialization(self):
         super()._execute_initialization()
@@ -48,8 +55,9 @@ class ArduinoProvider(BaseStartedModule):
         if self.__arduino_port:
             self.__serial.port = self.__arduino_port
             self.__serial.open()
+            self.__receive_loop_lock = Event()
             Thread(target=self.__receive_loop).start()
-            sleep(1)
+            self.__receive_loop_lock.wait(10)
             self.send_arduino_command(ArduinoCommandHandler.START_COMMAND_TYPE)
             self.send_arduino_command(ArduinoCommandHandler.DISARM_COMMAND_TYPE)
             return self.__serial.is_open
@@ -94,6 +102,19 @@ class ArduinoProvider(BaseStartedModule):
         data = struct.pack("!h", round(heading))
         self.send_arduino_command(ArduinoCommandHandler.ACTUAL_HEADING_COMMAND_TYPE, data)
 
+    def set_flight_mode(self, mode):
+        if mode == raspilot.flight_controller.flight_controller.RaspilotFlightController.FLIGHT_MODE_RATE:
+            arduino_mode = self.FLIGHT_MODE_RATE
+        elif mode == raspilot.flight_controller.flight_controller.RaspilotFlightController.FLIGHT_MODE_FBW:
+            arduino_mode = self.FLIGHT_MODE_FBW
+        elif mode == raspilot.flight_controller.flight_controller.RaspilotFlightController.FLIGHT_MODE_RTH:
+            arduino_mode = self.FLIGHT_MODE_RTH
+        else:
+            self.logger.error('Flight Mode %s not supported' % mode)
+            return
+        data = struct.pack("!c", arduino_mode)
+        self.send_arduino_command(ArduinoCommandHandler.FLIGHT_MODE_SET_COMMAND_TYPE, data)
+
     @staticmethod
     def __command_type_to_bytes(cmd_type):
         return bytes([ord(cmd_type)])
@@ -101,6 +122,8 @@ class ArduinoProvider(BaseStartedModule):
     def __receive_loop(self):
         while self.__serial.is_open:
             try:
+                if self.__receive_loop_lock:
+                    self.__receive_loop_lock.set()
                 cmd_type = self.__serial.read(1)
                 payload_size = self.__handler.get_command_payload_size(cmd_type)
                 payload = self.__serial.read(payload_size)
@@ -108,6 +131,11 @@ class ArduinoProvider(BaseStartedModule):
             except serial.SerialException as e:
                 if self.started:
                     self._log_critical("Error during receiving Arduino data. Error was {}".format(e))
+            except TypeError as e:
+                if not self.started:
+                    pass
+                else:
+                    raise e
 
     def __handle_start(self, payload):
         self.logger.info("Arduino Started")

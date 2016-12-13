@@ -10,11 +10,11 @@ from up.utils.up_logger import UpLogger
 from raspilot.utils.raspilot_loader import RaspilotLoader
 
 MODULES_PATH = 'modules'
-MODULES_PREFIX = 'raspilot.modules.'
+MODULES_PREFIX = 'raspilot.modules'
 RECORDERS_PATH = 'recorders'
-RECORDERS_PREFIX = 'raspilot.recorders.'
+RECORDERS_PREFIX = 'raspilot.recorders'
 FLIGHT_CONTROLLER_PATH = 'flight_controller'
-FLIGHT_CONTROLLER_PREFIX = 'raspilot.flight_controller.'
+FLIGHT_CONTROLLER_PREFIX = 'raspilot.flight_controller'
 
 if __name__ == "__main__":
     logger = UpLogger.get_logger()

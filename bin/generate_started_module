@@ -21,6 +21,9 @@ class ${NAME}(BaseStartedModule):
     def __init__(self):
         super().__init__()
 
+    def _execute_initialization(self):
+        pass
+
     def _execute_start(self):
         return True
 

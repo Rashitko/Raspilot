@@ -35,7 +35,7 @@ class RaspilotTelemetryRecorder(BaseTelemetryStateRecorder):
     def initialize(self, raspilot):
         super().initialize(raspilot)
         self.__recorder.initialize(raspilot)
-        self.__telemetry_freq_handle = self.raspilot.command_executor.register_command(
+        self.__telemetry_freq_handle = self.up.command_executor.register_command(
             TelemetryFrequencyCommand.NAME,
             TelemetryFrequencyCommandHandler(raspilot.telemetry_controller, raspilot.flight_control)
         )
@@ -57,17 +57,17 @@ class RaspilotSystemStateRecorder(BaseSystemStateRecorder):
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
-        self.__orientation_provider = self.raspilot.get_module(RaspilotOrientationProvider)
-        self.__location_provider = self.raspilot.get_module(RaspilotLocationProvider)
-        self.__android_battery_provider = self.raspilot.get_module(AndroidBatteryProvider)
-        self.__rx_provider = self.raspilot.get_module(RaspilotRXProvider)
-        self.__load_guard = self.raspilot.load_guard_controller.load_guard
-        self.__altitude_provider = self.raspilot.get_module(AltitudeProvider)
+        self.__orientation_provider = self.up.get_module(RaspilotOrientationProvider)
+        self.__location_provider = self.up.get_module(RaspilotLocationProvider)
+        self.__android_battery_provider = self.up.get_module(AndroidBatteryProvider)
+        self.__rx_provider = self.up.get_module(RaspilotRXProvider)
+        self.__load_guard = self.up.load_guard_controller.load_guard
+        self.__altitude_provider = self.up.get_module(AltitudeProvider)
 
     def record_state(self):
         state = self.__capture_state()
         if self.__transmit:
-            self.raspilot.flight_control.send_message(
+            self.up.flight_control.send_message(
                 TelemetryUpdateCommand.create_from_system_state(state).serialize())
 
     def __capture_state(self):

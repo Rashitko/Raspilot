@@ -22,7 +22,7 @@ class RaspilotLoadGuardStateRecorder(BaseLoadGuardStateRecorder):
 
     def initialize(self, raspilot):
         super().initialize(raspilot)
-        self.__android_provider = self.raspilot.get_module(AndroidProvider)
+        self.__android_provider = self.up.get_module(AndroidProvider)
         if not self.__android_provider:
             self._log_warning("AndroidProvider NOT found")
 

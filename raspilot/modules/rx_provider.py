@@ -16,7 +16,7 @@ class RaspilotRXProvider(BaseRXProvider):
         self.__rudder = None
 
     def _execute_initialization(self):
-        self.raspilot.command_executor.register_command(RXUpdateCommand.NAME, RXUpdateCommandHandler(self))
+        self.up.command_executor.register_command(RXUpdateCommand.NAME, RXUpdateCommandHandler(self))
 
     def _execute_start(self):
         return True

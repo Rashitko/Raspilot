@@ -17,13 +17,13 @@ class RaspilotLocationProvider(BaseLocationProvider):
         return self.location
 
     def _execute_start(self):
-        self.__command_handle = self.raspilot.command_executor.register_command(LocationUpdateCommand.NAME,
+        self.__command_handle = self.up.command_executor.register_command(LocationUpdateCommand.NAME,
                                                                                 LocationUpdateCommandHandler(self))
-        self.__arduino_provider = self.raspilot.get_module(ArduinoProvider)
+        self.__arduino_provider = self.up.get_module(ArduinoProvider)
         return True
 
     def _execute_stop(self):
-        self.raspilot.command_executor.unregister_command(LocationUpdateCommand.NAME, self.__command_handle)
+        self.up.command_executor.unregister_command(LocationUpdateCommand.NAME, self.__command_handle)
 
     @property
     def location(self):

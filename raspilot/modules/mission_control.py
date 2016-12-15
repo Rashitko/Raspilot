@@ -26,7 +26,7 @@ class RaspilotMissionControlProvider(BaseMissionControlProvider):
             reactor.callFromThread(self.__protocol.sendLine, data)
 
     def execute_command(self, command):
-        self.raspilot.command_receiver.execute_command(command)
+        self.up.command_receiver.execute_command(command)
 
     def on_connection_opened(self, address):
         self.logger.debug("Connected to Mission Control on address {}".format(address))

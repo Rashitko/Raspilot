@@ -28,19 +28,19 @@ class RaspilotFlightController(BaseFlightController):
 
     def initialize(self, raspil):
         super().initialize(raspil)
-        self.__arduino_provider = self.raspilot.get_module(raspilot.modules.arduino_provider.ArduinoProvider)
+        self.__arduino_provider = self.up.get_module(raspilot.modules.arduino_provider.ArduinoProvider)
         if not self.__arduino_provider:
             raise ValueError("Arduino Provider must be loaded")
 
     def stop(self):
         self.set_flight_mode(self.FLIGHT_MODE_RATE)
         super().stop()
-        self.raspilot.command_executor.unregister_command(FlightModeCommand.NAME, self.__mode_change_handle)
+        self.up.command_executor.unregister_command(FlightModeCommand.NAME, self.__mode_change_handle)
 
     def start(self):
-        self.__mode_change_handle = self.raspilot.command_executor.register_command(
+        self.__mode_change_handle = self.up.command_executor.register_command(
             FlightModeCommand.NAME,
-            FlightModeCommandHandler(self.raspilot.flight_control)
+            FlightModeCommandHandler(self.up.flight_control)
         )
         return True
 

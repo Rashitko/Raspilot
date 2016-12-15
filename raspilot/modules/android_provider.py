@@ -17,7 +17,7 @@ class AndroidProvider(BaseStartedModule):
         super().__init__()
 
     def _execute_initialization(self):
-        self.__protocol = AndroidProtocol(self.raspilot.command_receiver)
+        self.__protocol = AndroidProtocol(self.up.command_receiver)
 
     def _execute_start(self):
         endpoint = TCP4ServerEndpoint(reactor, 50001)

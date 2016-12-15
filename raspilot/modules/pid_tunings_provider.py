@@ -6,8 +6,8 @@ from raspilot.commands.pid_tunings_command import PIDTuningsCommand, \
 
 class PIDTuningsProvider(BaseStartedModule):
     def _execute_start(self):
-        self.raspilot.command_executor.register_command(PIDTuningsCommand.NAME, PIDTuningsCommandHandler())
-        self.raspilot.command_executor.register_command(PIDSyncCommand.NAME, PIDSyncCommandHandler())
+        self.up.command_executor.register_command(PIDTuningsCommand.NAME, PIDTuningsCommandHandler())
+        self.up.command_executor.register_command(PIDSyncCommand.NAME, PIDSyncCommandHandler())
         return True
 
     def load(self):

@@ -11,8 +11,8 @@ class AltitudeChangeCommand(BaseCommand):
 class AltitudeChangeCommandHandler(BaseCommandHandler):
     def __init__(self, provider):
         super().__init__()
-        self.__location_provider = provider
+        self.__altitude_provider = provider
 
     def run_action(self, command):
         if command.data['altitude'] is not None:
-            self.__location_provider.altitude = command.data['altitude']
+            self.__altitude_provider.altitude = command.data['altitude']

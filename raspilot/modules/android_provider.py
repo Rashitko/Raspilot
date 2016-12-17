@@ -36,6 +36,10 @@ class AndroidProvider(BaseStartedModule):
     def load(self):
         return True
 
+    @property
+    def is_connected(self):
+        return self.__protocol.is_connected
+
 
 class AndroidProtocol(LineReceiver):
     def __init__(self, callbacks):
@@ -44,6 +48,7 @@ class AndroidProtocol(LineReceiver):
         self.__logger = UpLogger.get_logger()
         self.__callbacks = callbacks
         self.__queue = []
+        self.__is_connected = False
 
     def enqueue(self, data):
         self.__queue.append(data)
@@ -79,9 +84,15 @@ class AndroidProtocol(LineReceiver):
         for data in self.__queue:
             self.sendLine(data)
         self.__queue.clear()
+        self.__is_connected = True
 
     def connectionLost(self, reason=connectionDone):
         self.__logger.info("Connection lost")
+        self.__is_connected = False
+
+    @property
+    def is_connected(self):
+        return self.__is_connected
 
 
 class AndroidProtocolFactory(Factory):

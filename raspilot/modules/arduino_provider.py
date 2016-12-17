@@ -37,6 +37,7 @@ class ArduinoProvider(BaseStartedModule):
         self.__serial = serial.Serial()
         self.__serial.baudrate = self.BAUD_RATE
         self.__receive_loop_lock = None
+        self.__is_connected = False
 
     def _execute_initialization(self):
         super()._execute_initialization()
@@ -68,6 +69,7 @@ class ArduinoProvider(BaseStartedModule):
     def _execute_stop(self):
         if self.__serial and self.__serial.is_open:
             self.__serial.close()
+            self.__is_connected = False
 
     def load(self):
         return True
@@ -125,6 +127,7 @@ class ArduinoProvider(BaseStartedModule):
                 if self.__receive_loop_lock:
                     self.__receive_loop_lock.set()
                 cmd_type = self.__serial.read(1)
+                self.__is_connected = True
                 payload_size = self.__handler.get_command_payload_size(cmd_type)
                 payload = self.__serial.read(payload_size)
                 self.__handler.execute_action(cmd_type, payload)
@@ -149,35 +152,35 @@ class ArduinoProvider(BaseStartedModule):
     def __discover_arduino(self):
         config = ConfigReader.instance().global_config
         arduino_required = config.get('DEFAULT', 'WAIT FOR ARDUINO', fallback='false')
+        ports = list(serial.tools.list_ports.comports())
+        for port in ports:
+            if "Arduino" in port[1]:
+                self._log_info("Arduino found on port {}".format(port))
+                return port[0]
         while arduino_required.lower() == 'true':
-            ports = list(serial.tools.list_ports.comports())
-            for port in ports:
-                if "Arduino" in port[1]:
-                    self._log_info("Arduino found on port {}".format(port))
-                    return port[0]
             self.logger.warning('Arduino required but not found yet. Will try again in 1s')
             sleep(self.DISCOVERY_RETRY_INTERVAL)
         return None
 
     def __handle_altitude_confirmation(self, payload):
-        self.logger.debug(" %s" % payload)
-        (altitude,) = struct.unpack("h", payload)
+        altitude, = struct.unpack("h", payload)
         self.logger.debug("Arduino confirmed altitude %s" % altitude)
 
     def __handle_location_confirmation(self, payload):
-        self.logger.debug(" %s" % payload)
-        (latitude, longitude) = struct.unpack("!ff", payload)
+        latitude, longitude = struct.unpack("!ff", payload)
         self.logger.debug("Arduino confirmed location LAT: %s, LON: %s" % (latitude, longitude))
 
     def __handle_actual_heading_confirmation(self, payload):
-        self.logger.debug(" %s" % payload)
         (heading,) = struct.unpack("!h", payload)
         self.logger.debug("Arduino has confirmed actual heading %s˚" % heading)
 
     def __handle_required_heading_confirmation(self, payload):
-        self.logger.debug(" %s" % payload)
         (heading,) = struct.unpack("!h", payload)
         self.logger.debug("Arduino has confirmed required heading %s˚" % heading)
+
+    @property
+    def is_connected(self):
+        return self.__is_connected
 
 
 class ArduinoCommandHandler:

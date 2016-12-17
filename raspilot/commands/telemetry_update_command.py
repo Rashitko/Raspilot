@@ -15,6 +15,7 @@ class TelemetryUpdateCommand(BaseCommand):
         data = {'orientation': system_state.get('orientation', None),
                 'location': system_state.get('location', None),
                 'flightControllerStatus': system_state.get('flightControllerStatus', None),
-                'altitude': system_state.get('altitude', None)}
+                'altitude': system_state.get('altitude', None),
+                'devicesStatus': system_state.get('devicesStatus', None)}
         c = TelemetryUpdateCommand(data)
         return c

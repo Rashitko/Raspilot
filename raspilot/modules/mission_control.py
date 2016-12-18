@@ -29,7 +29,7 @@ class RaspilotMissionControlProvider(BaseMissionControlProvider):
         self.up.command_receiver.execute_command(command)
 
     def on_connection_opened(self, address):
-        self.logger.debug("Connected to Mission Control on address {}".format(address))
+        self.logger.info("Connected to Mission Control on address {}".format(address))
 
     def on_connection_lost(self):
         if reactor.running:

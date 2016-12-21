@@ -4,6 +4,10 @@ dist
 raspilot.egg-info
 
 tmp/
-logs/
 
 **/*.pyc
+
+raspilot/logs/*
+
+raspilot/circuits.lock
+raspilot/circuits/

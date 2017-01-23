@@ -9,5 +9,6 @@ tmp/
 
 raspilot/logs/*
 
-raspilot/circuits.lock
-raspilot/circuits/
+raspilot/install.sh
+raspilot/deprecated_modules
+raspilot/not_modified_mods

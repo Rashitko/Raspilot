@@ -1,0 +1,3 @@
+remote_server:
+  url: raspilot.projekty.ms.mff.cuni.cz
+  port: 3003

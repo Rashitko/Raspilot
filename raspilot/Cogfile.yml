@@ -1,2 +1,12 @@
 arduino_cog:
-  url: https://github.com/Rashitko/arduino_cog.git
+  pypi: arduino-cog
+  version: 0.1.4
+
+android_cog:
+  pypi: android-cog
+
+discovery_cog:
+  pypi: discovery-cog
+
+mission_control_cog:
+  pypi: mission-control-cog

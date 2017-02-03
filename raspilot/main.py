@@ -3,11 +3,11 @@ import os
 
 import pid
 from pid import PidFile
-from up.utils.config_reader import ConfigReader
-from up.utils.up_loader import UpLoader
-from up.utils.up_logger import UpLogger
+from raspilot.utils.raspilot_loader import RaspilotLoadStrategy
 
-from raspilot.utils.raspilot_loader import RaspilotLoader
+from up.utils.config_reader import ConfigReader
+from up.utils.new_loader import NewUpLoader
+from up.utils.up_logger import UpLogger
 
 MODULES_PATH = 'modules'
 MODULES_PREFIX = 'raspilot.modules'
@@ -34,13 +34,10 @@ if __name__ == "__main__":
     recorders_path = os.path.abspath(os.path.join(current_dir, RECORDERS_PATH))
     flight_controller_path = os.path.abspath(os.path.join(current_dir, FLIGHT_CONTROLLER_PATH))
     if '~' in pid_dir:
-            pid_dir = os.path.join(os.path.expanduser(pid_dir[pid_dir.index('~'):]))
+        pid_dir = os.path.join(os.path.expanduser(pid_dir[pid_dir.index('~'):]))
     try:
         with PidFile(piddir=pid_dir, pidname=pid_name):
-            with (UpLoader(modules_path=modules_path, modules_prefix=MODULES_PREFIX, recorders_path=recorders_path,
-                           recorders_prefix=RECORDERS_PREFIX, flight_controller_path=flight_controller_path,
-                           flight_controller_prefix=FLIGHT_CONTROLLER_PREFIX).create(
-                load_condition_class=RaspilotLoader)) as raspilot:
+            with (NewUpLoader(RaspilotLoadStrategy).create()) as raspilot:
                 raspilot.run()
     except pid.PidFileAlreadyLockedError:
         logger.critical("Another instance of Raspilot is already running. Check %s." % os.path.join(pid_dir, pid_name))

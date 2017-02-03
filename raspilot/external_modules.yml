@@ -27,3 +27,4 @@ up:
   - {class_name: BaseHeadingProvider, prefix: up.modules.base_heading_provider}
   - {class_name: BaseAltitudeProvider, prefix: up.modules.base_altitude_provider}
   - {class_name: BaseLocationProvider, prefix: up.modules.base_location_provider}
+  - {class_name: BaseOrientationProvider, prefix: up.modules.base_orientation_provider}

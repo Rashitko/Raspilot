@@ -14,6 +14,10 @@ discovery_cog:
   modules:
   - {class_name: DiscoveryService, prefix: discovery_cog.modules.discovery_module}
   recorders: []
+load_guard_cog:
+  modules:
+  - {class_name: LoadGuard, prefix: load_guard_cog.modules.load_guard}
+  recorders: []
 mission_control_cog:
   modules:
   - {class_name: MissionControlProvider, prefix: mission_control_cog.modules.mission_control_module}

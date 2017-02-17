@@ -9,6 +9,7 @@ arduino_cog:
   - {class_name: ArduinoHeadingModule, prefix: arduino_cog.modules.arduino_heading_module}
   - {class_name: ArduinoLocationModule, prefix: arduino_cog.modules.arduino_location_module}
   - {class_name: ArduinoModule, prefix: arduino_cog.modules.arduino_module}
+  - {class_name: PIDTuningsProvider, prefix: arduino_cog.modules.pid_tunings_module}
   recorders: []
 discovery_cog:
   modules:

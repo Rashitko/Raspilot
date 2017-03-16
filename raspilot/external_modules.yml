@@ -2,6 +2,7 @@ android_cog:
   modules:
   - {class_name: AndroidBatteryProvider, prefix: android_cog.modules.android_battery_module}
   - {class_name: AndroidProvider, prefix: android_cog.modules.android_module}
+  - {class_name: AndroidOrientationProvider, prefix: android_cog.modules.android_orientation_module}
   recorders: []
 arduino_cog:
   modules:

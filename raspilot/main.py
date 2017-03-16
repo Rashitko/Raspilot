@@ -3,8 +3,8 @@ import os
 
 import pid
 from pid import PidFile
-from raspilot.utils.raspilot_loader import RaspilotLoadStrategy
 
+from raspilot.utils.raspilot_loader import RaspilotLoadStrategy
 from up.utils.config_reader import ConfigReader
 from up.utils.new_loader import NewUpLoader
 from up.utils.up_logger import UpLogger

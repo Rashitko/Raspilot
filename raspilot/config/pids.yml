@@ -1,1 +1,6 @@
-{rate: null, stabilize: null}
+rate:
+  ailerons: {d: 0, i: 0, p: 4.5}
+  elevator: {d: 0, i: 0, p: 4.5}
+stabilize:
+  ailerons: {d: 0, i: 0, p: 0.7}
+  elevator: {d: 0, i: 0, p: 0.7}

@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='raspilot',
     version='',
-    packages=['raspilot', 'raspilot.utils', 'raspilot.runner', 'raspilot.modules',
+    packages=['raspilot', 'raspilot.utils', 'raspilot.modules',
               'raspilot.commands', 'raspilot.recorders', 'raspilot.ground_proxy', 'raspilot.flight_controller',
               'raspilot._flight_controller'],
     url='',

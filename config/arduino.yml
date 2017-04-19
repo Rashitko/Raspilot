@@ -1,0 +1,2 @@
+port: /dev/cu.usbmodem1411
+baud_rate: 9600

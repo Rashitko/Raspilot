@@ -1,0 +1,10 @@
+discovery_cog:
+  url: https://github.com/Rashitko/discovery-cog.git
+load_guard_cog:
+  url: https://github.com/Rashitko/load_guard_cog.git
+android-cog:
+  url: https://github.com/Rashitko/android-cog.git
+arduino_cog:
+  url: https://github.com/Rashitko/arduino_cog.git
+mission_control_cog:
+  url: https://github.com/Rashitko/mission-control-cog.git

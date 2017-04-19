@@ -1,0 +1,3 @@
+panic threshold: 80
+calm down threshold: 65
+interval: 0.5

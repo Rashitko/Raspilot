@@ -1,0 +1,31 @@
+android_cog:
+  modules:
+  - {class_name: AndroidBatteryProvider, prefix: android_cog.modules.android_battery_module}
+  - {class_name: AndroidProvider, prefix: android_cog.modules.android_module}
+  - {class_name: AndroidOrientationProvider, prefix: android_cog.modules.android_orientation_module}
+  recorders: []
+arduino_cog:
+  modules:
+  - {class_name: ArduinoAltitudeModule, prefix: arduino_cog.modules.arduino_altitude_module}
+  - {class_name: ArduinoHeadingModule, prefix: arduino_cog.modules.arduino_heading_module}
+  - {class_name: ArduinoLocationModule, prefix: arduino_cog.modules.arduino_location_module}
+  - {class_name: ArduinoModule, prefix: arduino_cog.modules.arduino_module}
+  - {class_name: PIDTuningsProvider, prefix: arduino_cog.modules.pid_tunings_module}
+  - {class_name: ArduinoRXProvider, prefix: arduino_cog.modules.arduino_rx_provider}
+  recorders: []
+discovery_cog:
+  modules:
+  - {class_name: DiscoveryService, prefix: discovery_cog.modules.discovery_module}
+  recorders: []
+load_guard_cog:
+  modules:
+  - {class_name: LoadGuard, prefix: load_guard_cog.modules.load_guard}
+  recorders: []
+mission_control_cog:
+  modules:
+  - {class_name: MissionControlProvider, prefix: mission_control_cog.modules.mission_control_module}
+  recorders: []
+serial_provider_cog:
+  modules:
+  - {class_name: SerialProvider, prefix: serial_provider_cog.modules.serial_module}
+  recorders: []

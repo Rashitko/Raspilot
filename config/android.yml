@@ -1,0 +1,5 @@
+general port: 50001
+orientation port: 50000
+stop if orientation connection is lost: True
+stop delay (s): 10
+forward interval for onboard device (ms): 500

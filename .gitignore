@@ -13,3 +13,5 @@ raspilot/logs/*
 raspilot/install.sh
 raspilot/deprecated_modules
 raspilot/not_modified_mods
+
+logs/
